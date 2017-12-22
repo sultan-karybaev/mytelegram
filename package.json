@@ -10,6 +10,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "axios": "^0.17.1",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
   },
@@ -57,5 +58,15 @@
     "> 1%",
     "last 2 versions",
     "not ie <= 8"
-  ]
+  ],
+  "main": ".postcssrc.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/raimbek1/telegramclone.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/raimbek1/telegramclone/issues"
+  },
+  "homepage": "https://gitlab.com/raimbek1/telegramclone#README"
 }

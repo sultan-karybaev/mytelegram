@@ -1,15 +1,30 @@
 <template>
   <div id="app">
     <!--<img src="./assets/logo.png">-->
+
+    <!--<router-link to="/chat">link</router-link>-->
+
     <router-view/>
   </div>
 </template>
+
+
+
+
+
 
 <script>
 export default {
   name: 'app'
 }
 </script>
+
+
+
+
+
+
+
 
 <style>
 #app {

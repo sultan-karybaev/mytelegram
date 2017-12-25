@@ -12,24 +12,32 @@
             <input class="downsection-sidebar-search-inputblock-input" placeholder="Search"/>
           </div>
         </div>
+        <div  v-for="(room, index) in rooms" @click="changeName(room.user.firstName + ' ' + room.user.lastName)">
+          <router-link :to="{ name: 'contact', params: { chatID: room.roomID }}" >
+          <div class="downsection-sidebar-contacts"  >
+              <div class="downsection-sidebar-contact" >
+                <div class="downsection-sidebar-contact-icon">
+                  <div class="downsection-sidebar-contact-icon-circle"></div>
+                </div>
+                <div class="downsection-sidebar-contact-info">
+                  <div class="downsection-sidebar-contact-info-person">
+                    {{room.user.firstName}} {{room.user.lastName}}
+                  </div>
+                  <div class="downsection-sidebar-contact-info-message" ></div>
+                </div>
+                <div class="downsection-sidebar-contact-time" ></div>
+              </div>
+          </div>
 
-        <div class="downsection-sidebar-contacts" v-for="user in users">
-            <div class="downsection-sidebar-contact" >
-              <div class="downsection-sidebar-contact-icon">
-                <div class="downsection-sidebar-contact-icon-circle"></div>
-              </div>
-              <div class="downsection-sidebar-contact-info">
-                <div class="downsection-sidebar-contact-info-person" v-text="user.name"></div>
-                <div class="downsection-sidebar-contact-info-message" v-text="user.address.street"></div>
-              </div>
-              <div class="downsection-sidebar-contact-time" v-text="user.address.zipcode"></div>
-            </div>
+
+          </router-link>
         </div>
-
       </div>
 
+      <router-view></router-view>
+      <!--<contact />-->
 
-      <contact />
+
 
     </div>
 
@@ -42,34 +50,47 @@
 
 export default {
   name: 'Sidebar',
+  props: ["message"],
   data () {
     return {
       msg: 'Good Luck',
       text: "Telegram clone",
-      users: []
+      rooms: [],
+      userID: "user",
+      messageText: ""
     }
   },
   components: {
     Contact
   },
   mounted(){
-    console.log("Hello");
-    this.callHello();
+    //this.callHello();
+    this.rooms = this.$store.getters.getRooms;
   },
   methods: {
     callHello() {
-      console.log("Call");
-      let users = this.users;
-      axios.get('../../users.json')
-        .then(function (response) {
-          console.log(response.data);
-          response.data.forEach(function (t) {
-            users.push(t)
-          })
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+//      console.log("Call");
+//      let users = this.users;
+//      axios.get('../../users.json')
+//        .then(function (response) {
+//          console.log(response.data);
+//          response.data.forEach(function (t) {
+//            users.push(t)
+//          })
+//        })
+//        .catch(function (error) {
+//          console.log(error);
+//        });
+    },
+    changeName(name) {
+      this.$emit("name", name);
+      Event.$emit("name", "Elon");
+
+    },
+    getChat(index, roomID) {
+      //this.$router.push({ path: `/chat/${index}` });
+      console.log(index);
+      this.$router.push({ name: 'contact', params: { chatID: roomID }});
     }
   }
 }

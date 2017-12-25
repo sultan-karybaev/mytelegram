@@ -5,7 +5,8 @@
       <section class="main-block">
 
         <div class="header">
-          <div class="header-sidebar">
+
+          <div class="header-sidebar" @click="modalContactDisplay = 'display: flex'">
             <div class="header-sidebar-menu">
               <div class="header-sidebar-menu-lines">
                 <div class="header-sidebar-menu-line"></div>
@@ -15,8 +16,9 @@
             </div>
             <div class="header-sidebar-company">Chat</div>
           </div>
+
           <div class="header-name">
-            <div class="header-name-person">Elon Musk</div>
+            <div class="header-name-person">{{contactName}}</div>
             <div class="header-name-index">last seen 20 minutes ago</div>
           </div>
           <div class="header-search">
@@ -32,13 +34,30 @@
         </div>
 
 
-        <sidebar />
+        <sidebar message="Mars" @name="changeName">Earth</sidebar>
 
       </section>
+
+      <section class="modalContacts" :style=modalContactDisplay>
+        <div class="modalContacts-center">
+            <div class="modalContacts-center-contact" v-for="contact in contacts">
+              <div class="modalContacts-center-contact-icon">
+                <div class="modalContacts-center-contact-icon-circle"></div>
+              </div>
+              <div class="modalContacts-center-contact-username">
+                {{contact.firstName}}  {{contact.lastName}}
+              </div>
+            </div>
+        </div>
+        <div class="modalContacts-drop" @click="modalContactDisplay = 'display: none'"></div>
+      </section>
+
     </section>
 
   </div>
 </template>
+
+
 
 <script>
   import Sidebar from './ChatSidebar.vue'
@@ -47,16 +66,35 @@
     data () {
       return {
         msg: 'Good Luck',
-        text: "Telegram clone"
+        text: "Telegram clone",
+        contactName: "",
+        contacts: [],
+        modalContactDisplay: "display: none"
       }
+    },
+    mounted() {
+      this.contacts = this.$store.getters.getContacts;
     },
     components: {
       Sidebar
+    },
+    methods: {
+      changeName(name) {
+        console.log("Header " + name);
+        this.contactName = name;
+      }
+    },
+    created() {
+      Event.$on("name", function () {
+        console.log("CHAT");
+      });
     }
   }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+
+
+
 <style scoped>
 h1, h2 {
   font-weight: normal;

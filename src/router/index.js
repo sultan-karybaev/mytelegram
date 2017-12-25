@@ -1,11 +1,12 @@
 import Vue from 'vue'
-import Router from 'vue-router'
+import VueRouter from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
 import Chat from '@/components/Chat'
+import User from '@/components/ChatSidebarContact'
 
-Vue.use(Router);
+Vue.use(VueRouter);
 
-export default new Router({
+export default new VueRouter({
   routes: [
     {
       path: '/',
@@ -15,7 +16,16 @@ export default new Router({
     {
       path: '/chat',
       name: 'Chat',
-      component: Chat
+      component: Chat,
+      children: [
+        { path: ':chatID',
+          name: "contact",
+          component: User}
+      ]
+    },
+    {
+      path: '*',
+      redirect: "/chat"
     }
   ]
 })

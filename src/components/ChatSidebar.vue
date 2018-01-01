@@ -12,8 +12,8 @@
             <input class="downsection-sidebar-search-inputblock-input" placeholder="Search"/>
           </div>
         </div>
-        <div  v-for="(room, index) in rooms" @click="changeName(room.user.firstName + ' ' + room.user.lastName)">
-          <router-link :to="{ name: 'contact', params: { chatID: room.roomID }}" >
+        <div  v-for="(room, index) in rooms" @click="getChat(room.roomID)">
+          <!--<router-link :to="{ name: 'contact', params: { chatID: room.roomID }}" >-->
           <div class="downsection-sidebar-contacts"  >
               <div class="downsection-sidebar-contact" >
                 <div class="downsection-sidebar-contact-icon">
@@ -23,19 +23,19 @@
                   <div class="downsection-sidebar-contact-info-person">
                     {{room.user.firstName}} {{room.user.lastName}}
                   </div>
-                  <div class="downsection-sidebar-contact-info-message" ></div>
+                  <div class="downsection-sidebar-contact-info-message">{{room.lastMessage.text}}</div>
                 </div>
-                <div class="downsection-sidebar-contact-time" ></div>
+                <div class="downsection-sidebar-contact-time" >{{room.lastMessage.time}}</div>
               </div>
           </div>
 
 
-          </router-link>
+          <!--</router-link>-->
         </div>
       </div>
 
-      <router-view></router-view>
-      <!--<contact />-->
+      <!--<router-view></router-view>-->
+      <contact />
 
 
 
@@ -53,8 +53,6 @@ export default {
   props: ["message"],
   data () {
     return {
-      msg: 'Good Luck',
-      text: "Telegram clone",
       rooms: [],
       userID: "user",
       messageText: ""
@@ -66,6 +64,26 @@ export default {
   mounted(){
     //this.callHello();
     this.rooms = this.$store.getters.getRooms;
+  },
+  created() {
+    let vm = this;
+
+    Event.$on("newLastMessage", (message) => {
+      this.setLastMessage(message);
+    });
+
+  },
+  watch: {
+    "$store.state.rooms": function (newVal) {
+      console.log("ROOMS");
+      //this.messages = this.$store.getters.getMessages(this.$route.params.chatID);
+    },
+    "$store.state.messages": function (newVal) {
+      //console.log("$store.state.messages");
+      //this.rooms = this.$store.getters.getRooms;
+      //console.log(this.rooms);
+      //this.messages = this.$store.getters.getMessages(this.$route.params.chatID);
+    },
   },
   methods: {
     callHello() {
@@ -84,13 +102,21 @@ export default {
     },
     changeName(name) {
       this.$emit("name", name);
-      Event.$emit("name", "Elon");
-
     },
-    getChat(index, roomID) {
+    getChat(roomID) {
       //this.$router.push({ path: `/chat/${index}` });
-      console.log(index);
+      console.log("getChat");
       this.$router.push({ name: 'contact', params: { chatID: roomID }});
+    },
+    setLastMessage(message) {
+      console.log("setLastMessage");
+      //this.rooms[0].lastMessage.text = "Blablabla";
+      for (let i = 0; i < this.rooms.length; i++) {
+        if (this.rooms[i].roomID == message.roomID) {
+          console.log(message);
+          this.rooms[i].lastMessage = message;
+        }
+      }
     }
   }
 }

@@ -1,17 +1,31 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
+    <h2 @click="getPush">Essential Links</h2>
 
   </div>
 </template>
 
 <script>
+  import axios from "axios"
+
 export default {
   name: 'HelloWorld',
   data () {
     return {
       msg: 'Welcome to Your Vue.js App'
+    }
+  },
+  methods: {
+    getPush() {
+      axios.get('http://localhost:3000/get')
+        .then(response =>{
+          console.log(response.data);
+          //this.msg = response.data.message
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     }
   }
 }

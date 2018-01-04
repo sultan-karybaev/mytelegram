@@ -23,7 +23,9 @@ export default new Vuex.Store({
       {userID: 5, firstName: "Sherlock", lastName: "Holmes"}, {userID: 6, firstName: "Tonny", lastName: "Stark"},
       {userID: 7, firstName: "Leonardo", lastName: "DiCaprio"}, {userID: 8, firstName: "Jimmy", lastName: "Fallon"},
     ],
-    rooms: [{roomID: 1, typeRoom: "Open", chatUserID: 1}],
+    rooms: [{roomID: 1, typeRoom: "Open", chosenClass: "unchosen", chatUserID: 1},
+      {roomID: 2, typeRoom: "Open", chosenClass: "unchosen", chatUserID: 2},
+      {roomID: 3, typeRoom: "Open", chosenClass: "unchosen", chatUserID: 3}],
     messages: [{messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?<span class='em em-a emoji' title='confused'></span>", time: "12/07/17", senderName: "Sultan"},
       {messageID: 33, roomID: 1, senderID: 10, text: "I'm fine, thanks<img src='/static/imgs/logo.png' " +
       "style='width: 20px; height: 20px; border: 0 solid black; vertical-align: middle'/>", time: "12/07/17", senderName: "Jack"},

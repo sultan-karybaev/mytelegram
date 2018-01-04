@@ -12,7 +12,7 @@
             <input class="downsection-sidebar-search-inputblock-input" placeholder="Search"/>
           </div>
         </div>
-        <div  v-for="(room, index) in rooms" @click="getChat(room.roomID)">
+        <div  v-for="(room, index) in rooms" @click="getChat(room.roomID, index)" :class="room.chosenClass">
           <!--<router-link :to="{ name: 'contact', params: { chatID: room.roomID }}" >-->
           <div class="downsection-sidebar-contacts"  >
               <div class="downsection-sidebar-contact" >
@@ -23,7 +23,7 @@
                   <div class="downsection-sidebar-contact-info-person">
                     {{room.user.firstName}} {{room.user.lastName}}
                   </div>
-                  <div class="downsection-sidebar-contact-info-message">{{room.lastMessage.text}}</div>
+                  <div class="downsection-sidebar-contact-info-message" v-html="room.lastMessage.text"></div>
                 </div>
                 <div class="downsection-sidebar-contact-time" >{{room.lastMessage.time}}</div>
               </div>
@@ -55,7 +55,7 @@ export default {
     return {
       rooms: [],
       userID: "user",
-      messageText: ""
+      messageText: "",
     }
   },
   components: {
@@ -64,13 +64,15 @@ export default {
   mounted(){
     //this.callHello();
     this.rooms = this.$store.getters.getRooms;
+    this.rooms[0].chosenClass = "chosen";
+
   },
   created() {
-    let vm = this;
-
     Event.$on("newLastMessage", (message) => {
       this.setLastMessage(message);
     });
+
+    this.$router.push({ name: 'contact', params: { chatID: 1 }});
 
   },
   watch: {
@@ -103,10 +105,17 @@ export default {
     changeName(name) {
       this.$emit("name", name);
     },
-    getChat(roomID) {
+    getChat(roomID, index) {
       //this.$router.push({ path: `/chat/${index}` });
       console.log("getChat");
       this.$router.push({ name: 'contact', params: { chatID: roomID }});
+
+
+      for (let i = 0; i < this.rooms.length; i++) {
+        console.log("room");
+        this.rooms[i].chosenClass = "unchosen";
+      }
+      this.rooms[index].chosenClass = "chosen";
     },
     setLastMessage(message) {
       console.log("setLastMessage");
@@ -116,6 +125,11 @@ export default {
           console.log(message);
           this.rooms[i].lastMessage = message;
         }
+      }
+    },
+    changeClass() {
+      if (this.chosenClass === "unchosen") {
+
       }
     }
   }
@@ -138,4 +152,13 @@ li {
 a {
   color: #42b983;
 }
+
+.unchosen{
+  background-color: none;
+}
+.chosen{
+  background-color: #7594e3;
+}
+
+
 </style>

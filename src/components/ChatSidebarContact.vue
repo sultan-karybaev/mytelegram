@@ -41,7 +41,7 @@
                 <div class="downsection-maincontent-writeblock-block-icon-img"></div>
               </div>
               <div class="downsection-maincontent-writeblock-block-keyboard">
-                <div class="downsection-maincontent-writeblock-block-keyboard-write" style="border: 1px solid black;">
+                <div class="downsection-maincontent-writeblock-block-keyboard-write">
                   <!--<input class="downsection-maincontent-writeblock-block-keyboard-write-input"-->
                             <!--placeholder="Write a message..." v-model="messageText" @keypress="addMessageEnter">-->
                   <!--<div id="test" class="downsection-maincontent-writeblock-block-keyboard-write-input"-->
@@ -52,12 +52,12 @@
 
                   <!--</div>-->
 
-                  <textarea id="textarea"></textarea>
+                  <textarea id="textarea" @keypress="addMessageEnter"></textarea>
 
 
-                  <div class="downsection-maincontent-writeblock-block-keyboard-write-smile">
-                    <img src="../assets/smile.svg" style="width: 20px; height: 20px">
-                  </div>
+                  <!--<div class="downsection-maincontent-writeblock-block-keyboard-write-smile">-->
+                    <!--<img src="../assets/smile.svg" style="width: 20px; height: 20px">-->
+                  <!--</div>-->
                 </div>
                 <div class="downsection-maincontent-writeblock-block-keyboard-buttons">
                   <div class="downsection-maincontent-writeblock-block-keyboard-buttons-icon">
@@ -122,10 +122,9 @@ export default {
     this.myself = this.$store.getters.getUser;
     this.messages = this.$store.getters.getMessages(this.$route.params.chatID);
     this.senderUser = this.$store.getters.getSenderUser(this.$route.params.chatID);
+    console.log(this.$route.params.chatID);
     console.log(this.senderUser);
     Event.$emit("headerSenderUserName", this.senderUser);
-    //let t = document.getElementById("test").innerHTML;
-    //console.log(t);
 
     $("#textarea").emojioneArea();
 
@@ -148,6 +147,7 @@ export default {
   },
   methods: {
     addMessageEnter(event) {
+      console.log("ENTER");
       if (event.code === "Enter") {
         this.addMessage();
         event.preventDefault();
@@ -277,12 +277,28 @@ a {
   color: #42b983;
 }
 
+#textarea{
+  border: none;
+  box-shadow: none;
+}
+
+.emojionearea{
+  border: none;
+  background: rgba(0, 0, 0, 0);
+  outline: none;
+  box-shadow: none;
+}
+
+
 .emojionearea .emojionearea-editor{
   width: 100%;
   min-height: 35px;
   max-height: none;
-  border: 1px solid black;
+  /*border: 1px solid black;*/
   border-radius: 0;
+  outline: none;
+  border: none;
+  background: rgba(0, 0, 0, 0);
 }
 
   .emojioneemoji{

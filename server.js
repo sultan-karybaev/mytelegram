@@ -4,6 +4,9 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var cors = require('cors');
+let multer = require("multer");
+
+let upload = multer({dest: "src/audio"});
 
 var app = express();
 
@@ -20,6 +23,10 @@ app.get("/get", function (req, res, next) {
   //console.log(req);
   console.log("DEST");
   res.send({word: "Cool!"});
+});
+
+app.post("/post/audio", upload.single("audiofile"), function (req, res, next) {
+  console.log("AUDIO");
 });
 
 var server = app.listen(app.get("port"), function () {

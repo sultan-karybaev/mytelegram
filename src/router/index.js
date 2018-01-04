@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
 import Chat from '@/components/Chat'
 import User from '@/components/ChatSidebarContact'
+import Map from '@/components/Map'
 
 Vue.use(VueRouter);
 
@@ -12,6 +13,11 @@ export default new VueRouter({
       path: '/',
       name: 'HelloWorld',
       component: HelloWorld
+    },
+    {
+      path: '/maps',
+      name: 'Map',
+      component: Map
     },
     {
       path: '/chat',

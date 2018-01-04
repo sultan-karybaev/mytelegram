@@ -1,3 +1,8 @@
+body{
+  background-color: #bec6c7;
+  margin: 0;
+}
+
 .section{
   width: 100%;
   height: 100vh;
@@ -9,7 +14,7 @@
 .main-block{
   width: 1000px;
   height: 100%;
-  background-color: #d6f7ff;
+  background-color: #ffffff;
 }
 .header{
   width: 100%;
@@ -190,7 +195,7 @@
         transition: 200ms;
       }
         .downsection-sidebar-contact-icon{
-          width: 140px;
+          width: 30%;
           height: 100%;
           display: flex;
           justify-content: center;
@@ -203,7 +208,7 @@
             background-color: rebeccapurple;
           }
         .downsection-sidebar-contact-info{
-          width: 100%;
+          width: 70%;
           height: 100%;
         }
           .downsection-sidebar-contact-info-person{
@@ -304,7 +309,7 @@
           transition: 200ms;
         }
           .downsection-maincontent-messageblock-message-text-contact-icon{
-            width: 140px;
+            width: 20%;
             height: 100%;
             padding-top: 12px;
             display: flex;
@@ -319,7 +324,7 @@
               background-color: rebeccapurple;
             }
           .downsection-maincontent-messageblock-message-text-contact-info{
-            width: 100%;
+            width: 80%;
             height: 100%;
           }
             .downsection-maincontent-messageblock-message-text-contact-info-person{
@@ -338,6 +343,7 @@
               color: black;
               font-size: 12px;
               text-align: left;
+              overflow-x: hidden;
             }
           .downsection-maincontent-messageblock-message-text-contact-time{
             position: absolute;

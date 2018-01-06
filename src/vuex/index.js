@@ -22,6 +22,9 @@ export default new Vuex.Store({
       {userID: 3, firstName: "Elon", lastName: "Musk"}, {userID: 4, firstName: "Jack", lastName: "Dalbert"},
       {userID: 5, firstName: "Sherlock", lastName: "Holmes"}, {userID: 6, firstName: "Tonny", lastName: "Stark"},
       {userID: 7, firstName: "Leonardo", lastName: "DiCaprio"}, {userID: 8, firstName: "Jimmy", lastName: "Fallon"},
+      {userID: 7774921228, firstName: 7774921228, lastName: "Last"},
+      {userID: 7472525236, firstName: 7472525236, lastName: "Last"},
+      {userID: 7471151837, firstName: 7471151837, lastName: "Last"},
     ],
     rooms: [{roomID: 1, typeRoom: "Open", chosenClass: "unchosen", chatUserID: 1},
       {roomID: 2, typeRoom: "Open", chosenClass: "unchosen", chatUserID: 2},
@@ -30,7 +33,10 @@ export default new Vuex.Store({
       {messageID: 33, roomID: 1, senderID: 10, text: "I'm fine, thanks<img src='/static/imgs/logo.png' " +
       "style='width: 20px; height: 20px; border: 0 solid black; vertical-align: middle'/>", time: "12/07/17", senderName: "Jack"},
       {messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?&#128512;", time: "12/07/17", senderName: "Sultan"},
-      {messageID: 33, roomID: 1, senderID: 10, text: "I'm fine, thanks", time: "12/07/17", senderName: "Jack"},
+      {messageID: 33, roomID: 1, senderID: 10, text: "I'm fine, thanks<br/><audio controls>\n" +
+      "<source src=\"/static/media/8cef22793c4da3cc05ad4583a6540479.95d9edd.webm\" type='audio/webm'>\n" +
+      "Your browser does not support the audio element.\n" +
+      "</audio>", time: "12/07/17", senderName: "Jack"},
       {messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?", time: "12/07/17", senderName: "Sultan"},
       {messageID: 33, roomID: 1, senderID: 10, text: "I'm fine, thanks", time: "12/07/17", senderName: "Jack"},
       {messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?", time: "12/07/17", senderName: "Sultan"},
@@ -52,7 +58,7 @@ export default new Vuex.Store({
       {messageID: 33, roomID: 3, senderID: 10, text: "I am from Canada", time: "12/07/17", senderName: "Sultan"},
       {messageID: 33, roomID: 3, senderID: 10, text: "I am a CEO of SpaceX and Tesla", time: "12/07/17", senderName: "Elon"},
     ],
-    userAccount: {accountID: 10, name: "Sultan"}
+    userAccount: {}
   },
   mutations: {
     arrayPush (state, payload) {
@@ -73,10 +79,11 @@ export default new Vuex.Store({
       let currentUser;
 
       for (let i = 0; i < state.users.length; i++) {
-        console.log(items);
-        console.log(items.userID);
-        console.log(state.users[i].userID === items.userID);
-        if (state.users[i].userID === items.userID) {
+        console.log("items", items);
+        console.log("items.userID", items.userID);
+        console.log("state.users[i].userID", state.users[i].userID);
+        console.log(state.users[i].userID == items.userID);
+        if (state.users[i].userID == items.userID) {
           currentUser = state.users[i];
           break;
         }
@@ -97,7 +104,7 @@ export default new Vuex.Store({
           senderName: ""}
       });
       console.log(state.rooms);
-    }
+    },
   },
   getters: {
     getRooms: function (state) {
@@ -154,6 +161,10 @@ export default new Vuex.Store({
     },
     getUser: function (state) {
       return state.userAccount;
+    },
+    getExistingUserAccount: (state) => {
+      if (state.userAccount.userID) return false;
+      else return true;
     }
   },
   actions: {
@@ -167,6 +178,9 @@ export default new Vuex.Store({
       console.log("setNewRoom");
       commit('pushRoom', {type: 'rooms', items: query})
     },
+    setUserAccount({commit}, query) {
+      commit('set', {type: 'userAccount', items: query})
+    }
   }
 })
 

@@ -63,6 +63,7 @@ export default {
   },
   mounted(){
     //this.callHello();
+    this.myself = this.$store.getters.getUser;
     this.rooms = this.$store.getters.getRooms;
     this.rooms[0].chosenClass = "chosen";
 
@@ -88,28 +89,21 @@ export default {
     },
   },
   methods: {
-    callHello() {
-//      console.log("Call");
-//      let users = this.users;
-//      axios.get('../../users.json')
-//        .then(function (response) {
-//          console.log(response.data);
-//          response.data.forEach(function (t) {
-//            users.push(t)
-//          })
-//        })
-//        .catch(function (error) {
-//          console.log(error);
-//        });
-    },
     changeName(name) {
       this.$emit("name", name);
     },
     getChat(roomID, index) {
       //this.$router.push({ path: `/chat/${index}` });
       console.log("getChat");
-      this.$router.push({ name: 'contact', params: { chatID: roomID }});
 
+      let data = {
+        roomID: roomID,
+        userID: this.myself.userID
+      };
+
+      this.$socket.emit("enterRoomServer", data);
+
+      this.$router.push({ name: 'contact', params: { chatID: roomID }});
 
       for (let i = 0; i < this.rooms.length; i++) {
         console.log("room");
@@ -127,11 +121,6 @@ export default {
         }
       }
     },
-    changeClass() {
-      if (this.chosenClass === "unchosen") {
-
-      }
-    }
   }
 }
 </script>

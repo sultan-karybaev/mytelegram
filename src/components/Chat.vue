@@ -75,10 +75,11 @@
       }
     },
     mounted() {
+      this.myself = this.$store.getters.getUser;
       this.contacts = this.$store.getters.getContacts;
-      this.$options.sockets.titanic = (data) => {
-        console.log("Titanic")
-      }
+//      this.$options.sockets.titanic = (data) => {
+//        console.log("Titanic")
+//      }
     },
     components: {
       Sidebar
@@ -97,6 +98,13 @@
             this.$router.push({ name: 'contact', params: { chatID: room }});
         } else {
           this.$store.dispatch('setNewRoom', { userID: user.userID});
+
+          let data = {
+            userID: user.userID,
+            ME: this.myself
+          };
+
+          this.$socket.emit("createNewRoom-Chat.vue-Server", data);
           this.createRoom(user);
         }
         this.changeName(user.firstName + " " + user.lastName);
@@ -105,6 +113,7 @@
         // $socket is socket.io-client instance
         //console.log("clickButton");
         this.$socket.emit('titanic');
+        this.$router.push({ name: 'Login'});
       }
     },
     created() {

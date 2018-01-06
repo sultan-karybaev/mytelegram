@@ -364,6 +364,8 @@ body{
       width: 80%;
       height: 100%;
       display: flex;
+      border-top: 1px solid #b8b8b8;
+      margin-top: 20px;
     }
       .downsection-maincontent-writeblock-block-icon{
         width: 80px;
@@ -399,16 +401,6 @@ body{
             border: none;
             background: rgba(0, 0, 0, 0);
             color: #6c6c6c;
-          }
-          .downsection-maincontent-writeblock-block-keyboard-write-smile{
-            width: 30px;
-            height: 30px;
-            position: absolute;
-            top: 0;
-            right: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
           }
         .downsection-maincontent-writeblock-block-keyboard-buttons{
           width: 100%;

@@ -30,11 +30,6 @@
 
 
 
-
-
-
-
-
           <div id="mems" class="downsection-maincontent-writeblock">
             <div class="downsection-maincontent-writeblock-block">
               <div class="downsection-maincontent-writeblock-block-icon">
@@ -51,13 +46,18 @@
                        <!--v-html="html" >-->
 
                   <!--</div>-->
+                  <div style="width: 100%; min-height: 70px; text-align: left;" v-show="textWriting">
+                    <textarea id="textarea" ></textarea>
+                  </div>
 
-                  <textarea id="textarea" @keypress="addMessageEnter"></textarea>
+                  <div style="width: 100%; height: 70px; text-align: center; box-sizing: border-box" v-show="!textWriting">
+                    <div style="width: 100%; display: flex; justify-content: center; margin: 10px 0">
+                      <div id="timer" style="font-weight: 700; font-size: 18px"></div>
+                    </div>
+                    <h4 style="color: red; margin: 0">Идет запись вашего голоса</h4>
+                  </div>
 
 
-                  <!--<div class="downsection-maincontent-writeblock-block-keyboard-write-smile">-->
-                    <!--<img src="../assets/smile.svg" style="width: 20px; height: 20px">-->
-                  <!--</div>-->
                 </div>
                 <div class="downsection-maincontent-writeblock-block-keyboard-buttons">
                   <div class="downsection-maincontent-writeblock-block-keyboard-buttons-icon">
@@ -66,8 +66,12 @@
                   <div class="downsection-maincontent-writeblock-block-keyboard-buttons-icon">
                     <img src="../assets/photo-camera.svg" style="width: 20px; height: 20px">
                   </div>
-                  <div class="downsection-maincontent-writeblock-block-keyboard-buttons-icon">
-                    <img src="../assets/microphone-of-voice.svg" style="width: 20px; height: 20px">
+                  <div class="downsection-maincontent-writeblock-block-keyboard-buttons-icon"  style="cursor: pointer">
+                    <!--<div id="record" onmousedown="toggleRecording(this)" onmouseup="toggleRecording(this)">-->
+                      <img id="record" src="../assets/microphone-of-voice.svg" style="width: 20px; height: 20px"
+                           onmousedown="toggleRecording(this)" onmouseup="toggleRecording(this)"
+                           @mousedown="timer(); textWriting=false" @mouseup="clearTimer(); textWriting=true">
+                    <!--</div>-->
                   </div>
                   <div class="downsection-maincontent-writeblock-block-keyboard-buttons-mems"></div>
                   <div class="downsection-maincontent-writeblock-block-keyboard-buttons-send" @click="addMessage">send</div>
@@ -83,10 +87,6 @@
 
       </div>
 
-      <div style="background-color: rebeccapurple; width: 10px; height: 10px"></div>
-      <span class="em em-a"></span>
-      <i class="em em-a"></i>
-
     </div>
 
 
@@ -98,6 +98,7 @@
 
 <script>
   import axios from 'axios'
+  import MediaStreamRecorder from 'msr'
 //  import {$,jQuery} from 'jquery'
 //  import emojioneArea from 'emojionearea'
 
@@ -110,24 +111,146 @@ export default {
       text: "Telegram clone",
       messages: [],
       messageText: "",
-      html: "vlnsejvereherhreh<i class=\"em em-a\"></i>fpjweiofojwoifwof ejv ewv ev wev wfoewh weu\n" +
-      "<img id='img' src=\"/static/imgs/logo.png\" style=\"width: 20px; height: 20px; border: 0 solid black; vertical-align: middle\"/>",
-
+      date: "",
+      textWriting: true
     }
   },
+  computed: {
+
+  },
   mounted() {
-//    console.log("Route");
-//    console.log(this.$route.params.chatID);
-    //console.log(this.$store.state.words[$route.params.userID]);
     this.myself = this.$store.getters.getUser;
+
+    let data = {
+      roomID: this.$route.params.chatID,
+      userID: this.myself.userID
+    };
+
+    this.$socket.emit("enterRoomServer", data);
+
     this.messages = this.$store.getters.getMessages(this.$route.params.chatID);
     this.senderUser = this.$store.getters.getSenderUser(this.$route.params.chatID);
     console.log(this.$route.params.chatID);
     console.log(this.senderUser);
+    console.log("this.myself", this.myself);
     Event.$emit("headerSenderUserName", this.senderUser);
 
     $("#textarea").emojioneArea();
 
+    ((window) => {
+
+      var WORKER_PATH = 'src/js/recorderjs/recorderWorker.js';
+
+      var Recorder = function(source, cfg){
+        var config = cfg || {};
+        var bufferLen = config.bufferLen || 4096;
+        this.context = source.context;
+        if(!this.context.createScriptProcessor){
+          this.node = this.context.createJavaScriptNode(bufferLen, 2, 2);
+        } else {
+          this.node = this.context.createScriptProcessor(bufferLen, 2, 2);
+        }
+
+        var worker = new Worker(config.workerPath || WORKER_PATH);
+        worker.postMessage({
+          command: 'init',
+          config: {
+            sampleRate: this.context.sampleRate
+          }
+        });
+        var recording = false,
+          currCallback;
+
+        this.node.onaudioprocess = function(e){
+          if (!recording) return;
+          worker.postMessage({
+            command: 'record',
+            buffer: [
+              e.inputBuffer.getChannelData(0),
+              e.inputBuffer.getChannelData(1)
+            ]
+          });
+        }
+
+        this.configure = function(cfg){
+          for (var prop in cfg){
+            if (cfg.hasOwnProperty(prop)){
+              config[prop] = cfg[prop];
+            }
+          }
+        }
+
+        this.record = function(){
+          recording = true;
+        }
+
+        this.stop = function(){
+          recording = false;
+        }
+
+        this.clear = function(){
+          worker.postMessage({ command: 'clear' });
+        }
+
+        this.getBuffers = function(cb) {
+          currCallback = cb || config.callback;
+          worker.postMessage({ command: 'getBuffers' })
+        }
+
+        this.exportWAV = function(cb, type){
+          currCallback = cb || config.callback;
+          type = type || config.type || 'audio/wav';
+          if (!currCallback) throw new Error('Callback not set');
+          worker.postMessage({
+            command: 'exportWAV',
+            type: type
+          });
+        }
+
+        this.exportMonoWAV = function(cb, type){
+          currCallback = cb || config.callback;
+          type = type || config.type || 'audio/wav';
+          if (!currCallback) throw new Error('Callback not set');
+          worker.postMessage({
+            command: 'exportMonoWAV',
+            type: type
+          });
+        }
+
+        worker.onmessage = function(e){
+          var blob = e.data;
+
+          currCallback(blob);
+        }
+
+        source.connect(this.node);
+        this.node.connect(this.context.destination);   // if the script node is not connected to an output the "onaudioprocess" event is not triggered in chrome.
+      };
+
+      Recorder.setupDownload = (blob, filename) => {
+
+        console.log("FUCK", blob);
+        console.log(this);
+
+        console.log(URL.createObjectURL(blob));
+
+        this.$socket.emit("jupiter", blob);
+
+        console.log(blob.filename);
+
+        let data = new FormData();
+        data.append("audiofile", blob);
+        data.append("sick", "qwerty");
+        axios.post("http://localhost:3000/post/audio", data)
+          .then(res => console.log(res))
+          .catch(err => console.log(err));
+        //this.$socket.emit("jupiter", data);
+        //this.$socket.emit("venera", data);
+      }
+
+      window.Recorder = Recorder;
+
+    })(window);
   },
   watch: {
     '$route.params.chatID': function (newVal) {
@@ -146,6 +269,38 @@ export default {
     });
   },
   methods: {
+    timer() {
+      console.log("TIMER");
+
+      let countDownDate = new Date().getTime();
+      this.x = setInterval(function() {
+        let now = new Date().getTime();
+        let distance = now - countDownDate;
+        let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        if (minutes < 10) minutes = "0" + minutes;
+        if (seconds < 10) seconds = "0" + seconds;
+
+        document.getElementById("timer").innerHTML = minutes + " : " + seconds;
+      });
+    },
+    clearTimer() {
+      console.log("clearTimer");
+      document.getElementById("timer").innerHTML = "";
+      clearInterval(this.x);
+    },
+    serverConnection() {
+
+      console.log("serverConnection");
+
+      axios.get("http://localhost:3000/mars")
+        .then(res => console.log(res))
+        .catch(err => console.log(err));
+      axios.get("http://localhost:3001/showman")
+        .then(res => console.log(res))
+        .catch(err => console.log(err));
+    },
     addMessageEnter(event) {
       console.log("ENTER");
       if (event.code === "Enter") {
@@ -166,13 +321,13 @@ export default {
 //        this.$store.commit("arrayPush", payload);
         console.log(this.$route.params.chatID);
 
-        this.$socket.emit('setMessageServer',
+        this.$socket.emit('setMessage-ChatSidebarContact.vue-Server',
           { messageID: 33,
             roomID: this.$route.params.chatID,
-            senderID: this.myself.accountID,
+            senderID: this.myself.userID,
             text: emoji[0].innerHTML,
             time: "12/07/17",
-            senderName: this.myself.name}
+            senderName: this.myself.userID}
         );
 
 //        this.$store.dispatch('setMessage',
@@ -292,12 +447,13 @@ a {
 
 .emojionearea .emojionearea-editor{
   width: 100%;
-  min-height: 35px;
+  min-height: 70px;
   max-height: none;
   /*border: 1px solid black;*/
   border-radius: 0;
   outline: none;
   border: none;
+  box-shadow: none;
   background: rgba(0, 0, 0, 0);
 }
 

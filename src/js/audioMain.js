@@ -52,15 +52,6 @@ function doneEncoding( blob ) {
     recIndex++;
 }
 
-
-function down(t) {
-  toggleRecording(t);
-}
-
-function up(t) {
-  toggleRecording(t);
-}
-
 function toggleRecording( e ) {
     if (e.classList.contains("recording")) {
         // stop recording
@@ -92,7 +83,6 @@ function cancelAnalyserUpdates() {
     rafID = null;
 }
 
-//Canvas function
 // function updateAnalysers(time) {
 //     if (!analyserContext) {
 //         var canvas = document.getElementById("analyser");
@@ -159,7 +149,7 @@ function gotStream(stream) {
     analyserNode.fftSize = 2048;
     inputPoint.connect( analyserNode );
 
-    //audioRecorder = new Recorder( inputPoint );
+    audioRecorder = new Recorder( inputPoint );
 
     zeroGain = audioContext.createGain();
     zeroGain.gain.value = 0.0;

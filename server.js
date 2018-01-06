@@ -44,26 +44,10 @@ io.attach(server);
 //var socketEvents = require("./server/socket");
 
 function socketEvents(io) {
-  io.sockets.on("venera", function () {
-    console.log("venera");
-  });
-
   io.sockets.on("connection", (socket) => {
     console.log("SOCKETS ");
 
-    //tested
-    socket.on("jupiter", function (data) {
-      console.log("JUPITER");
-      console.log(data);
 
-      fs.writeFile("spacex2.wav", data,  "binary", function(err) {
-        if(err) {
-          console.log(err);
-        } else {
-          console.log("The file was saved!");
-        }
-      });
-    });
 
     //tested
     socket.on("titanic", function (data) {
@@ -80,24 +64,28 @@ function socketEvents(io) {
       socket.join(userID);
     });
 
+    socket.on("logout-???-Server", function (data) {
+      console.log("logout-???-Server");
+      console.log(data);
+    });
+
     socket.on("createNewRoom-Chat.vue-Server", function (data) {
       console.log("createNewRoom-Chat.vue-Server");
       console.log(data);
       socket.to(data.userID).emit("createNewRoomSocket", data.ME);
     });
 
-    socket.on("enterRoomServer", function (data) {
+    socket.on("enterRoom-ChatSidebar.vue-Server", function (data) {
+      console.log("enterRoom-ChatSidebar.vue-Server");
       console.log(data);
-
       let message1 = {
         messageID: 33,
         roomID: data.roomID,
         senderID: 10,
-        text: "you have joined to " + socket.room,
+        text: "you have joined to " + data.roomID,
         time: "12/07/17",
         senderName: "Server"
       };
-
       let message2 = {
         messageID: 33,
         roomID: data.roomID,
@@ -106,35 +94,50 @@ function socketEvents(io) {
         time: "12/07/17",
         senderName: "Server"
       };
-
       socket.join(data.roomID);
-      socket.emit("setMessageSocket", message1);
-      socket.to(data.roomID).emit("setMessageSocket", message2);
+      // socket.emit("setMessageSocket", message1);
+      // socket.to(data.roomID).emit("setMessageSocket", message2);
     });
 
     socket.on("setMessage-ChatSidebarContact.vue-Server", function (data) {
       console.log("setMessage-ChatSidebarContact.vue-Server");
       console.log(data);
-
       socket.emit("setMessageSocket", data);
       socket.broadcast.emit("setMessageSocket", data);
-      socket.emit("newLastMessageSocket", data);
-      socket.broadcast.emit("newLastMessageSocket", data);
+      socket.emit("newLastMessageChatSidebarSocket", data);
+      socket.broadcast.emit("newLastMessageChatSidebarSocket", data);
+    });
+
+    socket.on("audioFile-ChatSidebarContact.vue-Server", function (data, message) {
+      console.log("audioFile-ChatSidebarContact.vue-Server");
+      console.log(data);
+      console.log(message);
+      let lastMessage = {
+        roomID: message.roomID,
+        text: "Audio File",
+        time: message.time,
+      };
+      let name = Math.floor(Math.random() * 1000000);
+      message.text = "<audio controls><source src=" + "../static/media/" + name + ".wav" + " type='audio/webm'/></audio>";
+      fs.writeFile(__dirname + "/static/media/" + name + ".wav", data,  "binary", function(err) {
+        if(err) {
+          console.log(err);
+        } else {
+          console.log("The file was saved!");
+          socket.emit("setMessageSocket", message);
+          socket.broadcast.emit("setMessageSocket", message);
+          socket.emit("newLastMessageChatSidebarSocket", lastMessage);
+          socket.broadcast.emit("newLastMessageChatSidebarSocket", lastMessage);
+        }
+      });
     });
   });
 }
 
 socketEvents(io);
-//socketEvents(io).s();
 
 app.post("/post/audio", upload.single("audiofile"), function (req, res, next) {
   console.log("AUDIO");
   console.log(req.file);
   res.send("Yahoo");
-
-
 });
-
-// function f() {
-//   socketEvents(io).someFun();
-// }

@@ -77,9 +77,6 @@
     mounted() {
       this.myself = this.$store.getters.getUser;
       this.contacts = this.$store.getters.getContacts;
-//      this.$options.sockets.titanic = (data) => {
-//        console.log("Titanic")
-//      }
     },
     components: {
       Sidebar
@@ -103,15 +100,12 @@
             userID: user.userID,
             ME: this.myself
           };
-
           this.$socket.emit("createNewRoom-Chat.vue-Server", data);
           this.createRoom(user);
         }
         this.changeName(user.firstName + " " + user.lastName);
       },
       clickButton: function(){
-        // $socket is socket.io-client instance
-        //console.log("clickButton");
         this.$socket.emit('titanic');
         this.$router.push({ name: 'Login'});
       }
@@ -133,18 +127,4 @@
 
 
 <style scoped>
-h1, h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
 </style>

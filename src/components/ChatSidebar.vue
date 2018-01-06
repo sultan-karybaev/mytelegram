@@ -23,9 +23,9 @@
                   <div class="downsection-sidebar-contact-info-person">
                     {{room.user.firstName}} {{room.user.lastName}}
                   </div>
-                  <div class="downsection-sidebar-contact-info-message" v-html="room.lastMessage.text"></div>
+                  <div class="downsection-sidebar-contact-info-message" v-html="room.lastMessageText"></div>
                 </div>
-                <div class="downsection-sidebar-contact-time" >{{room.lastMessage.time}}</div>
+                <div class="downsection-sidebar-contact-time" >{{room.lastMessageTime}}</div>
               </div>
           </div>
 
@@ -67,14 +67,21 @@ export default {
     this.rooms = this.$store.getters.getRooms;
     this.rooms[0].chosenClass = "chosen";
 
-  },
-  created() {
-    Event.$on("newLastMessage", (message) => {
-      this.setLastMessage(message);
-    });
+    let defaultRoom = 1;
 
-    this.$router.push({ name: 'contact', params: { chatID: 1 }});
+    this.$router.push({ name: 'contact', params: { roomID: defaultRoom }});
 
+    let data = {
+      roomID: defaultRoom,
+      userID: this.myself.userID
+    };
+    this.$socket.emit("enterRoom-ChatSidebar.vue-Server", data);
+
+    //Socket
+    this.$options.sockets.newLastMessageChatSidebarSocket = (data) => {
+      console.log("Titanic");
+      this.setLastMessage(data);
+    }
   },
   watch: {
     "$store.state.rooms": function (newVal) {
@@ -93,31 +100,27 @@ export default {
       this.$emit("name", name);
     },
     getChat(roomID, index) {
-      //this.$router.push({ path: `/chat/${index}` });
       console.log("getChat");
-
       let data = {
         roomID: roomID,
         userID: this.myself.userID
       };
-
-      this.$socket.emit("enterRoomServer", data);
-
-      this.$router.push({ name: 'contact', params: { chatID: roomID }});
-
+      this.$socket.emit("enterRoom-ChatSidebar.vue-Server", data);
+      this.$router.push({ name: 'contact', params: { roomID: roomID }});
       for (let i = 0; i < this.rooms.length; i++) {
         console.log("room");
         this.rooms[i].chosenClass = "unchosen";
       }
       this.rooms[index].chosenClass = "chosen";
     },
-    setLastMessage(message) {
+    setLastMessage(lastMessage) {
       console.log("setLastMessage");
-      //this.rooms[0].lastMessage.text = "Blablabla";
       for (let i = 0; i < this.rooms.length; i++) {
-        if (this.rooms[i].roomID == message.roomID) {
-          console.log(message);
-          this.rooms[i].lastMessage = message;
+        if (this.rooms[i].roomID == lastMessage.roomID) {
+          console.log("message", lastMessage);
+          console.log("this.rooms[i].lastMessageText", this.rooms[i].lastMessageText);
+          this.rooms[i].lastMessageText = lastMessage.text;
+          this.rooms[i].lastMessageTime = lastMessage.time;
         }
       }
     },
@@ -127,23 +130,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
 
 .unchosen{
-  background-color: none;
+  /*background-color: none;*/
 }
 .chosen{
   background-color: #7594e3;

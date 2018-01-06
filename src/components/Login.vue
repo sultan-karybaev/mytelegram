@@ -45,7 +45,7 @@
 
         console.log(this.phoneNumber);
         response.userID = this.phoneNumber;
-        console.log(response);
+        console.log("response", response);
         this.$store.dispatch('setUserAccount', response);
         this.$router.push({ name: 'contact', params: { chatID: 1 }});
         this.$socket.emit("login-Login.vue-Server", this.phoneNumber);

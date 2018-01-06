@@ -34,10 +34,12 @@ export default new Vuex.Store({
       "style='width: 20px; height: 20px; border: 0 solid black; vertical-align: middle'/>", time: "12/07/17", senderName: "Jack"},
       {messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?&#128512;", time: "12/07/17", senderName: "Sultan"},
       {messageID: 33, roomID: 1, senderID: 10, text: "I'm fine, thanks<br/><audio controls>\n" +
-      "<source src=\"/static/media/8cef22793c4da3cc05ad4583a6540479.95d9edd.webm\" type='audio/webm'>\n" +
+      "<source src=\"/static/media/8cef22793c4da3cc05ad4583a6540479.webm\" type='audio/webm'>\n" +
       "Your browser does not support the audio element.\n" +
       "</audio>", time: "12/07/17", senderName: "Jack"},
-      {messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?", time: "12/07/17", senderName: "Sultan"},
+      {messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?" + "<audio controls>\n" +
+      "<source src=\"./audio/8cef22793c4da3cc05ad4583a6540479.webm\" type=\"audio/webm\"/>\n" +
+      "</audio>", time: "12/07/17", senderName: "Sultan"},
       {messageID: 33, roomID: 1, senderID: 10, text: "I'm fine, thanks", time: "12/07/17", senderName: "Jack"},
       {messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?", time: "12/07/17", senderName: "Sultan"},
       {messageID: 33, roomID: 1, senderID: 10, text: "I'm fine, thanks", time: "12/07/17", senderName: "Jack"},
@@ -117,7 +119,8 @@ export default new Vuex.Store({
       for (let i = 0; i < state.rooms.length; i++) {
         for (let j = state.messages.length - 1; j > 0; j--) {
           if (state.rooms[i].roomID === state.messages[j].roomID) {
-            state.rooms[i].lastMessage = state.messages[j];
+            state.rooms[i].lastMessageText = state.messages[j].text;
+            state.rooms[i].lastMessageTime = state.messages[j].time;
             break;
           }
         }
@@ -149,6 +152,7 @@ export default new Vuex.Store({
       return mes;
     },
     getSenderUser: (state) => (roomID) => {
+      console.log("getSenderUser");
       for (let i = 0; i < state.rooms.length; i++) {
         if (state.rooms[i].roomID == roomID) {
           for (let j = 0; j < state.users.length; j++) {

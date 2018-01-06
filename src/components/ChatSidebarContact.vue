@@ -120,23 +120,15 @@ export default {
   },
   mounted() {
     this.myself = this.$store.getters.getUser;
-
-    let data = {
-      roomID: this.$route.params.chatID,
-      userID: this.myself.userID
-    };
-
-    this.$socket.emit("enterRoomServer", data);
-
-    this.messages = this.$store.getters.getMessages(this.$route.params.chatID);
-    this.senderUser = this.$store.getters.getSenderUser(this.$route.params.chatID);
-    console.log(this.$route.params.chatID);
-    console.log(this.senderUser);
+    this.messages = this.$store.getters.getMessages(this.$route.params.roomID);
+    this.senderUser = this.$store.getters.getSenderUser(this.$route.params.roomID);
+    console.log("this.senderUser", this.senderUser);
     console.log("this.myself", this.myself);
     Event.$emit("headerSenderUserName", this.senderUser);
 
     $("#textarea").emojioneArea();
 
+    //audio recorder
     ((window) => {
 
       var WORKER_PATH = 'src/js/recorderjs/recorderWorker.js';
@@ -179,24 +171,13 @@ export default {
             }
           }
         }
-
-        this.record = function(){
-          recording = true;
-        }
-
-        this.stop = function(){
-          recording = false;
-        }
-
-        this.clear = function(){
-          worker.postMessage({ command: 'clear' });
-        }
-
+        this.record = function(){recording = true;}
+        this.stop = function(){recording = false;}
+        this.clear = function(){worker.postMessage({ command: 'clear' });}
         this.getBuffers = function(cb) {
           currCallback = cb || config.callback;
           worker.postMessage({ command: 'getBuffers' })
-        }
-
+        };
         this.exportWAV = function(cb, type){
           currCallback = cb || config.callback;
           type = type || config.type || 'audio/wav';
@@ -228,22 +209,24 @@ export default {
       };
 
       Recorder.setupDownload = (blob, filename) => {
-
         console.log("FUCK", blob);
-        console.log(this);
 
-        console.log(URL.createObjectURL(blob));
+        let message = {
+          messageID: 33,
+          roomID: this.$route.params.roomID,
+          senderID: this.myself.userID,
+          time: "12/07/17",
+          senderName: this.myself.userID
+        };
 
-        this.$socket.emit("jupiter", blob);
+        this.$socket.emit("audioFile-ChatSidebarContact.vue-Server", blob, message);
 
-        console.log(blob.filename);
+//        let data = new FormData();
+//        data.append("audiofile", blob);
+//        axios.post("http://localhost:3000/post/audio", data)
+//          .then(res => console.log(res))
+//          .catch(err => console.log(err));
 
-        let data = new FormData();
-        data.append("audiofile", blob);
-        data.append("sick", "qwerty");
-        axios.post("http://localhost:3000/post/audio", data)
-          .then(res => console.log(res))
-          .catch(err => console.log(err));
         //this.$socket.emit("jupiter", data);
         //this.$socket.emit("venera", data);
       }
@@ -253,20 +236,17 @@ export default {
     })(window);
   },
   watch: {
-    '$route.params.chatID': function (newVal) {
+    '$route.params.roomID': function (newVal) {
+      console.log("ROUTE");
       this.messages = this.$store.getters.getMessages(newVal);
     },
-    msg: function (val, oldval) {
-
-    },
     "$store.state.messages": function (newVal) {
-      this.messages = this.$store.getters.getMessages(this.$route.params.chatID);
+      console.log("STORE");
+      this.messages = this.$store.getters.getMessages(this.$route.params.roomID);
     },
   },
   created() {
-    Event.$on("name", function () {
-      console.log("EVENT");
-    });
+
   },
   methods: {
     timer() {
@@ -319,15 +299,15 @@ export default {
 //          obj: {name: "Nick", text: this.messageText, time: "12 Oct"}
 //        };
 //        this.$store.commit("arrayPush", payload);
-        console.log(this.$route.params.chatID);
 
         this.$socket.emit('setMessage-ChatSidebarContact.vue-Server',
           { messageID: 33,
-            roomID: this.$route.params.chatID,
+            roomID: this.$route.params.roomID,
             senderID: this.myself.userID,
             text: emoji[0].innerHTML,
             time: "12/07/17",
-            senderName: this.myself.userID}
+            senderName: this.myself.userID
+          }
         );
 
 //        this.$store.dispatch('setMessage',

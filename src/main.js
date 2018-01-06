@@ -26,21 +26,10 @@ new Vue({
   router,
   store,
   sockets:{
-    titan: function(){
-      console.log('socket connected');
-
-    },
-    customEmit: function(val){
-      console.log('this method was fired by the socket server. eg: io.emit("customEmit", data)')
-    },
     setMessageSocket: function (data) {
       console.log('setMessageSocket');
       console.log(data);
       this.$store.dispatch('setMessage', data);
-    },
-    newLastMessageSocket: function (data) {
-      console.log('newLastMessageSocket');
-      Event.$emit("newLastMessage", data);
     },
     createNewRoomSocket: function (data) {
       console.log('createNewRoomSocket');

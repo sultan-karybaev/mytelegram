@@ -25,7 +25,7 @@ export default new VueRouter({
       name: 'Chat',
       component: Chat,
       children: [
-        { path: ':chatID',
+        { path: ':roomID',
           name: "contact",
           component: User}
       ]

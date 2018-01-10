@@ -1,6 +1,9 @@
-@import "main.css";
-@import "modalContacts.css";
-@import "emoji.css";
-@import "emojionearea.min.css";
+@import "components/main.css";
+@import "components/modalContacts.css";
+@import "components/audioMessage.css";
 
-/*@import "audio.css";*/
+@import "components/emojionearea.min.css";
+@import "components/textareaEmoji.css";
+
+
+

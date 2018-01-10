@@ -30,7 +30,7 @@
     },
     computed: {
       systemEntry() {
-        return this.$store.getters.getExistingUserAccount;
+        return !this.$store.getters.getExistingUserAccount;
       }
     },
     methods: {
@@ -47,7 +47,7 @@
         response.userID = this.phoneNumber;
         console.log("response", response);
         this.$store.dispatch('setUserAccount', response);
-        this.$router.push({ name: 'contact', params: { chatID: 1 }});
+        this.$router.push({ name: 'Chat'});
         this.$socket.emit("login-Login.vue-Server", this.phoneNumber);
       }
     },

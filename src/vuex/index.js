@@ -26,32 +26,30 @@ export default new Vuex.Store({
       {userID: 7472525236, firstName: 7472525236, lastName: "Last"},
       {userID: 7471151837, firstName: 7471151837, lastName: "Last"},
     ],
-    rooms: [{roomID: 1, typeRoom: "Open", chosenClass: "unchosen", chatUserID: 1},
-      {roomID: 2, typeRoom: "Open", chosenClass: "unchosen", chatUserID: 2},
-      {roomID: 3, typeRoom: "Open", chosenClass: "unchosen", chatUserID: 3}],
-    messages: [{messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?<span class='em em-a emoji' title='confused'></span>", time: "12/07/17", senderName: "Sultan"},
-      {messageID: 33, roomID: 1, senderID: 10, text: "I'm fine, thanks<img src='/static/imgs/logo.png' " +
-      "style='width: 20px; height: 20px; border: 0 solid black; vertical-align: middle'/>", time: "12/07/17", senderName: "Jack"},
-      {messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?&#128512;", time: "12/07/17", senderName: "Sultan"},
-      {messageID: 33, roomID: 1, senderID: 10, text: "I'm fine, thanks<br/><audio controls>\n" +
-      "<source src=\"/static/media/8cef22793c4da3cc05ad4583a6540479.webm\" type='audio/webm'>\n" +
-      "Your browser does not support the audio element.\n" +
-      "</audio>", time: "12/07/17", senderName: "Jack"},
-      {messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?" + "<audio controls>\n" +
-      "<source src=\"./audio/8cef22793c4da3cc05ad4583a6540479.webm\" type=\"audio/webm\"/>\n" +
-      "</audio>", time: "12/07/17", senderName: "Sultan"},
-      {messageID: 33, roomID: 1, senderID: 10, text: "I'm fine, thanks", time: "12/07/17", senderName: "Jack"},
-      {messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?", time: "12/07/17", senderName: "Sultan"},
-      {messageID: 33, roomID: 1, senderID: 10, text: "I'm fine, thanks", time: "12/07/17", senderName: "Jack"},
+    rooms: [{roomID: 1, typeRoom: "Open", chosenClass: "unchosen", chatUserID: 1, lastMessageText: "I'm fine, thanks777", lastMessageTime: "12/07/17"},
+      {roomID: 2, typeRoom: "Open", chosenClass: "unchosen", chatUserID: 2, lastMessageText: "London is a capital of Great Britain", lastMessageTime: "12/07/17"},
+      {roomID: 3, typeRoom: "Open", chosenClass: "unchosen", chatUserID: 3, lastMessageText: "I am a CEO of SpaceX and Tesla", lastMessageTime: "12/07/17"}
+      ],
+    messages: [{messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?", time: "12/07/17", senderName: "Sultan", type: "Text"},
+      {messageID: 33, roomID: 1, senderID: 10, text: "I'm fine, thanks", time: "12/07/17", senderName: "Jack", type: "Text"},
+      {messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?", time: "12/07/17", senderName: "Sultan", type: "Text"},
+      {messageID: 33, roomID: 1, senderID: 10, text: "I'm fine, thanks", time: "12/07/17", senderName: "Jack", type: "Text"},
+      {messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?", time: "12/07/17", senderName: "Sultan", type: "Text"},
+      {messageID: 33, roomID: 1, senderID: 10, src: "../../static/media/kissvk.com--qb-Imagine%20Dragons-Whatever%20It%20Takes.mp3", time: "12/07/17", senderName: "Jack", type: "Audio"},
+      {messageID: 33, roomID: 1, senderID: 10, text: "I'm fine, thanks", time: "12/07/17", senderName: "Jack", type: "Text"},
+      {messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?", time: "12/07/17", senderName: "Sultan", type: "Text"},
+      {messageID: 33, roomID: 1, senderID: 10, text: "I'm fine, thanks", time: "12/07/17", senderName: "Jack", type: "Text"},
+      {messageID: 33, roomID: 1, senderID: 10, src: "../../static/media/kissvk.com-Green%20Day-Boulevard%20of%20Broken%20Dreams-Acoustic-.mp3", time: "12/07/17", senderName: "Jack", type: "Audio"},
 
-      {messageID: 33, roomID: 2, senderID: 10, text: "Hi, my name is Tom", time: "12/07/17", senderName: "Sultan"},
-      {messageID: 33, roomID: 2, senderID: 10, text: "London is a capital of Great Britain", time: "12/07/17", senderName: "Tom"},
-      {messageID: 33, roomID: 2, senderID: 10, text: "Hi, my name is Tom", time: "12/07/17", senderName: "Sultan"},
-      {messageID: 33, roomID: 2, senderID: 10, text: "London is a capital of Great Britain", time: "12/07/17", senderName: "Tom"},
-      {messageID: 33, roomID: 2, senderID: 10, text: "Hi, my name is Tom", time: "12/07/17", senderName: "Sultan"},
-      {messageID: 33, roomID: 2, senderID: 10, text: "London is a capital of Great Britain", time: "12/07/17", senderName: "Tom"},
-      {messageID: 33, roomID: 2, senderID: 10, text: "Hi, my name is Tom", time: "12/07/17", senderName: "Sultan"},
-      {messageID: 33, roomID: 2, senderID: 10, text: "London is a capital of Great Britain", time: "12/07/17", senderName: "Tom"},
+      {messageID: 33, roomID: 2, senderID: 10, text: "Hi, my name is Tom", time: "12/07/17", senderName: "Sultan", type: "Text"},
+      {messageID: 33, roomID: 2, senderID: 10, text: "London is a capital of Great Britain", time: "12/07/17", senderName: "Tom", type: "Text"},
+      {messageID: 33, roomID: 2, senderID: 10, text: "Hi, my name is Tom", time: "12/07/17", senderName: "Sultan", type: "Text"},
+      {messageID: 33, roomID: 2, senderID: 10, text: "London is a capital of Great Britain", time: "12/07/17", senderName: "Tom", type: "Text"},
+      {messageID: 33, roomID: 2, senderID: 10, text: "Hi, my name is Tom", time: "12/07/17", senderName: "Sultan", type: "Text"},
+      {messageID: 33, roomID: 2, senderID: 10, src: "../../static/media/kissvk.com-The Script feat. will.i.am-Hall of Fame.mp3", time: "12/07/17", senderName: "Tom", type: "Audio"},
+      {messageID: 33, roomID: 2, senderID: 10, text: "London is a capital of Great Britain", time: "12/07/17", senderName: "Tom", type: "Text"},
+      {messageID: 33, roomID: 2, senderID: 10, text: "Hi, my name is Tom", time: "12/07/17", senderName: "Sultan", type: "Text"},
+      {messageID: 33, roomID: 2, senderID: 10, text: "London is a capital of Great Britain", time: "12/07/17", senderName: "Tom", type: "Text"},
 
       {messageID: 33, roomID: 3, senderID: 10, text: "I am from Canada", time: "12/07/17", senderName: "Sultan"},
       {messageID: 33, roomID: 3, senderID: 10, text: "I am a CEO of SpaceX and Tesla", time: "12/07/17", senderName: "Elon"},
@@ -74,6 +72,7 @@ export default new Vuex.Store({
     },
     push(state, {type, items}){
       state[type].push(items);
+      Event.$emit("audio");
     },
     pushRoom(state, {type, items}) {
       console.log("pushRoom");
@@ -115,17 +114,6 @@ export default new Vuex.Store({
           if (user.userID === room.chatUserID) room.user = user;
         })
       });
-
-      for (let i = 0; i < state.rooms.length; i++) {
-        for (let j = state.messages.length - 1; j > 0; j--) {
-          if (state.rooms[i].roomID === state.messages[j].roomID) {
-            state.rooms[i].lastMessageText = state.messages[j].text;
-            state.rooms[i].lastMessageTime = state.messages[j].time;
-            break;
-          }
-        }
-      }
-
       return state.rooms;
     },
     getContacts: function (state) {
@@ -152,7 +140,6 @@ export default new Vuex.Store({
       return mes;
     },
     getSenderUser: (state) => (roomID) => {
-      console.log("getSenderUser");
       for (let i = 0; i < state.rooms.length; i++) {
         if (state.rooms[i].roomID == roomID) {
           for (let j = 0; j < state.users.length; j++) {
@@ -167,8 +154,8 @@ export default new Vuex.Store({
       return state.userAccount;
     },
     getExistingUserAccount: (state) => {
-      if (state.userAccount.userID) return false;
-      else return true;
+      if (state.userAccount.userID) return true;
+      else return false;
     }
   },
   actions: {

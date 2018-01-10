@@ -1,0 +1,30 @@
+#textarea{
+  border: none;
+  box-shadow: none;
+}
+
+.emojionearea{
+  border: none;
+  background: rgba(0, 0, 0, 0);
+  outline: none;
+  box-shadow: none;
+}
+
+
+.emojionearea .emojionearea-editor{
+  width: 100%;
+  min-height: 70px;
+  max-height: none;
+  /*border: 1px solid black;*/
+  border-radius: 0;
+  outline: none;
+  border: none;
+  box-shadow: none;
+  background: rgba(0, 0, 0, 0);
+}
+
+.emojioneemoji{
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+}

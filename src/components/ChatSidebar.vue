@@ -34,8 +34,8 @@
         </div>
       </div>
 
-      <!--<router-view></router-view>-->
-      <contact />
+      <router-view></router-view>
+      <!--<contact />-->
 
 
 
@@ -50,7 +50,6 @@
 
 export default {
   name: 'Sidebar',
-  props: ["message"],
   data () {
     return {
       rooms: [],
@@ -62,14 +61,14 @@ export default {
     Contact
   },
   mounted(){
-    //this.callHello();
     this.myself = this.$store.getters.getUser;
     this.rooms = this.$store.getters.getRooms;
     this.rooms[0].chosenClass = "chosen";
+    document.getElementById("contactNameChat").innerHTML = this.rooms[0].user.firstName + " " + this.rooms[0].user.lastName;
 
     let defaultRoom = 1;
 
-    this.$router.push({ name: 'contact', params: { roomID: defaultRoom }});
+//    this.$router.push({ name: 'contact', params: { roomID: defaultRoom }});
 
     let data = {
       roomID: defaultRoom,
@@ -81,26 +80,19 @@ export default {
     this.$options.sockets.newLastMessageChatSidebarSocket = (data) => {
       console.log("Titanic");
       this.setLastMessage(data);
-    }
+    };
   },
   watch: {
     "$store.state.rooms": function (newVal) {
       console.log("ROOMS");
-      //this.messages = this.$store.getters.getMessages(this.$route.params.chatID);
     },
     "$store.state.messages": function (newVal) {
-      //console.log("$store.state.messages");
-      //this.rooms = this.$store.getters.getRooms;
-      //console.log(this.rooms);
-      //this.messages = this.$store.getters.getMessages(this.$route.params.chatID);
     },
   },
   methods: {
-    changeName(name) {
-      this.$emit("name", name);
-    },
     getChat(roomID, index) {
       console.log("getChat");
+      document.getElementById("contactNameChat").innerHTML = this.rooms[index].user.firstName + " " + this.rooms[index].user.lastName;
       let data = {
         roomID: roomID,
         userID: this.myself.userID
@@ -108,7 +100,6 @@ export default {
       this.$socket.emit("enterRoom-ChatSidebar.vue-Server", data);
       this.$router.push({ name: 'contact', params: { roomID: roomID }});
       for (let i = 0; i < this.rooms.length; i++) {
-        console.log("room");
         this.rooms[i].chosenClass = "unchosen";
       }
       this.rooms[index].chosenClass = "chosen";
@@ -119,16 +110,16 @@ export default {
         if (this.rooms[i].roomID == lastMessage.roomID) {
           console.log("message", lastMessage);
           console.log("this.rooms[i].lastMessageText", this.rooms[i].lastMessageText);
-          this.rooms[i].lastMessageText = lastMessage.text;
+          //this.rooms[i].lastMessageText = lastMessage.text;
           this.rooms[i].lastMessageTime = lastMessage.time;
         }
       }
-    },
+    }
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+
 <style scoped>
 
 .unchosen{

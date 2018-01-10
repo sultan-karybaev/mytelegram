@@ -4,6 +4,7 @@ import HelloWorld from '@/components/HelloWorld'
 import Chat from '@/components/Chat'
 import User from '@/components/ChatSidebarContact'
 import Map from '@/components/Map'
+import AudioFile from '@/components/AudioFile'
 import Login from '@/components/Login'
 
 Vue.use(VueRouter);
@@ -12,13 +13,18 @@ export default new VueRouter({
   routes: [
     {
       path: '/',
-      name: 'Login',
-      component: Login
+      name: 'HelloWorld',
+      component: HelloWorld
     },
     {
       path: '/maps',
       name: 'Map',
       component: Map
+    },
+    {
+      path: ':audioID',
+      name: 'AudioFile',
+      component: AudioFile
     },
     {
       path: '/chat',

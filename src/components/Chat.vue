@@ -18,7 +18,7 @@
           </div>
 
           <div class="header-name" @click="clickButton">
-            <div class="header-name-person">{{contactName}}</div>
+            <div class="header-name-person" id="contactNameChat"></div>
             <div class="header-name-index">last seen 20 minutes ago</div>
           </div>
           <div class="header-search">
@@ -33,8 +33,7 @@
           </div>
         </div>
 
-
-        <sidebar message="Mars" @name="changeName">Earth</sidebar>
+        <sidebar></sidebar>
 
       </section>
 
@@ -55,7 +54,7 @@
 
     </section>
 
-  </div>
+      </div>
 </template>
 
 
@@ -67,9 +66,6 @@
     name: 'Chat',
     data () {
       return {
-        msg: 'Good Luck',
-        text: "Telegram clone",
-        contactName: "",
         contacts: [],
         modalContactDisplay: "display: none"
       }
@@ -77,15 +73,13 @@
     mounted() {
       this.myself = this.$store.getters.getUser;
       this.contacts = this.$store.getters.getContacts;
+
+//      if (!this.$store.getters.getExistingUserAccount) this.$router.push({ name: 'Login'});
     },
     components: {
       Sidebar
     },
     methods: {
-      changeName(name) {
-        console.log("Header " + name);
-        this.contactName = name;
-      },
       createRoom(user) {
         console.log("Contact");
         console.log("USER" + user);
@@ -110,16 +104,6 @@
         this.$router.push({ name: 'Login'});
       }
     },
-    created() {
-      const vm = this;
-
-      Event.$on("headerSenderUserName", function (user) {
-        console.log("CHAT");
-        console.log(user);
-        //this.contactName = "user";
-        vm.changeName(user.firstName + " " + user.lastName);
-      });
-    }
   }
 </script>
 

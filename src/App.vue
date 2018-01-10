@@ -14,9 +14,6 @@
 
 <script>
   import chat from './components/Chat.vue'
-  //import map from './components/Map.vue'
-  import axios from 'axios'
-
 
 export default
 {

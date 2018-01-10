@@ -118,7 +118,7 @@ function socketEvents(io) {
         time: message.time,
       };
       let name = Math.floor(Math.random() * 1000000);
-      message.text = "<audio controls><source src=" + "../static/media/" + name + ".wav" + " type='audio/webm'/></audio>";
+      message.text = "<audio controls><source src=" + "../static/media/" + name + ".wav" + " type='audio/wav'/></audio>";
       fs.writeFile(__dirname + "/static/media/" + name + ".wav", data,  "binary", function(err) {
         if(err) {
           console.log(err);

@@ -69,20 +69,20 @@ export default {
   },
   mounted(){
     this.myself = this.$store.getters.getUser;
-    this.rooms = this.$store.getters.getRooms;
-    this.rooms[0].chosenClass = "chosen";
-    document.getElementById("contactNameChat").innerHTML = this.rooms[0].user.firstName + " " + this.rooms[0].user.lastName;
+    //this.rooms = this.$store.getters.getRooms;
+    //this.rooms[0].chosenClass = "chosen";
+    //document.getElementById("contactNameChat").innerHTML = this.rooms[0].user.firstName + " " + this.rooms[0].user.lastName;
 
     let defaultRoom = 1;
     this.currentRoomID = defaultRoom;
 
-//    this.$router.push({ name: 'contact', params: { roomID: defaultRoom }});
+    //this.$router.push({ name: 'contact', params: { roomID: defaultRoom }});
 
     let data = {
       roomID: defaultRoom,
       userID: this.myself.userID
     };
-    this.$socket.emit("enterRoom-ChatSidebar.vue-Server", data);
+    //this.$socket.emit("enterRoom-ChatSidebar.vue-Server", data);
 
     //Socket
     this.$options.sockets.newLastMessageChatSidebarSocket = (data) => {

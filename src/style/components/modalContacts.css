@@ -47,7 +47,10 @@
           width: 40px;
           height: 40px;
           border-radius: 20px;
-          background-color: black;
+          /*background-image: url("/src/assets/logo.png");*/
+          background-size: cover;
+          background-repeat: no-repeat;
+          background-position: center center;
         }
       .modalContacts-center-contact-username{
         width: 70%;

@@ -42,7 +42,9 @@
             <div class="modalContacts-center-contact" v-for="contact in contacts"
                  @click="createRoom(contact); modalContactDisplay = 'display: none'">
               <div class="modalContacts-center-contact-icon">
-                <div class="modalContacts-center-contact-icon-circle"></div>
+                <div class="modalContacts-center-contact-icon-circle" >
+                  <img :src=contact.avatar style="width: 40px; height: 40px; border-radius: 20px;"/>
+                </div>
               </div>
               <div class="modalContacts-center-contact-username">
                 {{contact.firstName}}  {{contact.lastName}}
@@ -60,6 +62,7 @@
 
 
 <script>
+  import axios from 'axios'
   import Sidebar from './ChatSidebar.vue'
 
   export default {
@@ -67,12 +70,14 @@
     data () {
       return {
         contacts: [],
-        modalContactDisplay: "display: none"
+        modalContactDisplay: "display: none",
       }
     },
     mounted() {
       this.myself = this.$store.getters.getUser;
       this.contacts = this.$store.getters.getContacts;
+      console.log(this.myself);
+      console.log(this.contacts);
 
 //      if (!this.$store.getters.getExistingUserAccount) this.$router.push({ name: 'Login'});
     },
@@ -82,21 +87,21 @@
     methods: {
       createRoom(user) {
         console.log("Contact");
-        console.log("USER" + user);
-        let room = this.$store.getters.getRoomExisting(user.userID);
-        console.log(room);
-        if (room) {
-            this.$router.push({ name: 'contact', params: { chatID: room }});
-        } else {
-          this.$store.dispatch('setNewRoom', { userID: user.userID});
-          let data = {
-            userID: user.userID,
-            ME: this.myself
-          };
-          this.$socket.emit("createNewRoom-Chat.vue-Server", data);
-          this.createRoom(user);
-        }
-        this.changeName(user.firstName + " " + user.lastName);
+        console.log(user);
+        const vm = this;
+        //Заменяем геттер на запрос к базе данных
+        //let room = this.$store.getters.getRoomExisting(user.userID);
+
+        axios.get("http://localhost:3000/get/roomExisting/" + this.myself._id + "/" + user._id)
+          .then(function (res) {
+            console.log(res.data);
+            if (res.data) {
+              vm.$router.push({ name: 'contact', params: { roomID: res.data }});
+            } else {
+              vm.$socket.emit("createNewRoom-Chat.vue-Server", vm.myself, user._id);
+            }
+          })
+          .catch(err => console.log("Chat.vue-methods-createRoom", err));
       },
       clickButton: function(){
         this.$router.push({ name: 'Login'});

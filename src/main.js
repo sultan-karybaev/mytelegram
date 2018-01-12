@@ -5,7 +5,7 @@ import App from './App'
 import AccountKit from 'vue-facebook-account-kit'
 import router from './router'
 import store from './vuex'
-// import axios from 'axios'
+import axios from 'axios'
 import socketio from 'socket.io-client'
 
 import './style/all.css'
@@ -34,12 +34,12 @@ new Vue({
     setMessageSocket: function (data) {
       console.log('setMessageSocket');
       console.log(data);
-      this.$store.dispatch('setMessage', data);
+      this.$store.dispatch('setMessageMainjs', data);
     },
     createNewRoomSocket: function (data) {
       console.log('createNewRoomSocket');
       console.log(data);
-      this.$store.dispatch('setNewRoom', { userID: data.userID});
+      this.$store.dispatch('setNewRoomMainjs', { userID: data.userID});
     },
     register: function (data) {
       console.log("register main");

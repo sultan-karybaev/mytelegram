@@ -6,30 +6,32 @@
 
       <div class="downsection-maincontent-messageblock-bottom">
 
-          <div id="mems2">
-            <div class="downsection-maincontent-messageblock-message"    v-for="(message, index) in messages">
-              <div class="downsection-maincontent-messageblock-message-check">
-                <img src="../assets/tick.svg" style="width: 26px; height: 26px" class="downsection-maincontent-messageblock-message-check-icon">
-              </div>
-              <div class="downsection-maincontent-messageblock-message-text">
-                <div class="downsection-maincontent-messageblock-message-text-contact">
-                  <div class="downsection-maincontent-messageblock-message-text-contact-icon">
-                    <div class="downsection-maincontent-messageblock-message-text-contact-icon-circle"></div>
-                  </div>
-                  <div class="downsection-maincontent-messageblock-message-text-contact-info">
-                    <div class="downsection-maincontent-messageblock-message-text-contact-info-person" >{{message.senderName}}</div>
-                      <div v-for="text in message.messageArray">
-                        <template v-if="text.type == 'Text'">
-                          <div class="downsection-maincontent-messageblock-message-text-contact-info-message"     v-html="text.text"></div>
-                        </template>
-                        <template v-if="text.type === 'Audio'">
-                          <audio-file :audioWay=text.src />
-                        </template>
+          <div id="mems2" style="height: calc(100% - 160px); overflow-y: hidden; position: relative">
+            <div style="position: absolute; bottom: 0; width: 100%">
+                  <div class="downsection-maincontent-messageblock-message"    v-for="(message, index) in messages">
+                    <div class="downsection-maincontent-messageblock-message-check">
+                      <img src="../assets/tick.svg" style="width: 26px; height: 26px" class="downsection-maincontent-messageblock-message-check-icon">
+                    </div>
+                    <div class="downsection-maincontent-messageblock-message-text">
+                      <div class="downsection-maincontent-messageblock-message-text-contact">
+                        <div class="downsection-maincontent-messageblock-message-text-contact-icon">
+                          <div class="downsection-maincontent-messageblock-message-text-contact-icon-circle"></div>
+                        </div>
+                        <div class="downsection-maincontent-messageblock-message-text-contact-info">
+                          <div class="downsection-maincontent-messageblock-message-text-contact-info-person" >{{message.senderName}}</div>
+                            <div v-for="text in message.messageArray">
+                              <template v-if="text.type == 'Text'">
+                                <div class="downsection-maincontent-messageblock-message-text-contact-info-message"     v-html="text.text"></div>
+                              </template>
+                              <template v-if="text.type === 'Audio'">
+                                <audio-file :audioWay=text.src />
+                              </template>
+                            </div>
+                        </div>
+                        <div class="downsection-maincontent-messageblock-message-text-contact-time"     v-text="message.time"></div>
                       </div>
+                    </div>
                   </div>
-                  <div class="downsection-maincontent-messageblock-message-text-contact-time"     v-text="message.time"></div>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -54,10 +56,13 @@
                 </div>
                 <div class="writeblock-block-keyboard-buttons">
                   <div class="writeblock-block-keyboard-buttons-icon">
-                    <img src="../assets/page-with-one-curled-corner.svg" style="width: 20px; height: 20px">
+                     <img src="../assets/page-with-one-curled-corner.svg" style="width: 20px; height: 20px;">
                   </div>
                   <div class="writeblock-block-keyboard-buttons-icon">
-                    <img src="../assets/photo-camera.svg" style="width: 20px; height: 20px">
+                    <input id="imageMessage" type="file" @change="testFile" style="display: none">
+                    <label tabindex="0" for="imageMessage" >
+                      <img src="../assets/photo-camera.svg" style="width: 20px; height: 20px; cursor: pointer">
+                    </label>
                   </div>
                   <div class="writeblock-block-keyboard-buttons-icon"  style="cursor: pointer">
                       <img id="record" src="../assets/microphone-of-voice.svg" style="width: 20px; height: 20px"
@@ -73,7 +78,6 @@
               </div>
             </div>
           </div>
-
 
       </div>
 
@@ -198,6 +202,28 @@ export default {
           type: "Audio"
         }
       );
+    },
+    testFile(event) {
+      this.someData = event.target.files[0];
+      console.log(this.someData);
+
+      let imgData = {
+        name: this.someData.name,
+        size: this.someData.size,
+        type: this.someData.type
+      };
+
+      let message = {
+        messageID: 33,
+        roomID: this.$route.params.roomID,
+        senderID: 3,
+        time: "12/07/17",
+        senderName: "Elon",
+        type: "Text"
+      };
+
+      console.log(imgData);
+      this.$socket.emit("image-ChatSidebarContact.vue-Server", event.target.files[0], imgData, message);
     }
   },
 }

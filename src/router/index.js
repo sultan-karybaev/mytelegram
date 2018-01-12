@@ -22,11 +22,6 @@ export default new VueRouter({
       component: Map
     },
     {
-      path: ':audioID',
-      name: 'AudioFile',
-      component: AudioFile
-    },
-    {
       path: '/chat',
       name: 'Chat',
       component: Chat,

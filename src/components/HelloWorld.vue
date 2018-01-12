@@ -13,7 +13,8 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: 'Welcome to Your Vue.js App',
+      array: [],
     }
   },
   mounted() {
@@ -22,7 +23,7 @@ export default {
       console.log(data);
 //      this.messages.push(data);
 //      setTimeout(() => this.secondAudioPlayer(), 1000);
-    }
+    };
   },
   methods: {
     getPush() {
@@ -47,9 +48,8 @@ export default {
 //        .catch(function (error) {
 //          console.log(error);
 //        });
-      let jsonObject = {phone:7077777777};
+      let jsonObject = {phone:"77471151837"};
       this.$socket.emit("register", jsonObject);
-
     }
   }
 }

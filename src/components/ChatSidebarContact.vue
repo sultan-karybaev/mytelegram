@@ -6,118 +6,78 @@
 
       <div class="downsection-maincontent-messageblock-bottom">
 
-        <div id="mems2">
-          <div class="downsection-maincontent-messageblock-message"    v-for="(message, index) in messages">
-            <div class="downsection-maincontent-messageblock-message-check">
-              <img src="../assets/tick.svg" style="width: 26px; height: 26px" class="downsection-maincontent-messageblock-message-check-icon">
-            </div>
-            <div class="downsection-maincontent-messageblock-message-text">
-              <div class="downsection-maincontent-messageblock-message-text-contact">
-                <!-- ---v-for="(message, index) in messages"---v-html="message.text"---- v-text="message.time"--- -->
-                <div class="downsection-maincontent-messageblock-message-text-contact-icon">
-                  <div class="downsection-maincontent-messageblock-message-text-contact-icon-circle"></div>
+          <div id="mems2">
+            <div class="downsection-maincontent-messageblock-message"    v-for="(message, index) in messages">
+              <div class="downsection-maincontent-messageblock-message-check">
+                <img src="../assets/tick.svg" style="width: 26px; height: 26px" class="downsection-maincontent-messageblock-message-check-icon">
+              </div>
+              <div class="downsection-maincontent-messageblock-message-text">
+                <div class="downsection-maincontent-messageblock-message-text-contact">
+                  <div class="downsection-maincontent-messageblock-message-text-contact-icon">
+                    <div class="downsection-maincontent-messageblock-message-text-contact-icon-circle"></div>
+                  </div>
+                  <div class="downsection-maincontent-messageblock-message-text-contact-info">
+                    <div class="downsection-maincontent-messageblock-message-text-contact-info-person" >{{message.senderName}}</div>
+                      <div v-for="text in message.messageArray">
+                        <template v-if="text.type == 'Text'">
+                          <div class="downsection-maincontent-messageblock-message-text-contact-info-message"     v-html="text.text"></div>
+                        </template>
+                        <template v-if="text.type === 'Audio'">
+                          <audio-file :audioWay=text.src />
+                        </template>
+                      </div>
+                  </div>
+                  <div class="downsection-maincontent-messageblock-message-text-contact-time"     v-text="message.time"></div>
                 </div>
-                <div class="downsection-maincontent-messageblock-message-text-contact-info">
-                  <div class="downsection-maincontent-messageblock-message-text-contact-info-person" >{{message.senderName}}</div>
-                  <!--<div class="downsection-maincontent-messageblock-message-text-contact-info-message"     v-html="message.text">-->
-                    <template v-if="message.type == 'Text'">
-                      <div class="downsection-maincontent-messageblock-message-text-contact-info-message"     v-html="message.text"></div>
-                    </template>
-                    <template v-if="message.type === 'Audio'">
-                      <audio-file :audioWay=message.src />
-                    </template>
-
-                    <!--<div class="audioMessage">-->
-                      <!--<div class="audioMessage-button">-->
-                        <!--<img class="audioMessage-button-img" src="../assets/play-button.svg" style="display: block"/>-->
-                        <!--<img class="audioMessage-button-img" src="../assets/pause-button.svg" style="display: none"/>-->
-                      <!--</div>-->
-                      <!--<div class="audioMessage-block">-->
-                        <!--<div class="audioMessage-block-up">-->
-                          <!--<div class="audioMessage-block-up-text">Голосовое сообщение</div>-->
-                          <!--<div class="audioMessage-block-up-time">00 : 00</div>-->
-                        <!--</div>-->
-                        <!--<div class="audioMessage-block-down">-->
-                          <!--<div class="audioMessage-block-down-road" name="../static/media/539387.wav"></div>-->
-                        <!--</div>-->
-                      <!--</div>-->
-                    <!--</div>-->
-
-                  <!--</div>-->
-                </div>
-                <div class="downsection-maincontent-messageblock-message-text-contact-time"     v-text="message.time"></div>
               </div>
             </div>
           </div>
-        </div>
 
-          <div class="downsection-maincontent-writeblock">
-            <div class="downsection-maincontent-writeblock-block">
-              <div class="downsection-maincontent-writeblock-block-icon">
-                <div class="downsection-maincontent-writeblock-block-icon-img"></div>
+
+
+          <div class="writeblock">
+            <div class="writeblock-block">
+              <div class="writeblock-block-icon">
+                <div class="writeblock-block-icon-img"></div>
               </div>
-              <div class="downsection-maincontent-writeblock-block-keyboard">
-                <div class="downsection-maincontent-writeblock-block-keyboard-write">
-                  <!--<input class="downsection-maincontent-writeblock-block-keyboard-write-input"-->
-                            <!--placeholder="Write a message..." v-model="messageText" @keypress="addMessageEnter">-->
-                  <!--<div id="test" class="downsection-maincontent-writeblock-block-keyboard-write-input"-->
-                       <!--contentEditable="true" hidefocus="true"-->
-
-                       <!--placeholder="Write a message..." style="text-align: left;  border: 1px solid black;" ref="myinput"-->
-                       <!--v-html="html" >-->
-
-                  <!--</div>-->
-                  <div style="width: 100%; min-height: 70px; text-align: left;" v-show="textWriting">
+              <div class="writeblock-block-keyboard">
+                <div class="writeblock-block-keyboard-write">
+                  <div class="writeblock-block-keyboard-write-emojiTextarea" v-show="textWriting">
                     <textarea id="textarea" ></textarea>
                   </div>
-
-                  <div style="width: 100%; height: 70px; text-align: center; box-sizing: border-box" v-show="!textWriting">
-                    <div style="width: 100%; display: flex; justify-content: center; margin: 10px 0">
-                      <div id="timer" style="font-weight: 700; font-size: 18px"></div>
+                  <div class="writeblock-block-keyboard-write-audio" v-show="!textWriting">
+                    <div class="writeblock-block-keyboard-write-audio-timerBlock">
+                      <div id="timer" class="writeblock-block-keyboard-write-audio-timerBlock-timer"></div>
                     </div>
-                    <h4 style="color: red; margin: 0">Идет запись вашего голоса</h4>
+                    <h4 class="writeblock-block-keyboard-write-audio-text">Идет запись вашего голоса</h4>
                   </div>
-
-
                 </div>
-                <div class="downsection-maincontent-writeblock-block-keyboard-buttons">
-                  <div class="downsection-maincontent-writeblock-block-keyboard-buttons-icon">
+                <div class="writeblock-block-keyboard-buttons">
+                  <div class="writeblock-block-keyboard-buttons-icon">
                     <img src="../assets/page-with-one-curled-corner.svg" style="width: 20px; height: 20px">
                   </div>
-                  <div class="downsection-maincontent-writeblock-block-keyboard-buttons-icon">
+                  <div class="writeblock-block-keyboard-buttons-icon">
                     <img src="../assets/photo-camera.svg" style="width: 20px; height: 20px">
                   </div>
-                  <div class="downsection-maincontent-writeblock-block-keyboard-buttons-icon"  style="cursor: pointer">
-                    <!--<div id="record" onmousedown="toggleRecording(this)" onmouseup="toggleRecording(this)">-->
+                  <div class="writeblock-block-keyboard-buttons-icon"  style="cursor: pointer">
                       <img id="record" src="../assets/microphone-of-voice.svg" style="width: 20px; height: 20px"
                            onmousedown="toggleRecording(this)" onmouseup="toggleRecording(this)"
                            @mousedown="timer(); textWriting=false" @mouseup="clearTimer(); textWriting=true">
-                    <!--</div>-->
                   </div>
-                  <div class="downsection-maincontent-writeblock-block-keyboard-buttons-mems"></div>
-                  <div class="downsection-maincontent-writeblock-block-keyboard-buttons-send" @click="testMethod">send</div>
+                  <div class="writeblock-block-keyboard-buttons-mems"></div>
+                  <div class="writeblock-block-keyboard-buttons-send" @click="addMessage">send</div>
                 </div>
               </div>
-              <div class="downsection-maincontent-writeblock-block-icon">
-                <div class="downsection-maincontent-writeblock-block-icon-img">
-
-                </div>
+              <div class="writeblock-block-icon">
+                <div class="writeblock-block-icon-img"></div>
               </div>
             </div>
           </div>
 
-        <audio-file audioWay="../../static/media/kissvk.com-Green%20Day-Boulevard%20of%20Broken%20Dreams-Acoustic-.mp3"></audio-file>
 
       </div>
 
     </div>
-
-    <div id="test">
-      qwerty
-    </div>
-
-    <router-link :to="{ name: 'AudioFile', params: { audioID: 123 }}">User</router-link>
-    <router-view name="AudioFile"></router-view>
 
   </div>
 
@@ -137,59 +97,44 @@ export default {
       messageText: "",
       date: "",
       textWriting: true,
-      soundTracks: []
+      testArray: []
     }
   },
   components: {
     AudioFile
   },
-  mounted() {
+  created() {
     this.myself = this.$store.getters.getUser;
     this.messages = this.$store.getters.getMessages(this.$route.params.roomID);
-    this.senderUser = this.$store.getters.getSenderUser(this.$route.params.roomID);
-
-    const vm = this;
-
-    document.getElementById("test").innerHTML = "<audio-file audioID=\"7\" audioWay=\"../../static/media/kissvk.com-Green%20Day-Boulevard%20of%20Broken%20Dreams-Acoustic-.mp3\"></audio-file>\n";
-    console.log(document.getElementById("test").innerHTML);
-
-    this.$options.sockets.setMessageSocket = (data) => {
-      console.log(data);
-      //this.messages.push(data);
-      //setTimeout(() => this.secondAudioPlayer(), 1000);
-    };
-
-    //emoji Area
+//    this.senderUser = this.$store.getters.getSenderUser(this.$route.params.roomID);
+    console.log(this.messages);
+  },
+  mounted() {
     $("#textarea").emojioneArea();
-
-    //Voice recorder
     Recorder.setupDownload = (blob, filename) => {
-      console.log("FUCK", blob);
-
       let message = {
         messageID: 33,
         roomID: this.$route.params.roomID,
-        senderID: this.myself.userID,
+        //senderID: this.myself.userID,
+        senderID: 3,
         time: "12/07/17",
-        senderName: this.myself.userID
+        //senderName: this.myself.userID,
+        senderName: "Elon",
+        type: "Audio"
       };
-
       this.$socket.emit("audioFile-ChatSidebarContact.vue-Server", blob, message);
-
 //        let data = new FormData();
 //        data.append("audiofile", blob);
 //        axios.post("http://localhost:3000/post/audio", data)
 //          .then(res => console.log(res))
 //          .catch(err => console.log(err));
-
-      //this.$socket.emit("jupiter", data);
-      //this.$socket.emit("venera", data);
     };
   },
   watch: {
     '$route.params.roomID': function (newVal) {
       console.log("ROUTE");
-      this.messages = this.$store.getters.getMessages(newVal);
+      this.messages = [];
+      setTimeout(() => this.messages = this.$store.getters.getMessages(newVal), 0);
     },
     "$store.state.messages": function (newVal) {
       console.log("STORE");
@@ -229,37 +174,28 @@ export default {
         this.$socket.emit('setMessage-ChatSidebarContact.vue-Server',
           { messageID: 33,
             roomID: this.$route.params.roomID,
-            senderID: this.myself.userID,
+            //senderID: this.myself.userID,
+            senderID: 3,
             text: emoji[0].innerHTML,
             time: "12/07/17",
-            senderName: this.myself.userID
+            //senderName: this.myself.userID,
+            senderName: "Elon",
+            type: "Text"
           }
         );
         emoji[0].innerHTML = "";
       }
     },
     testMethod() {
+      console.log("testMethod");
       this.$socket.emit('setMessage-ChatSidebarContact.vue-Server',
         { messageID: 33,
           roomID: this.$route.params.roomID,
           senderID: this.myself.userID,
-          text: "<div class=\"audioMessage\">\n" +
-          "                      <div class=\"audioMessage-button\">\n" +
-          "                        <img class=\"audioMessage-button-img\" src=\"src/assets/play-button.svg\" style=\"display: block\"/>\n" +
-          "                        <img class=\"audioMessage-button-img\" src=\"src/assets/pause-button.svg\" style=\"display: none\"/>\n" +
-          "                      </div>\n" +
-          "                      <div class=\"audioMessage-block\">\n" +
-          "                        <div class=\"audioMessage-block-up\">\n" +
-          "                          <div class=\"audioMessage-block-up-text\">Голосовое сообщение</div>\n" +
-          "                          <div class=\"audioMessage-block-up-time\">00 : 00</div>\n" +
-          "                        </div>\n" +
-          "                        <div class=\"audioMessage-block-down\">\n" +
-          "                          <div class=\"audioMessage-block-down-road\" name=\"../static/media/539387.wav\"></div>\n" +
-          "                        </div>\n" +
-          "                      </div>\n" +
-          "                    </div>",
+          src: "../../static/media/kissvk.com-The Script feat. will.i.am-Hall of Fame.mp3",
           time: "12/07/17",
-          senderName: this.myself.userID
+          senderName: 1,
+          type: "Audio"
         }
       );
     }

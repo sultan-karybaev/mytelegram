@@ -6,15 +6,15 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 let multer = require("multer");
 let fs = require('fs');
-
+let mongoose = require("mongoose");
 
 multer({
   limits: { fieldSize: 25 * 1024 * 1024 }
 });
 
-let upload = multer({dest: "src/audio"});
+let upload = multer({dest: "static/media"});
 
-var app = express();
+let app = express();
 
 app.set("port", process.env.PORT || 3000);
 
@@ -31,7 +31,11 @@ app.get("/mars", function (req, res, next) {
   //res.send({word: "Cool!"});
 });
 
-
+app.post("/post/audio", upload.single("audiofile"), function (req, res, next) {
+  console.log("AUDIO");
+  console.log(req.file);
+  res.send("Yahoo");
+});
 
 var server = app.listen(app.get("port"), function () {
   console.log("Express server listening on port " + app.get("port"));
@@ -45,18 +49,7 @@ io.attach(server);
 
 function socketEvents(io) {
   io.sockets.on("connection", (socket) => {
-    console.log("SOCKETS ");
-
-
-
-    //tested
-    socket.on("titanic", function (data) {
-      console.log("Titanic");
-      //console.log(socket);
-      socket.emit("titanic");
-      socket.broadcast.emit("titanic");
-      console.log(data);
-    });
+    console.log("SOCKETS");
 
     socket.on("login-Login.vue-Server", function (userID) {
       console.log("login-Login.vue-Server");
@@ -78,22 +71,6 @@ function socketEvents(io) {
     socket.on("enterRoom-ChatSidebar.vue-Server", function (data) {
       console.log("enterRoom-ChatSidebar.vue-Server");
       console.log(data);
-      let message1 = {
-        messageID: 33,
-        roomID: data.roomID,
-        senderID: 10,
-        text: "you have joined to " + data.roomID,
-        time: "12/07/17",
-        senderName: "Server"
-      };
-      let message2 = {
-        messageID: 33,
-        roomID: data.roomID,
-        senderID: 10,
-        text: data.userID + " has joined to this room",
-        time: "12/07/17",
-        senderName: "Server"
-      };
       socket.join(data.roomID);
       // socket.emit("setMessageSocket", message1);
       // socket.to(data.roomID).emit("setMessageSocket", message2);
@@ -103,7 +80,7 @@ function socketEvents(io) {
       console.log("setMessage-ChatSidebarContact.vue-Server");
       console.log(data);
       socket.emit("setMessageSocket", data);
-      socket.broadcast.emit("setMessageSocket", data);
+      socket.to(data.roomID).emit("setMessageSocket", data);
       socket.emit("newLastMessageChatSidebarSocket", data);
       socket.broadcast.emit("newLastMessageChatSidebarSocket", data);
     });
@@ -118,7 +95,7 @@ function socketEvents(io) {
         time: message.time,
       };
       let name = Math.floor(Math.random() * 1000000);
-      message.text = "<audio controls><source src=" + "../static/media/" + name + ".wav" + " type='audio/wav'/></audio>";
+      message.src = "../../static/media/" + name + ".wav";
       fs.writeFile(__dirname + "/static/media/" + name + ".wav", data,  "binary", function(err) {
         if(err) {
           console.log(err);
@@ -135,9 +112,3 @@ function socketEvents(io) {
 }
 
 socketEvents(io);
-
-app.post("/post/audio", upload.single("audiofile"), function (req, res, next) {
-  console.log("AUDIO");
-  console.log(req.file);
-  res.send("Yahoo");
-});

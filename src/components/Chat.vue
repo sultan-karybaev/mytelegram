@@ -89,7 +89,6 @@
             this.$router.push({ name: 'contact', params: { chatID: room }});
         } else {
           this.$store.dispatch('setNewRoom', { userID: user.userID});
-
           let data = {
             userID: user.userID,
             ME: this.myself
@@ -100,7 +99,6 @@
         this.changeName(user.firstName + " " + user.lastName);
       },
       clickButton: function(){
-        this.$socket.emit('titanic');
         this.$router.push({ name: 'Login'});
       }
     },

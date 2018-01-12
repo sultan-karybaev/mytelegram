@@ -6,7 +6,7 @@ import AccountKit from 'vue-facebook-account-kit'
 import router from './router'
 import store from './vuex'
 // import axios from 'axios'
-
+import socketio from 'socket.io-client'
 
 import './style/all.css'
 
@@ -14,7 +14,9 @@ import './style/all.css'
 Vue.config.productionTip = false;
 
 //Vue.use(VueTextareaAutosize);
-Vue.use(VueSocketio, 'http://blablachat.me:8080?username=guest&v=0.2');
+//export const SocketInstance = socketio('http://blablachat.me:8080?username=guest&v=0.2');
+//Vue.use(VueSocketio, SocketInstance);
+Vue.use(VueSocketio, 'http://localhost:3000');
 Vue.use(AccountKit);
 // Vue.use(axios);
 

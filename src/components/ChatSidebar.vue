@@ -23,7 +23,13 @@
                   <div class="downsection-sidebar-contact-info-person">
                     {{room.user.firstName}} {{room.user.lastName}}
                   </div>
-                  <div class="downsection-sidebar-contact-info-message" v-html="room.lastMessageText"></div>
+                  <div class="downsection-sidebar-contact-info-down">
+                    <div class="downsection-sidebar-contact-info-down-text" v-html="room.lastMessageText"></div>
+                    <div class="downsection-sidebar-contact-info-down-count">
+                      <div class="downsection-sidebar-contact-info-down-count-number"
+                           v-show="room.unreadMessageCount == 0 ? false : true">{{room.unreadMessageCount}}</div>
+                    </div>
+                  </div>
                 </div>
                 <div class="downsection-sidebar-contact-time" >{{room.lastMessageTime}}</div>
               </div>
@@ -55,6 +61,7 @@ export default {
       rooms: [],
       userID: "user",
       messageText: "",
+      currentRoomID: ""
     }
   },
   components: {
@@ -67,6 +74,7 @@ export default {
     document.getElementById("contactNameChat").innerHTML = this.rooms[0].user.firstName + " " + this.rooms[0].user.lastName;
 
     let defaultRoom = 1;
+    this.currentRoomID = defaultRoom;
 
 //    this.$router.push({ name: 'contact', params: { roomID: defaultRoom }});
 
@@ -86,12 +94,11 @@ export default {
     "$store.state.rooms": function (newVal) {
       console.log("ROOMS");
     },
-    "$store.state.messages": function (newVal) {
-    },
   },
   methods: {
     getChat(roomID, index) {
       console.log("getChat");
+      Event.$emit("audio");
       document.getElementById("contactNameChat").innerHTML = this.rooms[index].user.firstName + " " + this.rooms[index].user.lastName;
       let data = {
         roomID: roomID,
@@ -99,10 +106,12 @@ export default {
       };
       this.$socket.emit("enterRoom-ChatSidebar.vue-Server", data);
       this.$router.push({ name: 'contact', params: { roomID: roomID }});
+      this.currentRoomID = roomID;
       for (let i = 0; i < this.rooms.length; i++) {
         this.rooms[i].chosenClass = "unchosen";
       }
       this.rooms[index].chosenClass = "chosen";
+      this.rooms[index].unreadMessageCount = 0;
     },
     setLastMessage(lastMessage) {
       console.log("setLastMessage");
@@ -110,8 +119,9 @@ export default {
         if (this.rooms[i].roomID == lastMessage.roomID) {
           console.log("message", lastMessage);
           console.log("this.rooms[i].lastMessageText", this.rooms[i].lastMessageText);
-          //this.rooms[i].lastMessageText = lastMessage.text;
+          this.rooms[i].lastMessageText = lastMessage.text;
           this.rooms[i].lastMessageTime = lastMessage.time;
+          if (this.rooms[i].roomID !== this.currentRoomID) this.rooms[i].unreadMessageCount++;
         }
       }
     }
@@ -127,7 +137,11 @@ export default {
 }
 .chosen{
   background-color: #7594e3;
+
 }
+  .chosen > div > div > div div{
+    color: white;
+  }
 
 
 </style>

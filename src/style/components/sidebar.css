@@ -1,0 +1,140 @@
+.downsection{
+  width: 100%;
+  height: calc(100% - 60px);
+  display: flex;
+}
+  .downsection-sidebar{
+    width: 30%;
+    height: 100%;
+    border-right: 1px solid #b8b8b8;
+    overflow-y: scroll;
+  }
+.downsection-sidebar::-webkit-scrollbar-track
+{
+  /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);*/
+  border-radius: 10px;
+  /*background-color: #F5F5F5;*/
+  background: rgba(0, 0, 0, 0);
+}
+
+.downsection-sidebar::-webkit-scrollbar
+{
+  width: 2px;
+  /*background-color: #F5F5F5;*/
+  background: rgba(0, 0, 0, 0);
+}
+
+.downsection-sidebar::-webkit-scrollbar-thumb
+{
+  /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);*/
+  background-color: #6079bb;
+}
+    .downsection-sidebar-search{
+      width: 100%;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 5%;
+      box-sizing: border-box;
+    }
+      .downsection-sidebar-search-inputblock{
+        width: 100%;
+        height: 100%;
+        outline: none;
+        border-radius: 3px;
+        background: rgba(0, 0, 0, .1);
+        display: flex;
+      }
+        .downsection-sidebar-search-inputblock-img{
+          width: 40px;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 10px;
+        }
+        .downsection-sidebar-search-inputblock-input{
+          width: 100%;
+          height: 100%;
+          outline: none;
+          background: rgba(0, 0, 0, 0);
+          color: #6c6c6c;
+          border: none;
+        }
+    .downsection-sidebar-contacts{
+      width: 100%;
+    }
+      .downsection-sidebar-contact{
+        width: 100%;
+        height: 60px;
+        cursor: pointer;
+        display: flex;
+        position: relative;
+        transition: 200ms;
+      }
+        .downsection-sidebar-contact-icon{
+          width: 30%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+          .downsection-sidebar-contact-icon-circle{
+            width: 46px;
+            height: 46px;
+            border-radius: 23px;
+            background-color: rebeccapurple;
+          }
+        .downsection-sidebar-contact-info{
+          width: 70%;
+          height: 100%;
+        }
+          .downsection-sidebar-contact-info-person{
+            width: 100%;
+            height: 30px;
+            line-height: 40px;
+            color: black;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: left;
+          }
+          .downsection-sidebar-contact-info-down{
+            width: 100%;
+            display: flex;
+          }
+            .downsection-sidebar-contact-info-down-text{
+              width: 90%;
+              height: 30px;
+              line-height: 30px;
+              color: black;
+              font-size: 12px;
+              text-align: left;
+              overflow-y: hidden;
+              overflow-x: hidden;
+            }
+            .downsection-sidebar-contact-info-down-count{
+              width: 10%;
+              height: 30px;
+            }
+              .downsection-sidebar-contact-info-down-count-number{
+                width: 20px;
+                height: 20px;
+                border-radius: 10px;
+                color: white;
+                background-color: #6079bb;
+                font-size: 12px;
+                font-weight: 700;
+                line-height: 20px;
+                text-align: center;
+              }
+        .downsection-sidebar-contact-time{
+          position: absolute;
+          top: 5px;
+          right: 10px;
+          font-size: 10px;
+          color: #6c6c6c;
+        }
+        .downsection-sidebar-contact:hover {
+          background: rgba(112, 146, 234, .2);
+        }

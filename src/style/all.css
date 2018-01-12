@@ -1,6 +1,8 @@
 @import "components/main.css";
 @import "components/modalContacts.css";
 @import "components/audioMessage.css";
+@import "components/writeblock.css";
+@import "components/sidebar.css";
 
 @import "components/emojionearea.min.css";
 @import "components/textareaEmoji.css";

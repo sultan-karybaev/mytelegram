@@ -1,13 +1,25 @@
 <template>
-  <div>
+
+  <div class="audioMessage">
     <audio class="audio" preload="true" ref="sound"><source :src="src"></audio>
-    <div class="audioplayer" ref="audioplayer">
-      <button class="play playbutton" ref="playbutton"></button>
-      <div class="timeline" ref="timeline">
-        <div class="playhead" ref="playhead"></div>
+    <div class="audioMessage-button play" ref="playbutton">
+      <!--<img class="audioMessage-button-img" src="../assets/play-button.svg" style="display: block"/>-->
+      <!--<img class="audioMessage-button-img" src="../assets/pause-button.svg" style="display: none"/>-->
+    </div>
+    <div class="audioMessage-block">
+      <div class="audioMessage-block-up">
+        <div class="audioMessage-block-up-text">Голосовое сообщение</div>
+        <div class="audioMessage-block-up-time" ref="time">00 : 00</div>
+      </div>
+      <div class="audioMessage-block-down">
+        <div class="audioMessage-block-down-road" ref="timeline">
+          <div class="audioMessage-block-down-road-playedtimeline" ref="playedtimeline"></div>
+          <!--<div class="playhead" ref="playhead"></div>-->
+        </div>
       </div>
     </div>
   </div>
+
 </template>
 
 <script>
@@ -21,121 +33,107 @@
         onplayhead: false,
       }
     },
-    created() {
-      // Event listener for DOM
-      //document.addEventListener("DOMContentLoaded", theDOMHasLoaded, false);
-      const vm = this;
-
+    mounted() {
       console.log("audio", this.$refs.sound);
-      console.log("audio", this.audio);
-
-      function theDOMHasLoaded() {
-        vm.Audio = new AudioObject2();
-      }
-
+      const vm = this;
       this.Audio = new AudioObject2();
 
       function AudioObject2() {
+        console.log("AudioObject2");
         this.audio = vm.$refs.sound;
         this.duration = 0;
-        this.audioplayer = vm.$refs.audioplayer;
         this.playbutton = vm.$refs.playbutton;
         this.timeline = vm.$refs.timeline;
-        this.playhead = vm.$refs.playhead;
-        this.timelineWidth = this.timeline.offsetWidth - this.playhead.offsetWidth;
-        this.audio.addEventListener("timeupdate", this.timeUpdate, false);
-        this.audio.addEventListener("durationchange", this.durationChange, false);
-        this.timeline.addEventListener("click", this.timelineClick, false);
-        this.playbutton.addEventListener("click", this.pressPlay, false);
-        this.playhead.addEventListener('mousedown', this.mouseDown, false);
-        window.addEventListener('mouseup', AudioObject2.prototype.mouseUp, false);
+        this.playedtimeline = vm.$refs.playedtimeline;
+        this.time = vm.$refs.time;
+        //this.playhead = vm.$refs.playhead;
+        //this.timelineWidth = this.timeline.offsetWidth - this.playhead.offsetWidth;
+        this.timelineWidth = this.timeline.offsetWidth;
+        this.audio.addEventListener("timeupdate", vm.timeUpdate, false);
+        this.audio.addEventListener("durationchange", durationChange, false);
+        this.timeline.addEventListener("click", vm.timelineClick, false);
+        this.playbutton.addEventListener("click", vm.pressPlay, false);
+        //this.playhead.addEventListener('mousedown', vm.mouseDown, false);
       }
 
-      AudioObject2.prototype.timeUpdate = function () {
-        let playPercent = vm.Audio.timelineWidth * (vm.Audio.audio.currentTime / vm.Audio.duration);
-        vm.Audio.playhead.style.marginLeft = playPercent + "px";
-        // If song is over
-        if (vm.Audio.audio.currentTime == vm.Audio.duration) {
-          vm.changeClass(vm.Audio.playbutton, "playbutton play");
-          vm.Audio.audio.currentTime = 0;
-          vm.Audio.audio.pause();
-          vm.playingAudio = true;
-        }
-      };
-
-      AudioObject2.prototype.durationChange = function () {
+      function durationChange () {
+        console.log("durationChange", this);
         vm.Audio.duration = this.duration;
-      };
-
-      AudioObject2.prototype.timelineClick = function (event) {
-        vm.Audio.audio.currentTime = vm.Audio.audio.duration * clickPercent(event, vm.Audio.timeline, vm.Audio.timelineWidth);
-      };
-
-      AudioObject2.prototype.pressPlay = function () {
-        if (vm.playingAudio) {
-          vm.Audio.audio.pause();
-          vm.playingAudio = false;
-          vm.changeClass(vm.Audio.playbutton, "playbutton play");
-        } else {
-          vm.Audio.audio.play();
-          vm.playingAudio = true;
-          vm.changeClass(vm.Audio.playbutton, "playbutton pause");
-        }
-      };
-
-      AudioObject2.prototype.mouseDown = function (event) {
-        vm.onplayhead = true;
-        window.addEventListener('mousemove', AudioObject2.prototype.moveplayhead, true);
-        vm.Audio.audio.removeEventListener('timeupdate', AudioObject2.prototype.timeUpdate, false);
-      };
-
-      AudioObject2.prototype.moveplayhead = function (e) {
-        var ao = vm.Audio;
-        var newMargLeft = e.clientX - getPosition(ao.timeline);
-
-        if (newMargLeft >= 0 && newMargLeft <= ao.timelineWidth) {
-          vm.Audio.playhead.style.marginLeft = newMargLeft + "px";
-        }
-        if (newMargLeft < 0) {
-          vm.Audio.playhead.style.marginLeft = "0px";
-        }
-        if (newMargLeft > ao.timelineWidth) {
-          vm.Audio.playhead.style.marginLeft = ao.timelineWidth + "px";
-        }
-      };
-
-      AudioObject2.prototype.mouseUp = function(e) {
-        if (vm.onplayhead) {
-          var ao = vm.Audio;
-          window.removeEventListener('mousemove', AudioObject2.prototype.moveplayhead, true);
-          // change current time
-          ao.audio.currentTime = ao.audio.duration * clickPercent(e, ao.timeline, ao.timelineWidth);
-          ao.audio.addEventListener('timeupdate', AudioObject2.prototype.timeUpdate, false);
-          vm.onplayhead = false;
-        }
-      };
-
-      function clickPercent(event, timeline, timelineWidth) {
-        return (event.clientX - getPosition(timeline)) / timelineWidth;
       }
-
-      function getPosition(el) {
-        return el.getBoundingClientRect().left;
-      }
-    },
-    watch: {
 
     },
     methods: {
-//      bindAudioPlayer2() {
-//
-//      },
+      timeUpdate() {
+        let minutes = Math.floor(Math.floor(this.Audio.audio.currentTime) / 60);
+        let seconds = Math.floor(this.Audio.audio.currentTime) - minutes * 60;
+        if (minutes < 10) minutes = "0" + minutes;
+        if (seconds < 10) seconds = "0" + seconds;
+        this.Audio.time.innerHTML = minutes + " : " + seconds;
+
+        let playPercent = this.Audio.timelineWidth * (this.Audio.audio.currentTime / this.Audio.duration);
+        //this.Audio.playhead.style.marginLeft = playPercent + "px";
+        this.Audio.playedtimeline.style.width = playPercent + "px";
+        // If song is over
+        if (this.Audio.audio.currentTime == this.Audio.duration) {
+          this.changeClass(this.Audio.playbutton, "audioMessage-button play");
+          this.Audio.audio.currentTime = 0;
+          this.Audio.audio.pause();
+          this.playingAudio = false;
+        }
+      },
+      timelineClick(event) {
+        console.log("timelineClick");
+        this.Audio.audio.currentTime = this.Audio.audio.duration * this.clickPercent(event, this.Audio.timeline, this.Audio.timelineWidth);
+      },
+      pressPlay() {
+        console.log("pressPlay");
+        if (this.playingAudio) {
+          this.Audio.audio.pause();
+          this.playingAudio = false;
+          this.changeClass(this.Audio.playbutton, "audioMessage-button play");
+        } else {
+          this.Audio.audio.play();
+          this.playingAudio = true;
+          this.changeClass(this.Audio.playbutton, "audioMessage-button pause");
+        }
+      },
+      mouseDown(event) {
+        this.onplayhead = true;
+        this.Audio.audio.removeEventListener('timeupdate', this.timeUpdate, false);
+        window.addEventListener('mousemove', this.moveplayhead, true);
+        window.addEventListener('mouseup', this.mouseUp, true);
+      },
+      moveplayhead(e) {
+        let newMargLeft = e.clientX - this.getPosition(this.Audio.timeline);
+        if (newMargLeft >= 0 && newMargLeft <= this.Audio.timelineWidth) {  this.Audio.playhead.style.marginLeft = newMargLeft + "px";  }
+        if (newMargLeft < 0) {  this.Audio.playhead.style.marginLeft = "0px";  }
+        if (newMargLeft > this.Audio.timelineWidth) {  this.Audio.playhead.style.marginLeft = this.Audio.timelineWidth + "px";  }
+      },
+      mouseUp(e) {
+        console.log("mouseUp");
+        if (this.onplayhead) {
+          this.Audio.audio.addEventListener('timeupdate', this.timeUpdate, false);
+          window.removeEventListener('mousemove', this.moveplayhead, true);
+          window.removeEventListener('mouseup', this.mouseUp, true);
+          this.Audio.audio.currentTime = this.Audio.audio.duration * this.clickPercent(e, this.Audio.timeline, this.Audio.timelineWidth);
+          this.onplayhead = false;
+        }
+      },
       changeClass(element, newClasses) {
         element.className = newClasses;
-      }
+      },
+      clickPercent(event, timeline, timelineWidth) {
+        return (event.clientX - this.getPosition(timeline)) / timelineWidth;
+      },
+      getPosition(el) {
+        return el.getBoundingClientRect().left;
+      },
+    },
+    beforeUpdate() {
+      console.log("2222222");
     },
     updated() {
-      console.log("123");
+      console.log("2222222");
     }
   }
 </script>
@@ -166,7 +164,7 @@
 
   .play,
   .pause {
-    background-size: 50% 50%;
+    background-size: 50px 50px;
     background-repeat: no-repeat;
     background-position: center;
   }

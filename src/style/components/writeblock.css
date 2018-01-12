@@ -1,0 +1,96 @@
+.writeblock{
+  width: 100%;
+  min-height: 140px;
+  /*position: absolute;*/
+  /*bottom: 0;*/
+  display: flex;
+  justify-content: center;
+}
+  .writeblock-block{
+    width: 80%;
+    height: 100%;
+    display: flex;
+    border-top: 1px solid #b8b8b8;
+    margin-top: 20px;
+  }
+    .writeblock-block-icon{
+      width: 80px;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      padding-top: 10px;
+      box-sizing: border-box;
+    }
+      .writeblock-block-icon-img{
+        width: 50px;
+        height: 50px;
+        border-radius: 25px;
+        background-color: crimson;
+      }
+    .writeblock-block-keyboard{
+      width: calc(100% - 160px);
+      height: 100%;
+    }
+      .writeblock-block-keyboard-write{
+        width: 100%;
+        min-height: 70px;
+        border-bottom: 3px solid #7594e3;
+        position: relative;
+        display: flex;
+        justify-content: flex-start;
+      }
+        .writeblock-block-keyboard-write-emojiTextarea{
+          width: 100%;
+          min-height: 70px;
+          text-align: left;
+        }
+        .writeblock-block-keyboard-write-audio{
+          width: 100%;
+          height: 70px;
+          text-align: center;
+          box-sizing: border-box;
+        }
+          .writeblock-block-keyboard-write-audio-timerBlock{
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+          }
+            .writeblock-block-keyboard-write-audio-timerBlock-timer{
+              font-weight: 700;
+              font-size: 18px;
+            }
+          .writeblock-block-keyboard-write-audio-text{
+            color: #6079bb;
+            margin: 0;
+          }
+      .writeblock-block-keyboard-buttons{
+        width: 100%;
+        height: 30px;
+        display: flex;
+        justify-content: space-between;
+        margin-top: 5px;
+        margin-bottom: 30px;
+      }
+        .writeblock-block-keyboard-buttons-icon{
+          width: 30px;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        .writeblock-block-keyboard-buttons-mems{
+          width: 50%;
+          max-width: calc(100% - 150px);
+          height: 100%;
+        }
+        .writeblock-block-keyboard-buttons-send{
+          width: 60px;
+          height: 100%;
+          color: #6079bb;
+          text-transform: uppercase;
+          line-height: 30px;
+          font-weight: 700;
+          font-size: 14px;
+          cursor: pointer;
+        }

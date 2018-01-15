@@ -18,12 +18,12 @@
                           <div class="downsection-maincontent-messageblock-message-text-contact-icon-circle"></div>
                         </div>
                         <div class="downsection-maincontent-messageblock-message-text-contact-info">
-                          <div class="downsection-maincontent-messageblock-message-text-contact-info-person" >{{message.senderName}}</div>
+                          <div class="downsection-maincontent-messageblock-message-text-contact-info-person" >{{message.profile.firstName}}</div>
                             <div v-for="text in message.messageArray">
                               <template v-if="text.type == 'Text'">
                                 <div class="downsection-maincontent-messageblock-message-text-contact-info-message"     v-html="text.text"></div>
                               </template>
-                              <template v-if="text.type === 'Audio'">
+                              <template v-if="text.type == 'Audio'">
                                 <audio-file :audioWay=text.src />
                               </template>
                             </div>
@@ -101,7 +101,6 @@ export default {
       messageText: "",
       date: "",
       textWriting: true,
-      testArray: []
     }
   },
   components: {
@@ -111,7 +110,8 @@ export default {
     this.myself = this.$store.getters.getUser;
     this.messages = this.$store.getters.getMessages(this.$route.params.roomID);
 //    this.senderUser = this.$store.getters.getSenderUser(this.$route.params.roomID);
-    console.log(this.messages);
+    console.log("this.myself", this.myself);
+    console.log("this.messages", this.messages);
   },
   mounted() {
     $("#textarea").emojioneArea();
@@ -136,12 +136,10 @@ export default {
   },
   watch: {
     '$route.params.roomID': function (newVal) {
-      console.log("ROUTE");
       this.messages = [];
       setTimeout(() => this.messages = this.$store.getters.getMessages(newVal), 0);
     },
     "$store.state.messages": function (newVal) {
-      console.log("STORE");
       this.messages = this.$store.getters.getMessages(this.$route.params.roomID);
     },
   },
@@ -176,15 +174,11 @@ export default {
       console.log(emoji[0].innerHTML);
       if (emoji[0].innerHTML) {
         this.$socket.emit('setMessage-ChatSidebarContact.vue-Server',
-          { messageID: 33,
-            roomID: this.$route.params.roomID,
-            //senderID: this.myself.userID,
-            senderID: 3,
+          { type: "Text",
             text: emoji[0].innerHTML,
+            roomID: this.$route.params.roomID,
+            profileID: this.myself._id,
             time: "12/07/17",
-            //senderName: this.myself.userID,
-            senderName: "Elon",
-            type: "Text"
           }
         );
         emoji[0].innerHTML = "";

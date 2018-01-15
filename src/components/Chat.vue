@@ -85,20 +85,22 @@
       Sidebar
     },
     methods: {
-      createRoom(user) {
+      createRoom(contact) {
         console.log("Contact");
-        console.log(user);
+        console.log(contact);
+        console.log("http://localhost:3000/get/roomExisting/" + this.myself._id + "/" + contact._id);
         const vm = this;
         //Заменяем геттер на запрос к базе данных
-        //let room = this.$store.getters.getRoomExisting(user.userID);
+        //let room = this.$store.getters.getRoomExisting(contact._id);
 
-        axios.get("http://localhost:3000/get/roomExisting/" + this.myself._id + "/" + user._id)
+        axios.get("http://localhost:3000/get/roomExisting/" + this.myself._id + "/" + contact._id)
           .then(function (res) {
-            console.log(res.data);
+            console.log("res.data", res.data);
             if (res.data) {
-              vm.$router.push({ name: 'contact', params: { roomID: res.data }});
+              //vm.$router.push({ name: 'contact', params: { roomID: res.data }});
+              vm.$store.dispatch('setRoomChosenChatvue', res.data);
             } else {
-              vm.$socket.emit("createNewRoom-Chat.vue-Server", vm.myself, user._id);
+              vm.$socket.emit("createNewRoom-Chat.vue-Server", vm.myself, contact._id);
             }
           })
           .catch(err => console.log("Chat.vue-methods-createRoom", err));

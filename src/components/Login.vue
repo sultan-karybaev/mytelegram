@@ -73,13 +73,27 @@
           };
           axios.post("http://localhost:3000/post/login", data)
             .then(function (res) {
+              vm.$socket.emit("login-Login.vue-Server", res.data);
               vm.$store.dispatch('setUserAccountLoginvue', res.data);
+
               axios.get("http://localhost:3000/get/contacts/" + res.data._id)
                 .then(res => vm.$store.dispatch('setContactsLoginvue', res.data))
                 .catch(err => console.log(err));
+
               axios.get("http://localhost:3000/get/rooms/" + res.data._id)
-                .then(res => vm.$store.dispatch('setRoomsLoginvue', res.data))
+                .then(function (res) {
+                  for (let i = 0; i < res.data.length; i++) {
+                    if (res.data[i].chosen) {
+                      axios.get("http://localhost:3000/get/messages/" + res.data[i].roomID._id)
+                        .then(res => vm.$store.dispatch('setMessagesLoginvue', res.data))
+                        .catch(err => console.log(err));
+                      break;
+                    }
+                  }
+                  vm.$store.dispatch('setRoomsLoginvue', res.data)
+                })
                 .catch(err => console.log(err));
+
               setTimeout(() => vm.$router.push({ name: 'Chat'}), 300)
             })
             .catch(err => console.log(err));

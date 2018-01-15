@@ -18,40 +18,41 @@ export default new Vuex.Store({
     //   {roomID: 2, typeRoom: "Open", chosenClass: "unchosen", chatUserID: 2, lastMessageText: "London is a capital of Great Britain", lastMessageTime: "12/07/17", unreadMessageCount: 0},
     //   {roomID: 3, typeRoom: "Open", chosenClass: "unchosen", chatUserID: 3, lastMessageText: "I am a CEO of SpaceX and Tesla", lastMessageTime: "12/07/17", unreadMessageCount: 0}
     //   ],
+    // messages: [{messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?", time: "12/07/17", senderName: "Sultan", type: "Text"},
+    //   {messageID: 33, roomID: 1, senderID: 1, text: "I'm fine, thanks", time: "12/07/17", senderName: "Jack", type: "Text"},
+    //   {messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?", time: "12/07/17", senderName: "Sultan", type: "Text"},
+    //   {messageID: 33, roomID: 1, senderID: 1, text: "I'm fine, thanks", time: "12/07/17", senderName: "Jack", type: "Text"},
+    //   {messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?", time: "12/07/17", senderName: "Sultan", type: "Text"},
+    //   {messageID: 33, roomID: 1, senderID: 1, src: "../../static/media/kissvk.com--qb-Imagine%20Dragons-Whatever%20It%20Takes.mp3", time: "12/07/17", senderName: "Jack", type: "Audio"},
+    //   {messageID: 33, roomID: 1, senderID: 1, text: "I'm fine, thanks", time: "12/07/17", senderName: "Jack", type: "Text"},
+    //   {messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?", time: "12/07/17", senderName: "Sultan", type: "Text"},
+    //   {messageID: 33, roomID: 1, senderID: 1, text: "I'm fine, thanks", time: "12/07/17", senderName: "Jack", type: "Text"},
+    //   {messageID: 33, roomID: 1, senderID: 1, src: "../../static/media/kissvk.com-Green%20Day-Boulevard%20of%20Broken%20Dreams-Acoustic-.mp3", time: "12/07/17", senderName: "Jack", type: "Audio"},
+    //   {messageID: 33, roomID: 1, senderID: 1, text: "<img src=\"static/img/prometey-sanchez-noskov-340992.jpg\" style=\"width: 320px\"/>", time: "12/07/17", senderName: "Jack", type: "Text"},
+    //
+    //
+    //   {messageID: 33, roomID: 2, senderID: 2, src: "static/media/kissvk.com-The Script feat. will.i.am-Hall of Fame.mp3", time: "12/07/17", senderName: "Tom", type: "Audio"},
+    //   {messageID: 33, roomID: 2, senderID: 10, text: "Hi, my name is Tom", time: "12/07/17", senderName: "Sultan", type: "Text"},
+    //   {messageID: 33, roomID: 2, senderID: 2, text: "London is a capital of Great Britain", time: "12/07/17", senderName: "Tom", type: "Text"},
+    //   {messageID: 33, roomID: 2, senderID: 10, text: "Hi, my name is Tom", time: "12/07/17", senderName: "Sultan", type: "Text"},
+    //   {messageID: 33, roomID: 2, senderID: 2, text: "London is a capital of Great Britain", time: "12/07/17", senderName: "Tom", type: "Text"},
+    //   {messageID: 33, roomID: 2, senderID: 10, text: "Hi, my name is Tom", time: "12/07/17", senderName: "Sultan", type: "Text"},
+    //   {messageID: 33, roomID: 2, senderID: 2, text: "London is a capital of Great Britain", time: "12/07/17", senderName: "Tom", type: "Text"},
+    //   {messageID: 33, roomID: 2, senderID: 10, text: "Hi, my name is Tom", time: "12/07/17", senderName: "Sultan", type: "Text"},
+    //   {messageID: 33, roomID: 2, senderID: 2, text: "London is a capital of Great Britain", time: "12/07/17", senderName: "Tom", type: "Text"},
+    //   {messageID: 33, roomID: 2, senderID: 2, src: "../../static/media/kissvk.com-The Script feat. will.i.am-Hall of Fame.mp3", time: "12/07/17", senderName: "Tom", type: "Audio"},
+    //
+    //
+    //   {messageID: 33, roomID: 3, senderID: 10, text: "I am from Canada", time: "12/07/17", senderName: "Sultan", type: "Text"},
+    //   {messageID: 33, roomID: 3, senderID: 3, text: "I am a CEO of SpaceX and Tesla", time: "12/07/17", senderName: "Elon", type: "Text"},
+    //   {messageID: 33, roomID: 3, senderID: 10, text: "I am from Canada", time: "12/07/17", senderName: "Sultan", type: "Text"},
+    //   {messageID: 33, roomID: 3, senderID: 3, text: "I am a CEO of SpaceX and Tesla", time: "12/07/17", senderName: "Elon", type: "Text"},
+    //   {messageID: 33, roomID: 3, senderID: 10, text: "I am from Canada", time: "12/07/17", senderName: "Sultan", type: "Text"},
+    //   {messageID: 33, roomID: 3, senderID: 3, text: "I am a CEO of SpaceX and Tesla", time: "12/07/17", senderName: "Elon", type: "Text"},
+    // ],
     users: [],
     rooms: [],
-    messages: [{messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?", time: "12/07/17", senderName: "Sultan", type: "Text"},
-      {messageID: 33, roomID: 1, senderID: 1, text: "I'm fine, thanks", time: "12/07/17", senderName: "Jack", type: "Text"},
-      {messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?", time: "12/07/17", senderName: "Sultan", type: "Text"},
-      {messageID: 33, roomID: 1, senderID: 1, text: "I'm fine, thanks", time: "12/07/17", senderName: "Jack", type: "Text"},
-      {messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?", time: "12/07/17", senderName: "Sultan", type: "Text"},
-      {messageID: 33, roomID: 1, senderID: 1, src: "../../static/media/kissvk.com--qb-Imagine%20Dragons-Whatever%20It%20Takes.mp3", time: "12/07/17", senderName: "Jack", type: "Audio"},
-      {messageID: 33, roomID: 1, senderID: 1, text: "I'm fine, thanks", time: "12/07/17", senderName: "Jack", type: "Text"},
-      {messageID: 33, roomID: 1, senderID: 10, text: "Hey, how are you?", time: "12/07/17", senderName: "Sultan", type: "Text"},
-      {messageID: 33, roomID: 1, senderID: 1, text: "I'm fine, thanks", time: "12/07/17", senderName: "Jack", type: "Text"},
-      {messageID: 33, roomID: 1, senderID: 1, src: "../../static/media/kissvk.com-Green%20Day-Boulevard%20of%20Broken%20Dreams-Acoustic-.mp3", time: "12/07/17", senderName: "Jack", type: "Audio"},
-      {messageID: 33, roomID: 1, senderID: 1, text: "<img src=\"static/img/prometey-sanchez-noskov-340992.jpg\" style=\"width: 320px\"/>", time: "12/07/17", senderName: "Jack", type: "Text"},
-
-
-      {messageID: 33, roomID: 2, senderID: 2, src: "static/media/kissvk.com-The Script feat. will.i.am-Hall of Fame.mp3", time: "12/07/17", senderName: "Tom", type: "Audio"},
-      {messageID: 33, roomID: 2, senderID: 10, text: "Hi, my name is Tom", time: "12/07/17", senderName: "Sultan", type: "Text"},
-      {messageID: 33, roomID: 2, senderID: 2, text: "London is a capital of Great Britain", time: "12/07/17", senderName: "Tom", type: "Text"},
-      {messageID: 33, roomID: 2, senderID: 10, text: "Hi, my name is Tom", time: "12/07/17", senderName: "Sultan", type: "Text"},
-      {messageID: 33, roomID: 2, senderID: 2, text: "London is a capital of Great Britain", time: "12/07/17", senderName: "Tom", type: "Text"},
-      {messageID: 33, roomID: 2, senderID: 10, text: "Hi, my name is Tom", time: "12/07/17", senderName: "Sultan", type: "Text"},
-      {messageID: 33, roomID: 2, senderID: 2, text: "London is a capital of Great Britain", time: "12/07/17", senderName: "Tom", type: "Text"},
-      {messageID: 33, roomID: 2, senderID: 10, text: "Hi, my name is Tom", time: "12/07/17", senderName: "Sultan", type: "Text"},
-      {messageID: 33, roomID: 2, senderID: 2, text: "London is a capital of Great Britain", time: "12/07/17", senderName: "Tom", type: "Text"},
-      {messageID: 33, roomID: 2, senderID: 2, src: "../../static/media/kissvk.com-The Script feat. will.i.am-Hall of Fame.mp3", time: "12/07/17", senderName: "Tom", type: "Audio"},
-
-
-      {messageID: 33, roomID: 3, senderID: 10, text: "I am from Canada", time: "12/07/17", senderName: "Sultan", type: "Text"},
-      {messageID: 33, roomID: 3, senderID: 3, text: "I am a CEO of SpaceX and Tesla", time: "12/07/17", senderName: "Elon", type: "Text"},
-      {messageID: 33, roomID: 3, senderID: 10, text: "I am from Canada", time: "12/07/17", senderName: "Sultan", type: "Text"},
-      {messageID: 33, roomID: 3, senderID: 3, text: "I am a CEO of SpaceX and Tesla", time: "12/07/17", senderName: "Elon", type: "Text"},
-      {messageID: 33, roomID: 3, senderID: 10, text: "I am from Canada", time: "12/07/17", senderName: "Sultan", type: "Text"},
-      {messageID: 33, roomID: 3, senderID: 3, text: "I am a CEO of SpaceX and Tesla", time: "12/07/17", senderName: "Elon", type: "Text"},
-    ],
+    allMessageArray: [],
     userAccount: {}
   },
   mutations: {
@@ -66,104 +67,140 @@ export default new Vuex.Store({
     },
     push(state, {type, items}){
       state[type].push(items);
-      Event.$emit("audio");
+      //Event.$emit("audio");
     },
-    pushRoom(state, {type, items}) {
-      console.log("pushRoom");
-      let currentUser;
-      for (let i = 0; i < state.users.length; i++) {
-        console.log("items", items);
-        console.log("items.userID", items.userID);
-        console.log("state.users[i].userID", state.users[i].userID);
-        console.log(state.users[i].userID == items.userID);
-        if (state.users[i].userID == items.userID) {
-          currentUser = state.users[i];
-          break;
+    pushRoomEmit(state, {type, items}) {
+      console.log("pushRoomEmit");
+      for (let i = 0; i < state.rooms.length; i++) {
+        state.rooms[i].index++;
+        state.rooms[i].chosen = false;
+      }
+      state[type].push(items);
+    },
+    pushRoomBroadcast(state, {type, items}) {
+      console.log("pushRoomBroadcast");
+      for (let i = 0; i < state.rooms.length; i++) {
+        state.rooms[i].index++;
+      }
+      state[type].push(items);
+    },
+    setRoomChosen(state, roomID) {
+      console.log(roomID);
+      for (let i = 0; i < state.rooms.length; i++) {
+        console.log("state.rooms[i]._id", state.rooms[i]._id);
+        console.log("roomID", roomID);
+        console.log(state.rooms[i]._id !== roomID);
+        if (state.rooms[i]._id !== roomID) {
+          state.rooms[i].chosen = false;
+        } else {
+          state.rooms[i].chosen = true;
         }
       }
-      console.log(currentUser);
-      state[type].push({
-        roomID: state.rooms.length + 1,
-        typeRoom: "Open",
-        chatUserID: items.userID,
-        user: currentUser,
-        lastMessage: {messageID: 33,
-          roomID: state.rooms.length + 1,
-          senderID: items.userID,
-          text: "",
-          time: "",
-          senderName: ""}
-      });
       console.log(state.rooms);
-    },
+    }
   },
   getters: {
     getRooms: function (state) {
-      state.rooms.forEach(function (room) {
-        state.users.forEach(function (user) {
-          if (user.userID === room.chatUserID) room.user = user;
-        })
+      state.rooms.sort(function (a, b) {
+        if (a.index > b.index) return 1;
+        if (a.index < b.index) return -1;
+        return 0;
       });
+      console.log("state.rooms", state.rooms);
       return state.rooms;
     },
     getContacts: function (state) {
       return state.users;
     },
-    getRoomExisting: (state) => (userID) => {
-      console.log("getRoomExisting " + userID);
+    getRoomExisting: (state) => (contactID) => {
+      console.log("getRoomExisting " + contactID);
       for (let i = 0; i < state.rooms.length; i++) {
-        console.log(state.rooms[i].chatUserID === userID);
-        if (state.rooms[i].chatUserID === userID) return state.rooms[i].roomID;
+        console.log(state.rooms[i].roomID === contactID);
+        if (state.rooms[i].chatUserID === contactID) return state.rooms[i].roomID;
       }
       return false;
     },
+    //Переделать
     getMessages: (state) => (id) => {
       let array = [];
-      let senderID;
-      let secondParams;
+      //let senderID;
+      let user = {
+        _id: 0
+      };
+      let messageParams;
       let currentIndex = -1;
-      for (let i = 0; i < state.messages.length; i++) {
-        if (state.messages[i].roomID == id) {
-          secondParams = {
-            messageID: state.messages[i].messageID,
-            text: state.messages[i].text,
-            src: state.messages[i].src,
-            time: state.messages[i].time,
-            type: state.messages[i].type,
-          };
+      // for (let i = 0; i < state.messages.length; i++) {
+      //   if (state.messages[i].roomID == id) {
+      //     secondParams = {
+      //       messageID: state.messages[i].messageID,
+      //       text: state.messages[i].text,
+      //       src: state.messages[i].src,
+      //       time: state.messages[i].time,
+      //       type: state.messages[i].type,
+      //     };
+      //
+      //     //console.log(senderID !== state.messages[i].senderID);
+      //     if (senderID !== state.messages[i].senderID) {
+      //       senderID = state.messages[i].senderID;
+      //       currentIndex++;
+      //
+      //       array.push({
+      //         roomID: state.messages[i].roomID,
+      //         senderID: state.messages[i].senderID,
+      //         senderName: state.messages[i].senderName,
+      //         messageArray: [secondParams]
+      //       });
+      //     } else {
+      //       array[currentIndex].messageArray.push(secondParams);
+      //     }
+      //   }
+      // }
+      // return array;
 
-          console.log(senderID !== state.messages[i].senderID);
-          if (senderID !== state.messages[i].senderID) {
-            senderID = state.messages[i].senderID;
-            currentIndex++;
 
-            array.push({
-              roomID: state.messages[i].roomID,
-              senderID: state.messages[i].senderID,
-              senderName: state.messages[i].senderName,
-              messageArray: [secondParams]
-            });
-          } else {
-            array[currentIndex].messageArray.push(secondParams);
-          }
-          //array.push(state.messages[i]);
-        }
-      }
-      return array;
-    },
-    getSenderUser: (state) => (roomID) => {
-      for (let i = 0; i < state.rooms.length; i++) {
-        if (state.rooms[i].roomID == roomID) {
-          for (let j = 0; j < state.users.length; j++) {
-            if (state.users[j].userID == state.rooms[i].chatUserID) {
-              return state.users[j];
+      for (let i = 0; i < state.allMessageArray.length; i++) {
+        if (state.allMessageArray[i].roomID == id) {
+          let messages = state.allMessageArray[i].messages;
+          for (let j = 0; j < messages.length; j++) {
+            messageParams = {
+              messageID: messages[j]._id,
+              text: messages[j].text,
+              src: messages[j].src,
+              time: messages[j].time,
+              type: messages[j].type,
+            };
+
+            //console.log(senderID !== state.messages[i].senderID);
+            if (user._id !== messages[j].profileID._id) {
+              user = messages[j].profileID;
+              currentIndex++;
+              array.push({
+                profile: messages[j].profileID,
+                messageArray: [messageParams]
+              });
+            } else {
+              array[currentIndex].messageArray.push(messageParams);
             }
           }
         }
       }
+      return array;
+    },
+    // getSenderUser: (state) => (roomID) => {
+    //   for (let i = 0; i < state.rooms.length; i++) {
+    //     if (state.rooms[i].roomID == roomID) {
+    //       for (let j = 0; j < state.users.length; j++) {
+    //         if (state.users[j].userID == state.rooms[i].chatUserID) {
+    //           return state.users[j];
+    //         }
+    //       }
+    //     }
+    //   }
+    // },
+    getMessegesTest: function (state) {
+      return state.allMessageArray;
     },
     getUser: function (state) {
-      console.log("getUser");
       return state.userAccount;
     },
     getExistingUserAccount: (state) => {
@@ -176,12 +213,17 @@ export default new Vuex.Store({
     setUserExample({commit}, query) {
       commit('set', {type: 'user', items: query})
     },
-    setMessageMainjs({commit}, query) {
-      commit('push', {type: 'messages', items: query})
-    },
-    setNewRoomMainjs({commit}, query) {
+    //Изменить
+    // setMessageMainjs({commit}, query) {
+    //   commit('push', {type: 'messages', items: query})
+    // },
+    setNewRoomEmitMainjs({commit}, query) {
       console.log("setNewRoom");
-      commit('pushRoom', {type: 'rooms', items: query})
+      commit('pushRoomEmit', {type: 'rooms', items: query})
+    },
+    setNewRoomBroadcastMainjs({commit}, query) {
+      console.log("setNewRoom");
+      commit('pushRoomBroadcast', {type: 'rooms', items: query})
     },
     setUserAccountLoginvue({commit}, query) {
       console.log("setUserAccount");
@@ -194,6 +236,16 @@ export default new Vuex.Store({
       console.log("setRoomsLoginvue");
       console.log(query);
       commit('set', {type: 'rooms', items: query})
+    },
+    setMessagesLoginvue({commit}, query) {
+      console.log("setMessagesLoginvue");
+      console.log(query);
+      commit('push', {type: 'allMessageArray', items: query})
+    },
+    setRoomChosenChatvue({commit}, query) {
+      console.log("setRoomChosenChatvue");
+      console.log(query);
+      commit('setRoomChosen', query)
     }
   }
 })

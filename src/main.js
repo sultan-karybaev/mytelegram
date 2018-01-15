@@ -36,10 +36,15 @@ new Vue({
       console.log(data);
       this.$store.dispatch('setMessageMainjs', data);
     },
-    createNewRoomSocket: function (data) {
-      console.log('createNewRoomSocket');
+    createNewRoomSocketEmit: function (data) {
+      console.log('createNewRoomSocketEmit');
       console.log(data);
-      this.$store.dispatch('setNewRoomMainjs', { userID: data.userID});
+      this.$store.dispatch('setNewRoomEmitMainjs', data);
+    },
+    createNewRoomSocketBroadcast: function (data) {
+      console.log('createNewRoomSocketBroadcast');
+      console.log(data);
+      this.$store.dispatch('setNewRoomBroadcastMainjs', data);
     },
     register: function (data) {
       console.log("register main");

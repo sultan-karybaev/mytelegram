@@ -5,7 +5,6 @@ let Message = mongoose.Schema({
   src: String,
   roomID: {type: mongoose.Schema.Types.ObjectId, ref: "Room"},
   profileID: {type: mongoose.Schema.Types.ObjectId, ref: "Profile"},
-  profileName: String,
   time: String,
 }, { versionKey: false });
 

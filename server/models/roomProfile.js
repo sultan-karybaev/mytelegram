@@ -4,6 +4,7 @@ let roomProfile = mongoose.Schema({
   profileID: {type: mongoose.Schema.Types.ObjectId, ref: "Profile"},
   unreadMessageCount: Number,
   index: Number,
+  chosen: Boolean,
   name: String,
   img: String
 }, { versionKey: false });

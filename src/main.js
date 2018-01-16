@@ -36,10 +36,16 @@ new Vue({
       console.log(data);
       this.$store.dispatch('setMessageMainjs', data);
     },
+    setLastMessageSocket: function (data) {
+      console.log('setLastMessageSocket');
+      console.log(data);
+      this.$store.dispatch('setLastMessageMainjs', data);
+    },
     createNewRoomSocketEmit: function (data) {
       console.log('createNewRoomSocketEmit');
       console.log(data);
       this.$store.dispatch('setNewRoomEmitMainjs', data);
+      this.$router.push({ name: 'contact', params: { roomID: data.roomID._id }});
     },
     createNewRoomSocketBroadcast: function (data) {
       console.log('createNewRoomSocketBroadcast');

@@ -17,8 +17,8 @@
           <div class="downsection-sidebar-contacts"  >
               <div class="downsection-sidebar-contact" >
                 <div class="downsection-sidebar-contact-icon">
-                  <div class="downsection-sidebar-contact-icon-circle">
-                    <img :src="room.img" style="width: 46px; height: 46px; border-radius: 23px"/>
+                  <div class="downsection-sidebar-contact-icon-circle" :style="{ 'background-image': 'url(' + room.img + ')' }">
+                    <!--<img :src="room.img" style="width: 46px; height: 46px; border-radius: 23px"/>-->
                   </div>
                 </div>
                 <div class="downsection-sidebar-contact-info">
@@ -33,7 +33,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="downsection-sidebar-contact-time" >{{room.roomID.lastMessageTime}}</div>
+                <div class="downsection-sidebar-contact-time" v-text="computedTime(room.roomID.lastMessageTime)"></div>
               </div>
           </div>
 
@@ -68,79 +68,62 @@ export default {
   components: {
     Contact
   },
+  created() {
+    const vm = this;
+    Event.$on("Store-to-Sidebar-lastMessage", function () {
+      vm.rooms = vm.$store.getters.getRooms;
+      console.log("vm.rooms", vm.rooms);
+    });
+  },
   mounted(){
     this.myself = this.$store.getters.getUser;
     this.rooms = this.$store.getters.getRooms;
     this.messagesTest = this.$store.getters.getMessegesTest;
-    console.log("this.myself", this.myself);
-    console.log("this.rooms", this.rooms);
-    console.log("this.messagesTest", this.messagesTest);
 
     for (let i = 0; i < this.rooms.length; i++) {
       if (this.rooms[i].chosen) {
         document.getElementById("contactNameChat").innerHTML = this.rooms[i].name;
         this.openedRooms.push(this.rooms[i].roomID._id);
+        this.$socket.emit("enterRoom-ChatSidebar.vue-Server", this.rooms[i].roomID._id);
         this.$router.push({ name: 'contact', params: { roomID: this.rooms[i].roomID._id }});
       }
     }
 
-    //this.$router.push({ name: 'contact', params: { roomID: defaultRoom }});
-
-//    let data = {
-//      roomID: this.rooms[0]._id,
-//      userID: this.myself.userID
-//    };
-    //this.$socket.emit("enterRoom-ChatSidebar.vue-Server", data);
 
     //Socket
-    this.$options.sockets.newLastMessageChatSidebarSocket = (data) => {
-      console.log("Titanic");
-      this.setLastMessage(data);
-    };
+//    this.$options.sockets.newLastMessageChatSidebarSocket = (data) => {
+//      console.log("Titanic");
+//      this.setLastMessage(data);
+//    };
   },
   watch: {
-    "$store.state.rooms": function (newVal) {
+    "$store.state.roomProfiles": function (newVal) {
       this.rooms = this.$store.getters.getRooms;
     },
   },
   methods: {
     getChat(roomProfile, index) {
       const vm = this;
-      console.log("this.openedRooms", this.openedRooms);
       document.getElementById("contactNameChat").innerHTML = roomProfile.name;
-      let data = {
-        roomID: roomProfile,
-        userID: this.myself.userID
-      };
-//      this.$socket.emit("enterRoom-ChatSidebar.vue-Server", data);
+      this.$store.dispatch('setRoomChosenChatSidebarvue', roomProfile._id);
 
-      //edged script - next is Messages
-      let check = 0;
-      for (let i = 0; i < this.openedRooms.length; i++) {
-        if (this.openedRooms[i] == roomProfile.roomID._id) {
-          vm.$router.push({ name: 'contact', params: { roomID: roomProfile.roomID._id }});
-          break;
-        }
-        check++;
-      }
-      if (check == this.openedRooms.length) {
+      if(vm.$store.getters.getHasRoomBeenOpened(roomProfile.roomID._id)) {
+        vm.$router.push({ name: 'contact', params: { roomID: roomProfile.roomID._id }});
+      } else {
         axios.get("http://localhost:3000/get/messages/" + roomProfile.roomID._id)
           .then(function (res) {
-            console.log("res.data", res.data);
             vm.openedRooms.push(roomProfile.roomID._id);
-            vm.$store.dispatch('setMessagesLoginvue', res.data);
+            vm.$socket.emit("enterRoom-ChatSidebar.vue-Server", roomProfile.roomID._id);
+            vm.$store.dispatch('setMessagesLoginSidebarvue', res.data);
             vm.$router.push({ name: 'contact', params: { roomID: roomProfile.roomID._id }});
           })
           .catch(err => console.log(err));
       }
-
-      //this.$router.push({ name: 'contact', params: { roomID: roomProfile.roomID._id }});
-      this.currentRoomID = roomProfile;
-      for (let i = 0; i < this.rooms.length; i++) {
-        this.rooms[i].chosen = false;
-      }
-      this.rooms[index].chosen = true;
-      this.rooms[index].unreadMessageCount = 0;
+    },
+    computedTime(time) {
+      let months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "Jule", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      console.log("date", new Date(time * 1000 / 1000).getDate());
+      return  new Date(time * 1000 / 1000).getDate() + " " + months[new Date(time * 1000 / 1000).getMonth()];
     },
     setLastMessage(lastMessage) {
       console.log("setLastMessage");
@@ -165,12 +148,15 @@ export default {
   /*background-color: none;*/
 }
 .chosen{
-  background-color: #7594e3;
+  background-color: #546e7a;
 
 }
   .chosen > div > div > div div{
     color: white;
   }
+.unchosen:hover {
+  background: rgba(129, 156, 169, .5);
+}
 
 
 </style>

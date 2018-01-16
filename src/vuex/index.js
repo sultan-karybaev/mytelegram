@@ -51,112 +51,90 @@ export default new Vuex.Store({
     //   {messageID: 33, roomID: 3, senderID: 3, text: "I am a CEO of SpaceX and Tesla", time: "12/07/17", senderName: "Elon", type: "Text"},
     // ],
     users: [],
-    rooms: [],
+    roomProfiles: [],
     allMessageArray: [],
     userAccount: {}
   },
   mutations: {
-    arrayPush (state, payload) {
-      console.log("Hahaha");
-      console.log(payload);
-      state.words[payload.number].push(payload.obj);
-      console.log(state.words);
-    },
     set(state, {type, items}){
       state[type] = items
     },
     push(state, {type, items}){
       state[type].push(items);
-      //Event.$emit("audio");
+    },
+    pushMessage(state, message){
+      for (let i = 0; i < state.allMessageArray.length; i++) {
+        if (state.allMessageArray[i].roomID == message.roomID) {
+          state.allMessageArray[i].messages.push(message);
+        }
+      }
+      Event.$emit("Store-to-Contact-pushMessage");
+    },
+    //todo
+    setLastMessage(state, room){
+      for (let i = 0; i < state.roomProfiles.length; i++) {
+        if (state.roomProfiles[i].roomID._id == room._id) {
+          state.roomProfiles[i].roomID.lastMessageText = room.lastMessageText;
+          state.roomProfiles[i].roomID.lastMessageTime = room.lastMessageTime;
+
+          if (state.roomProfiles[i].chosen) {
+            for (let j = 0; j < state.roomProfiles.length; j++) {
+              state.roomProfiles[j].index++;
+            }
+            state.roomProfiles[i].index = 1;
+          } else {
+            state.roomProfiles[i].unreadMessageCount++;
+          }
+        }
+      }
+      Event.$emit("Store-to-Sidebar-lastMessage");
     },
     pushRoomEmit(state, {type, items}) {
       console.log("pushRoomEmit");
-      for (let i = 0; i < state.rooms.length; i++) {
-        state.rooms[i].index++;
-        state.rooms[i].chosen = false;
+      for (let i = 0; i < state.roomProfiles.length; i++) {
+        state.roomProfiles[i].index++;
+        state.roomProfiles[i].chosen = false;
       }
       state[type].push(items);
     },
     pushRoomBroadcast(state, {type, items}) {
       console.log("pushRoomBroadcast");
-      for (let i = 0; i < state.rooms.length; i++) {
-        state.rooms[i].index++;
+      for (let i = 0; i < state.roomProfiles.length; i++) {
+        state.roomProfiles[i].index++;
       }
       state[type].push(items);
     },
     setRoomChosen(state, roomID) {
-      console.log(roomID);
-      for (let i = 0; i < state.rooms.length; i++) {
-        console.log("state.rooms[i]._id", state.rooms[i]._id);
-        console.log("roomID", roomID);
-        console.log(state.rooms[i]._id !== roomID);
-        if (state.rooms[i]._id !== roomID) {
-          state.rooms[i].chosen = false;
+      for (let i = 0; i < state.roomProfiles.length; i++) {
+        if (state.roomProfiles[i]._id !== roomID) {
+          state.roomProfiles[i].chosen = false;
         } else {
-          state.rooms[i].chosen = true;
+          state.roomProfiles[i].chosen = true;
+          state.roomProfiles[i].unreadMessageCount = 0;
         }
       }
-      console.log(state.rooms);
+      console.log(state.roomProfiles);
     }
   },
   getters: {
     getRooms: function (state) {
-      state.rooms.sort(function (a, b) {
+      state.roomProfiles.sort(function (a, b) {
         if (a.index > b.index) return 1;
         if (a.index < b.index) return -1;
         return 0;
       });
-      console.log("state.rooms", state.rooms);
-      return state.rooms;
+      return state.roomProfiles;
     },
     getContacts: function (state) {
       return state.users;
     },
-    getRoomExisting: (state) => (contactID) => {
-      console.log("getRoomExisting " + contactID);
-      for (let i = 0; i < state.rooms.length; i++) {
-        console.log(state.rooms[i].roomID === contactID);
-        if (state.rooms[i].chatUserID === contactID) return state.rooms[i].roomID;
-      }
-      return false;
-    },
-    //Переделать
     getMessages: (state) => (id) => {
       let array = [];
-      //let senderID;
       let user = {
         _id: 0
       };
       let messageParams;
       let currentIndex = -1;
-      // for (let i = 0; i < state.messages.length; i++) {
-      //   if (state.messages[i].roomID == id) {
-      //     secondParams = {
-      //       messageID: state.messages[i].messageID,
-      //       text: state.messages[i].text,
-      //       src: state.messages[i].src,
-      //       time: state.messages[i].time,
-      //       type: state.messages[i].type,
-      //     };
-      //
-      //     //console.log(senderID !== state.messages[i].senderID);
-      //     if (senderID !== state.messages[i].senderID) {
-      //       senderID = state.messages[i].senderID;
-      //       currentIndex++;
-      //
-      //       array.push({
-      //         roomID: state.messages[i].roomID,
-      //         senderID: state.messages[i].senderID,
-      //         senderName: state.messages[i].senderName,
-      //         messageArray: [secondParams]
-      //       });
-      //     } else {
-      //       array[currentIndex].messageArray.push(secondParams);
-      //     }
-      //   }
-      // }
-      // return array;
-
 
       for (let i = 0; i < state.allMessageArray.length; i++) {
         if (state.allMessageArray[i].roomID == id) {
@@ -186,17 +164,6 @@ export default new Vuex.Store({
       }
       return array;
     },
-    // getSenderUser: (state) => (roomID) => {
-    //   for (let i = 0; i < state.rooms.length; i++) {
-    //     if (state.rooms[i].roomID == roomID) {
-    //       for (let j = 0; j < state.users.length; j++) {
-    //         if (state.users[j].userID == state.rooms[i].chatUserID) {
-    //           return state.users[j];
-    //         }
-    //       }
-    //     }
-    //   }
-    // },
     getMessegesTest: function (state) {
       return state.allMessageArray;
     },
@@ -206,6 +173,17 @@ export default new Vuex.Store({
     getExistingUserAccount: (state) => {
       if (state.userAccount.userID) return true;
       else return false;
+    },
+    getRoomProfile: (state) => (roomID) => {
+      for (let i = 0; i < state.roomProfiles.length; i++) {
+        if (state.roomProfiles[i].roomID._id == roomID) return state.roomProfiles[i];
+      }
+    },
+    getHasRoomBeenOpened: (state) => (roomID) => {
+      for (let i = 0; i < state.allMessageArray.length; i++) {
+        if (state.allMessageArray[i].roomID == roomID) return true
+      }
+      return false;
     }
   },
   actions: {
@@ -213,38 +191,31 @@ export default new Vuex.Store({
     setUserExample({commit}, query) {
       commit('set', {type: 'user', items: query})
     },
-    //Изменить
-    // setMessageMainjs({commit}, query) {
-    //   commit('push', {type: 'messages', items: query})
-    // },
+    setMessageMainjs({commit}, message) {
+      commit('pushMessage', message)
+    },
+    setLastMessageMainjs({commit}, room) {
+      commit('setLastMessage', room)
+    },
     setNewRoomEmitMainjs({commit}, query) {
-      console.log("setNewRoom");
-      commit('pushRoomEmit', {type: 'rooms', items: query})
+      commit('pushRoomEmit', {type: 'roomProfiles', items: query})
     },
     setNewRoomBroadcastMainjs({commit}, query) {
-      console.log("setNewRoom");
-      commit('pushRoomBroadcast', {type: 'rooms', items: query})
+      commit('pushRoomBroadcast', {type: 'roomProfiles', items: query})
     },
     setUserAccountLoginvue({commit}, query) {
-      console.log("setUserAccount");
       commit('set', {type: 'userAccount', items: query})
     },
     setContactsLoginvue({commit}, query) {
       commit('set', {type: 'users', items: query})
     },
     setRoomsLoginvue({commit}, query) {
-      console.log("setRoomsLoginvue");
-      console.log(query);
-      commit('set', {type: 'rooms', items: query})
+      commit('set', {type: 'roomProfiles', items: query})
     },
-    setMessagesLoginvue({commit}, query) {
-      console.log("setMessagesLoginvue");
-      console.log(query);
+    setMessagesLoginSidebarvue({commit}, query) {
       commit('push', {type: 'allMessageArray', items: query})
     },
-    setRoomChosenChatvue({commit}, query) {
-      console.log("setRoomChosenChatvue");
-      console.log(query);
+    setRoomChosenChatSidebarvue({commit}, query) {
       commit('setRoomChosen', query)
     }
   }

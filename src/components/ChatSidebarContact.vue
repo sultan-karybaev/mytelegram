@@ -15,7 +15,8 @@
                     <div class="downsection-maincontent-messageblock-message-text">
                       <div class="downsection-maincontent-messageblock-message-text-contact">
                         <div class="downsection-maincontent-messageblock-message-text-contact-icon">
-                          <div class="downsection-maincontent-messageblock-message-text-contact-icon-circle"></div>
+                          <div class="downsection-maincontent-messageblock-message-text-contact-icon-circle"
+                               :style="{ 'background-image': 'url(' + message.profile.avatar + ')' }"></div>
                         </div>
                         <div class="downsection-maincontent-messageblock-message-text-contact-info">
                           <div class="downsection-maincontent-messageblock-message-text-contact-info-person" >{{message.profile.firstName}}</div>
@@ -26,9 +27,13 @@
                               <template v-if="text.type == 'Audio'">
                                 <audio-file :audioWay=text.src />
                               </template>
+
+                              <!--<div class="downsection-maincontent-messageblock-message-text-contact-time"     v-text="text.time"></div>-->
+
                             </div>
                         </div>
-                        <div class="downsection-maincontent-messageblock-message-text-contact-time"     v-text="message.time"></div>
+                        <div class="downsection-maincontent-messageblock-message-text-contact-time"
+                             v-text="computedTime(message.messageArray[0].time)"></div>
                       </div>
                     </div>
                   </div>
@@ -40,7 +45,7 @@
           <div class="writeblock">
             <div class="writeblock-block">
               <div class="writeblock-block-icon">
-                <div class="writeblock-block-icon-img"></div>
+                <div class="writeblock-block-icon-img" :style="{ 'background-image': 'url(' + myself.avatar + ')' }"></div>
               </div>
               <div class="writeblock-block-keyboard">
                 <div class="writeblock-block-keyboard-write">
@@ -74,7 +79,7 @@
                 </div>
               </div>
               <div class="writeblock-block-icon">
-                <div class="writeblock-block-icon-img"></div>
+                <div class="writeblock-block-icon-img" :style="{ 'background-image': 'url(' + roomProfile.img + ')' }"></div>
               </div>
             </div>
           </div>
@@ -109,9 +114,13 @@ export default {
   created() {
     this.myself = this.$store.getters.getUser;
     this.messages = this.$store.getters.getMessages(this.$route.params.roomID);
-//    this.senderUser = this.$store.getters.getSenderUser(this.$route.params.roomID);
-    console.log("this.myself", this.myself);
-    console.log("this.messages", this.messages);
+    this.roomProfile = this.$store.getters.getRoomProfile(this.$route.params.roomID);
+
+    const vm = this;
+    Event.$on("Store-to-Contact-pushMessage", function () {
+      console.log("ChatSidebarContact.vue pushMessage");
+      vm.messages = vm.$store.getters.getMessages(vm.$route.params.roomID);
+    });
   },
   mounted() {
     $("#textarea").emojioneArea();
@@ -138,8 +147,9 @@ export default {
     '$route.params.roomID': function (newVal) {
       this.messages = [];
       setTimeout(() => this.messages = this.$store.getters.getMessages(newVal), 0);
+      this.roomProfile = this.$store.getters.getRoomProfile(this.$route.params.roomID);
     },
-    "$store.state.messages": function (newVal) {
+    "$store.state.allMessageArray": function (newVal) {
       this.messages = this.$store.getters.getMessages(this.$route.params.roomID);
     },
   },
@@ -162,6 +172,11 @@ export default {
       document.getElementById("timer").innerHTML = "";
       clearInterval(this.interval);
     },
+    computedTime(time) {
+      let months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "Jule", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      console.log("date", new Date(time * 1000 / 1000).getDate());
+      return  new Date(time * 1000 / 1000).getDate() + " " + months[new Date(time * 1000 / 1000).getMonth()];
+    },
     addMessageEnter(event) {
       console.log("ENTER");
       if (event.code === "Enter") {
@@ -171,14 +186,16 @@ export default {
     },
     addMessage() {
       const emoji = document.getElementsByClassName("emojionearea-editor");
-      console.log(emoji[0].innerHTML);
+      let d = new Date().getTime();
+      console.log("new Date()", Date(d));
+
       if (emoji[0].innerHTML) {
         this.$socket.emit('setMessage-ChatSidebarContact.vue-Server',
           { type: "Text",
             text: emoji[0].innerHTML,
             roomID: this.$route.params.roomID,
             profileID: this.myself._id,
-            time: "12/07/17",
+            time: new Date().getTime()
           }
         );
         emoji[0].innerHTML = "";
@@ -192,7 +209,7 @@ export default {
           senderID: this.myself.userID,
           src: "../../static/media/kissvk.com-The Script feat. will.i.am-Hall of Fame.mp3",
           time: "12/07/17",
-          senderName: 1,
+          senderName: new Date().getTime(),
           type: "Audio"
         }
       );

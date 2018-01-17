@@ -6,9 +6,9 @@
 
       <div class="downsection-maincontent-messageblock-bottom">
 
-          <div id="mems2" style="height: calc(100% - 160px); overflow-y: hidden; position: relative">
-            <div style="position: absolute; bottom: 0; width: 100%">
-                  <div class="downsection-maincontent-messageblock-message"    v-for="(message, index) in messages">
+          <div id="mems2" style="height: calc(100% - 160px); overflow-y: scroll; position: relative; display: flex; align-items: flex-end">
+            <div style="position: absolute; bottom: 0; width: 100%" ref="allMessages">
+                  <div class="downsection-maincontent-messageblock-message"    v-for="(message, messageIndex) in messages">
                     <div class="downsection-maincontent-messageblock-message-check">
                       <img src="../assets/tick.svg" style="width: 26px; height: 26px" class="downsection-maincontent-messageblock-message-check-icon">
                     </div>
@@ -20,20 +20,28 @@
                         </div>
                         <div class="downsection-maincontent-messageblock-message-text-contact-info">
                           <div class="downsection-maincontent-messageblock-message-text-contact-info-person" >{{message.profile.firstName}}</div>
-                            <div v-for="text in message.messageArray">
+                            <div v-for="(text, textIndex) in message.messageArray" style="position: relative">
                               <template v-if="text.type == 'Text'">
-                                <div class="downsection-maincontent-messageblock-message-text-contact-info-message"     v-html="text.text"></div>
+                                <div class="downsection-maincontent-messageblock-message-text-contact-info-message"
+                                     v-html="text.text" @click="testMethod(messageIndex, textIndex)">
+                                </div>
                               </template>
                               <template v-if="text.type == 'Audio'">
                                 <audio-file :audioWay=text.src />
                               </template>
+                              <template v-if="text.type == 'Image'">
+                                <img :src=text.src style="width: 300px"/>
+                              </template>
 
-                              <!--<div class="downsection-maincontent-messageblock-message-text-contact-time"     v-text="text.time"></div>-->
+                              <div class="downsection-maincontent-messageblock-message-text-contact-time"
+                                   v-text="computedTime(message.messageArray[0].time, textIndex)">
+                              </div>
 
                             </div>
                         </div>
                         <div class="downsection-maincontent-messageblock-message-text-contact-time"
-                             v-text="computedTime(message.messageArray[0].time)"></div>
+                             v-text="computedTime(message.messageArray[0].time)">
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -64,7 +72,7 @@
                      <img src="../assets/page-with-one-curled-corner.svg" style="width: 20px; height: 20px;">
                   </div>
                   <div class="writeblock-block-keyboard-buttons-icon">
-                    <input id="imageMessage" type="file" @change="testFile" style="display: none">
+                    <input id="imageMessage" type="file" @change="sendImage" style="display: none">
                     <label tabindex="0" for="imageMessage" >
                       <img src="../assets/photo-camera.svg" style="width: 20px; height: 20px; cursor: pointer">
                     </label>
@@ -115,6 +123,7 @@ export default {
     this.myself = this.$store.getters.getUser;
     this.messages = this.$store.getters.getMessages(this.$route.params.roomID);
     this.roomProfile = this.$store.getters.getRoomProfile(this.$route.params.roomID);
+    console.log("this.roomProfile", this.roomProfile);
 
     const vm = this;
     Event.$on("Store-to-Contact-pushMessage", function () {
@@ -125,17 +134,17 @@ export default {
   mounted() {
     $("#textarea").emojioneArea();
     Recorder.setupDownload = (blob, filename) => {
-      let message = {
-        messageID: 33,
-        roomID: this.$route.params.roomID,
-        //senderID: this.myself.userID,
-        senderID: 3,
-        time: "12/07/17",
-        //senderName: this.myself.userID,
-        senderName: "Elon",
-        type: "Audio"
+      let random = Math.floor(Math.random() * 1000000)
+      let audioData = {
+        name: random
       };
-      this.$socket.emit("audioFile-ChatSidebarContact.vue-Server", blob, message);
+      let audioMessage = {
+        type: "Audio",
+        roomID: this.$route.params.roomID,
+        profileID: this.myself._id,
+        time: new Date().getTime()
+      };
+      this.$socket.emit("File-ChatSidebarContact.vue-Server", blob, audioMessage, audioData);
 //        let data = new FormData();
 //        data.append("audiofile", blob);
 //        axios.post("http://localhost:3000/post/audio", data)
@@ -148,6 +157,7 @@ export default {
       this.messages = [];
       setTimeout(() => this.messages = this.$store.getters.getMessages(newVal), 0);
       this.roomProfile = this.$store.getters.getRoomProfile(this.$route.params.roomID);
+      console.log("this.roomProfile", this.roomProfile);
     },
     "$store.state.allMessageArray": function (newVal) {
       this.messages = this.$store.getters.getMessages(this.$route.params.roomID);
@@ -172,9 +182,11 @@ export default {
       document.getElementById("timer").innerHTML = "";
       clearInterval(this.interval);
     },
-    computedTime(time) {
+    computedTime(time, index) {
+      if (!index && index == 0) {
+        return null;
+      }
       let months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "Jule", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      console.log("date", new Date(time * 1000 / 1000).getDate());
       return  new Date(time * 1000 / 1000).getDate() + " " + months[new Date(time * 1000 / 1000).getMonth()];
     },
     addMessageEnter(event) {
@@ -186,35 +198,37 @@ export default {
     },
     addMessage() {
       const emoji = document.getElementsByClassName("emojionearea-editor");
-      let d = new Date().getTime();
-      console.log("new Date()", Date(d));
-
       if (emoji[0].innerHTML) {
-        this.$socket.emit('setMessage-ChatSidebarContact.vue-Server',
-          { type: "Text",
-            text: emoji[0].innerHTML,
-            roomID: this.$route.params.roomID,
-            profileID: this.myself._id,
-            time: new Date().getTime()
-          }
-        );
+        let message = {
+          type: "Text",
+          text: emoji[0].innerHTML,
+          roomID: this.$route.params.roomID,
+          profileID: this.myself._id,
+          time: new Date().getTime()
+        };
+        this.$socket.emit('setMessage-ChatSidebarContact.vue-Server', message);
+        console.log("this.roomProfile.index !== 1", this.roomProfile.index !== 1);
+        if (this.roomProfile.index !== 1) this.$socket.emit('indexRoom-ChatSidebarContact.vue-Server', this.myself._id, this.roomProfile.roomID._id);
         emoji[0].innerHTML = "";
       }
     },
-    testMethod() {
-      console.log("testMethod");
-      this.$socket.emit('setMessage-ChatSidebarContact.vue-Server',
-        { messageID: 33,
-          roomID: this.$route.params.roomID,
-          senderID: this.myself.userID,
-          src: "../../static/media/kissvk.com-The Script feat. will.i.am-Hall of Fame.mp3",
-          time: "12/07/17",
-          senderName: new Date().getTime(),
-          type: "Audio"
-        }
-      );
+    testMethod(messageIndex, textIndex) {
+      let icon = this.$refs.allMessages.children[messageIndex].children[1].children[0].children[0];
+      let name = this.$refs.allMessages.children[messageIndex].children[1].children[0].children[1].children[0];
+      let message = this.$refs.allMessages.children[messageIndex].children[1].children[0].children[1].children[textIndex + 1];
+
+      let color = "#819ca9";
+      if (message.style.backgroundColor == "rgb(129, 156, 169)") color = "white";
+
+      if (textIndex > 0) {
+        message.style.backgroundColor = color;
+      } else {
+        icon.style.backgroundColor = color;
+        name.style.backgroundColor = color;
+        message.style.backgroundColor = color;
+      }
     },
-    testFile(event) {
+    sendImage(event) {
       this.someData = event.target.files[0];
       console.log(this.someData);
 
@@ -224,17 +238,15 @@ export default {
         type: this.someData.type
       };
 
-      let message = {
-        messageID: 33,
+      let imgMessage = {
+        type: "Image",
         roomID: this.$route.params.roomID,
-        senderID: 3,
-        time: "12/07/17",
-        senderName: "Elon",
-        type: "Text"
+        profileID: this.myself._id,
+        time: new Date().getTime()
       };
 
       console.log(imgData);
-      this.$socket.emit("image-ChatSidebarContact.vue-Server", event.target.files[0], imgData, message);
+      this.$socket.emit("File-ChatSidebarContact.vue-Server", event.target.files[0], imgMessage, imgData);
     }
   },
 }

@@ -61,15 +61,6 @@ app.use(cors());
 //     });
 //   });
 
-Message.find()
-  .exec(function (err, messages) {
-    if (err) return console.log(err);
-    messages.forEach(function (message) {
-      message.img = "src/assets/avatar.jpg";
-      message.save();
-    })
-  });
-
 app.post("/post/profile", function (req, res) {
   let profile = new Profile({
     firstName: "Sultan",
@@ -115,6 +106,11 @@ app.get("/get/messages/:roomID", function (req, res) {
   Message.find({roomID: req.params.roomID}).populate("profileID")
     .exec(function (err, messages) {
       if (err) return res.sendStatus(400).end();
+      messages.sort(function (a, b) {
+        if (a.time > b.time) return 1;
+        if (a.time < b.time) return -1;
+        return 0;
+      });
       let obj = {
         roomID: req.params.roomID,
         messages: messages
@@ -152,96 +148,6 @@ app.get("/get/roomExisting/:profileID/:contactID", function (req, res) {
     });
 });
 
-//test
-app.post("/post/room/:profileID/:friendID", function (req, res) {
-  //Request data = myProfileObject, friendID
-  let roomObj;
-
-  let room = new Room({
-    typeRoom: "Standart",
-    lastMessageText: "",
-    lastMessageTime: "",
-  });
-
-  room.save(function (err, savedRoom) {
-    if (err) return console.log(err);
-    Profile.findById(req.params.friendID)
-      .exec(function (err, friend) {
-        if (err) return console.log(err);
-
-        let roomProfile1 = new RoomProfile({
-          roomID: savedRoom._id,
-          profileID: myID,
-          unreadMessageCount: 0,
-          index: 0,
-          name: friend.firstName + " " + friend.lastName,
-          img: friend.avatar
-        });
-
-        let roomProfile2 = new RoomProfile({
-          roomID: savedRoom._id,
-          profileID: friend._id,
-          unreadMessageCount: 0,
-          index: 0,
-          name: myfirstName + " " + mylastName,
-          img: myavatar
-        });
-
-        roomProfile1.save(function (err, savedRoomProfile) {
-          if (err) return console.log(err);
-          RoomProfile.find({profileID: myID, })
-            .exec(function (err, roomProfiles) {
-              roomProfiles.forEach(function (roomProfile) {
-                roomProfile.index++;
-                roomProfile.save(function (err) {
-                  if (err) return console.log(err);
-                });
-              });
-
-              //socket emit
-              roomObj = {
-                _id: savedRoomProfile.roomID,
-                unreadMessageCount: savedRoomProfile.unreadMessageCount,
-                index: savedRoomProfile.index,
-                name: savedRoomProfile.name,
-                img: savedRoomProfile.img,
-                typeRoom: savedRoom.typeRoom,
-                lastMessageText: savedRoom.lastMessageText,
-                lastMessageTime: savedRoom.lastMessageTime,
-              };
-            });
-        });
-
-        roomProfile2.save(function (err, savedRoomProfile) {
-          if (err) return console.log(err);
-          RoomProfile.find({profileID: friend._id, })
-            .exec(function (err, roomProfiles) {
-              roomProfiles.forEach(function (roomProfile) {
-                roomProfile.index++;
-                roomProfile.save(function (err) {
-                  if (err) return console.log(err);
-                });
-              });
-
-              //socket broadcast
-              roomObj = {
-                _id: savedRoomProfile.roomID,
-                unreadMessageCount: savedRoomProfile.unreadMessageCount,
-                index: savedRoomProfile.index,
-                name: savedRoomProfile.name,
-                img: savedRoomProfile.img,
-                typeRoom: savedRoom.typeRoom,
-                lastMessageText: savedRoom.lastMessageText,
-                lastMessageTime: savedRoom.lastMessageTime,
-              };
-            });
-        });
-
-
-      });
-  });
-});
-
 app.post("/post/audio", upload.single("audiofile"), function (req, res, next) {
   console.log("AUDIO");
   console.log(req.file);
@@ -271,22 +177,16 @@ function socketEvents(io) {
       console.log(data);
     });
 
-    //completed
     socket.on("createNewRoom-Chat.vue-Server", function (myself, contactID, firstMessage) {
       console.log("createNewRoom-Chat.vue-Server");
       console.log(myself);
       console.log(contactID);
-
-      // Profile.findById(contactID)
-      //   .exec(function (err, profile) {
-      //     if (err) return console.log(err);
-      //     console.log(profile);
-      //   });
+      console.log(firstMessage);
 
       let room = new Room({
         typeRoom: "Standart",
-        lastMessageText: "",
-        lastMessageTime: "",
+        lastMessageText: firstMessage.text,
+        lastMessageTime: firstMessage.time,
       });
 
       room.save(function (err, savedRoom) {
@@ -294,6 +194,27 @@ function socketEvents(io) {
         Profile.findById(contactID)
           .exec(function (err, friend) {
             if (err) return console.log(err);
+
+            let msg = new Message({
+              type: firstMessage.type,
+              text: firstMessage.text,
+              roomID: savedRoom._id,
+              profileID: myself._id,
+              time: firstMessage.time
+            });
+
+            msg.save(function (err, savedMessage) {
+              if (err) return console.log(err);
+              Message.findById(savedMessage._id).populate("profileID")
+                .exec(function (err, message) {
+                  if (err) return console.log(err);
+                  let obj = {
+                    roomID: message.roomID,
+                    messages: [message]
+                  };
+                  socket.emit("setFirstMessageSocket", obj);
+                });
+            });
 
             let roomProfile1 = new RoomProfile({
               roomID: savedRoom._id,
@@ -308,7 +229,7 @@ function socketEvents(io) {
             let roomProfile2 = new RoomProfile({
               roomID: savedRoom._id,
               profileID: friend._id,
-              unreadMessageCount: 0,
+              unreadMessageCount: 1,
               index: 1,
               chosen: false,
               name: myself.firstName + " " + myself.lastName,
@@ -352,19 +273,50 @@ function socketEvents(io) {
                   });
                 });
             });
-
-
           });
       });
-
-      // socket.emit("createNewRoomSocket", data.ME);
-      // socket.to(data.userID).emit("createNewRoomSocket", data.ME);
     });
 
-    socket.on("enterRoom-ChatSidebar.vue-Server", function (roomID) {
+    socket.on("enterRoom-ChatSidebar.vue-Server", function (roomID, profileID) {
       console.log("enterRoom-ChatSidebar.vue-Server");
       console.log(roomID);
       socket.join(roomID);
+
+      RoomProfile.findOne({profileID: profileID, roomID: roomID})
+        .exec(function (err, roomProfile) {
+          if (err) return console.log(err);
+          roomProfile.chosen = true;
+          roomProfile.unreadMessageCount = 0;
+          roomProfile.save();
+        });
+
+      RoomProfile.find({profileID: profileID, roomID: { $ne: roomID}})
+        .exec(function (err, roomProfiles) {
+          if (err) return console.log(err);
+          roomProfiles.forEach(function (roomProfile) {
+            roomProfile.chosen = false;
+            roomProfile.save();
+          });
+        });
+    });
+
+    socket.on("indexRoom-ChatSidebarContact.vue-Server", function (profileID, roomID) {
+      console.log("indexRoom-ChatSidebarContact.vue-Server");
+
+      RoomProfile.findOne({profileID: profileID, roomID: roomID})
+        .exec(function (err, roomProfile) {
+          if (err) return console.log(err);
+          roomProfile.index = 1;
+          roomProfile.save();
+        });
+      RoomProfile.find({profileID: profileID, roomID: { $ne: roomID}})
+        .exec(function (err, roomProfiles) {
+          if (err) return console.log(err);
+          roomProfiles.forEach(function (roomProfile) {
+            roomProfile.index++;
+            roomProfile.save();
+          })
+        });
     });
 
     socket.on("setMessage-ChatSidebarContact.vue-Server", function (data) {
@@ -375,8 +327,6 @@ function socketEvents(io) {
 
       message.save(function (err, savedMessage) {
         if (err) return console.log(err);
-        //console.log("savedMessage", savedMessage);
-
         Room.findById(data.roomID)
           .exec(function (err, room) {
             if (err) return console.log(err);
@@ -388,11 +338,31 @@ function socketEvents(io) {
                 .exec(function (err, foundMessage) {
                   if (err) return console.log(err);
 
-
                   socket.emit("setMessageSocket", foundMessage);
                   socket.to(data.roomID).emit("setMessageSocket", foundMessage);
                   socket.emit("setLastMessageSocket", savedRoom);
 
+                  //Увеличиваем количество непрочитанных сообщений
+                  RoomProfile.find({profileID: { $ne: data.profileID}, roomID: data.roomID})
+                    .exec(function (err, roomProfiles) {
+                      if (err) return console.log(err);
+                      roomProfiles.forEach(function (roomProfile) {
+                        if (!roomProfile.chosen) roomProfile.unreadMessageCount++;
+                        roomProfile.index = 1;
+                        roomProfile.save();
+                        //Увеличиваем индексы
+                        RoomProfile.find({profileID: roomProfile.profileID, _id: { $ne: roomProfile._id}})
+                          .exec(function (err, roomProfiles) {
+                            if (err) return console.log(err);
+                            roomProfiles.forEach(function (roomP) {
+                              roomP.index++;
+                              roomP.save();
+                            })
+                          });
+                      })
+                    });
+
+                  //Рассылаем всем участникам группы сообщение
                   RoomProfile.find({roomID: data.roomID})
                     .exec(function (err, roomProfiles) {
                       if (err) return console.log(err);
@@ -405,60 +375,107 @@ function socketEvents(io) {
             });
           });
       });
-
-      // socket.emit("setMessageSocket", data);
-      // socket.to(data.roomID).emit("setMessageSocket", data);
-      // socket.emit("newLastMessageChatSidebarSocket", data);
-      // socket.broadcast.emit("newLastMessageChatSidebarSocket", data);
     });
 
-    socket.on("audioFile-ChatSidebarContact.vue-Server", function (data, message) {
-      console.log("audioFile-ChatSidebarContact.vue-Server");
-      console.log(data);
-      console.log(message);
-      let lastMessage = {
-        roomID: message.roomID,
-        text: "Audio File",
-        time: message.time,
-      };
-      let name = Math.floor(Math.random() * 1000000);
-      message.src = "../../static/media/" + name + ".wav";
-      fs.writeFile(__dirname + "/static/media/" + name + ".wav", data,  "binary", function(err) {
-        if(err) {
-          console.log(err);
-        } else {
-          console.log("The file was saved!");
-          socket.emit("setMessageSocket", message);
-          socket.broadcast.emit("setMessageSocket", message);
-          socket.emit("newLastMessageChatSidebarSocket", lastMessage);
-          socket.broadcast.emit("newLastMessageChatSidebarSocket", lastMessage);
-        }
+    socket.on("File-ChatSidebarContact.vue-Server", function (File, mainMessage, addData) {
+      console.log("File-ChatSidebarContact.vue-Server");
+      console.log(File);
+      console.log(mainMessage);
+
+      let varDir;
+      let varExp;
+      let varFileType;
+
+      if (mainMessage.type == "Audio") {
+        varDir = "media";
+        varExp = ".wav";
+        varFileType = "Audio File";
+      } else if (mainMessage.type == "Image") {
+        varDir = "img";
+        varExp = ".jpg";
+        varFileType = "Image";
+      }
+
+      mainMessage.src = "../../static/" + varDir + "/" + addData.name + varExp;
+      fs.writeFile(__dirname + "/static/" + varDir + "/" + addData.name + varExp, File,  "binary", function(err) {
+        if(err) return console.log(err);
+        let message = new Message(mainMessage);
+        message.save(function (err, savedMessage) {
+          if (err) return console.log(err);
+          Message.findById(savedMessage._id).populate("profileID")
+            .exec(function (err, foundMessage) {
+              if(err) return console.log(err);
+              console.log("The file was saved!");
+              socket.emit("setMessageSocket", foundMessage);
+              socket.to(mainMessage.roomID).emit("setMessageSocket", foundMessage);
+
+              RoomProfile.find({profileID: { $ne: mainMessage.profileID}, roomID: mainMessage.roomID})
+                .exec(function (err, roomProfiles) {
+                  if (err) return console.log(err);
+                  roomProfiles.forEach(function (roomProfile) {
+                    if (!roomProfile.chosen) roomProfile.unreadMessageCount++;
+                    roomProfile.index = 1;
+                    roomProfile.save();
+                    //Увеличиваем индексы
+                    RoomProfile.find({profileID: roomProfile.profileID, _id: { $ne: roomProfile._id}})
+                      .exec(function (err, roomProfiles) {
+                        if (err) return console.log(err);
+                        roomProfiles.forEach(function (roomP) {
+                          roomP.index++;
+                          roomP.save();
+                        })
+                      });
+                  })
+                });
+            });
+        });
       });
+
+      //Last Message
+      Room.findById(mainMessage.roomID)
+        .exec(function (err, room) {
+          if (err) return console.log(err);
+          room.lastMessageText = varFileType;
+          room.lastMessageTime = mainMessage.time;
+          room.save(function (err, savedRoom) {
+            if (err) return console.log(err);
+
+            socket.emit("setLastMessageSocket", savedRoom);
+
+            RoomProfile.find({roomID: mainMessage.roomID})
+              .exec(function (err, roomProfiles) {
+                if (err) return console.log(err);
+                for (let i = 0; i < roomProfiles.length; i++) {
+                  socket.to(roomProfiles[i].profileID).emit("setLastMessageSocket", savedRoom);
+                }
+              });
+          });
+        });
     });
 
-    socket.on("image-ChatSidebarContact.vue-Server", function (data, img, message) {
-      console.log("image");
-      console.log(data);
-      console.log(img);
-      console.log(message);
-      let lastMessage = {
-        roomID: message.roomID,
-        text: "Image",
-        time: message.time,
-      };
-      message.text = "<img src=\"static/img/" + img.name + "\" style=\"width: 320px\"/>";
-      fs.writeFile(__dirname + "/static/img/" + img.name, data,  "binary", function(err) {
-        if(err) {
-          console.log(err);
-        } else {
-          console.log("The file was saved!");
-          socket.emit("setMessageSocket", message);
-          socket.broadcast.emit("setMessageSocket", message);
-          socket.emit("newLastMessageChatSidebarSocket", lastMessage);
-          socket.broadcast.emit("newLastMessageChatSidebarSocket", lastMessage);
-        }
-      });
-    });
+    // socket.on("image-ChatSidebarContact.vue-Server", function (data, img, message) {
+    //   console.log("image");
+    //   console.log(data);
+    //   console.log(img);
+    //   console.log(message);
+    //   let lastMessage = {
+    //     roomID: message.roomID,
+    //     text: "Image",
+    //     time: message.time,
+    //   };
+    //   message.text = "<img src=\"static/img/" + img.name + "\" style=\"width: 320px\"/>";
+    //   fs.writeFile(__dirname + "/static/img/" + img.name, data,  "binary", function(err) {
+    //     if(err) {
+    //       console.log(err);
+    //     } else {
+    //       console.log("The file was saved!");
+    //       socket.emit("setMessageSocket", message);
+    //       socket.broadcast.emit("setMessageSocket", message);
+    //       // socket.emit("newLastMessageChatSidebarSocket", lastMessage);
+    //       // socket.broadcast.emit("newLastMessageChatSidebarSocket", lastMessage);
+    //     }
+    //   });
+    // });
   });
 }
 

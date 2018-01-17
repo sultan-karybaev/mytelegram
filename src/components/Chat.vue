@@ -6,15 +6,38 @@
 
         <div class="header">
 
-          <div class="header-sidebar" @click="modalContactDisplay = 'display: flex'">
-            <div class="header-sidebar-menu">
-              <div class="header-sidebar-menu-lines">
-                <div class="header-sidebar-menu-line"></div>
-                <div class="header-sidebar-menu-line"></div>
-                <div class="header-sidebar-menu-line"></div>
+          <div class="header-sidebar">
+            <div class="header-sidebar-block" @click="openMenu">
+              <div class="header-sidebar-block-menu">
+                <div class="header-sidebar-block-menu-lines">
+                  <div class="header-sidebar-block-menu-line"></div>
+                  <div class="header-sidebar-block-menu-line"></div>
+                  <div class="header-sidebar-block-menu-line"></div>
+                </div>
+              </div>
+              <div class="header-sidebar-block-company">Chat</div>
+            </div>
+
+            <div class="header-sidebar-down" :style="{display: menuDisplay}">
+              <div class="header-sidebar-down-block">
+                <div class="header-sidebar-down-block-icon">
+                  <img src="../assets/multiple-users-silhouette.svg"/>
+                </div>
+                <div class="header-sidebar-down-block-text">New Group</div>
+              </div>
+              <div class="header-sidebar-down-block" @click="openMenu(); modalContactDisplay = 'display: flex';">
+                <div class="header-sidebar-down-block-icon">
+                  <img src="../assets/user.svg"/>
+                </div>
+                <div class="header-sidebar-down-block-text">Contacts</div>
+              </div>
+              <div class="header-sidebar-down-block">
+                <div class="header-sidebar-down-block-icon">
+                  <img src="../assets/gear.svg"/>
+                </div>
+                <div class="header-sidebar-down-block-text">Settings</div>
               </div>
             </div>
-            <div class="header-sidebar-company">Chat</div>
           </div>
 
           <div class="header-name" @click="clickButton">
@@ -86,7 +109,8 @@
         contacts: [],
         modalContactDisplay: "display: none",
         modalMessageDisplay: "display: none",
-        chatTextarea: ""
+        chatTextarea: "",
+        menuDisplay: "none"
       }
     },
     mounted() {
@@ -99,48 +123,53 @@
       Sidebar
     },
     methods: {
+      openMenu() {
+        if (this.menuDisplay == "none") this.menuDisplay = "block";
+        else this.menuDisplay = "none";
+      },
       createRoom(contact) {
         const vm = this;
-        vm.modalMessageDisplay = "display: flex";
-//        axios.get("http://localhost:3000/get/roomExisting/" + this.myself._id + "/" + contact._id)
-//          .then(function (res) {
-//            let roomProfile = res.data;
-//            if (roomProfile) {
-//              vm.modalContactDisplay = 'display: none';
-//              vm.$store.dispatch('setRoomChosenChatSidebarvue', roomProfile._id);
-//              if (vm.$store.getters.getHasRoomBeenOpened(roomProfile.roomID)) {
-//                vm.$router.push({ name: 'contact', params: { roomID: roomProfile.roomID }});
-//              } else {
-//                axios.get("http://localhost:3000/get/messages/" + roomProfile.roomID)
-//                  .then(function (res) {
-//                    vm.$socket.emit("enterRoom-ChatSidebar.vue-Server", roomProfile.roomID);
-//                    vm.$store.dispatch('setMessagesLoginSidebarvue', res.data);
-//                    vm.$router.push({ name: 'contact', params: { roomID: roomProfile.roomID }});
-//                  })
-//                  .catch(err => console.log(err));
-//              }
-//            } else {
-//              vm.modalMessageDisplay = "display: flex";
-//
-//            }
-//          })
-//          .catch(err => console.log("Chat.vue-methods-createRoom", err));
+        this.contact = contact;
+//        vm.modalMessageDisplay = "display: flex";
+        axios.get("http://localhost:3000/get/roomExisting/" + this.myself._id + "/" + this.contact._id)
+          .then(function (res) {
+            let roomProfile = res.data;
+            if (roomProfile) {
+              vm.modalContactDisplay = 'display: none';
+              vm.$store.dispatch('setRoomChosenChatSidebarvue', roomProfile._id);
+              if (vm.$store.getters.getHasRoomBeenOpened(roomProfile.roomID)) {
+                vm.$router.push({ name: 'contact', params: { roomID: roomProfile.roomID }});
+              } else {
+                axios.get("http://localhost:3000/get/messages/" + roomProfile.roomID)
+                  .then(function (res) {
+                    vm.$socket.emit("enterRoom-ChatSidebar.vue-Server", roomProfile.roomID);
+                    vm.$store.dispatch('setMessagesLoginSidebarvue', res.data);
+                    vm.$router.push({ name: 'contact', params: { roomID: roomProfile.roomID }});
+                  })
+                  .catch(err => console.log(err));
+              }
+            } else {
+              vm.modalMessageDisplay = "display: flex";
+            }
+          })
+          .catch(err => console.log("Chat.vue-methods-createRoom", err));
       },
       clickButton: function(){
         this.$router.push({ name: 'Login'});
       },
       sendFirstMessage() {
-        this.modalMessageDisplay = 'display: none';
-        //vm.$socket.emit("createNewRoom-Chat.vue-Server", vm.myself, contact._id);
+        const vm = this;
         if (this.chatTextarea) {
-          let message = {
+          let firstMessage = {
             type: "Text",
             text: this.chatTextarea,
-            profileID: this.myself._id,
             time: new Date().getTime()
-          }
+          };
+          vm.$socket.emit("createNewRoom-Chat.vue-Server", vm.myself, vm.contact._id, firstMessage);
+          this.modalMessageDisplay = 'display: none';
+          this.modalContactDisplay = 'display: none';
+          this.chatTextarea = "";
         }
-        this.chatTextarea = "";
       }
     },
   }

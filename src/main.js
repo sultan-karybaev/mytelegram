@@ -14,8 +14,12 @@ import './style/all.css'
 Vue.config.productionTip = false;
 
 //Vue.use(VueTextareaAutosize);
-//export const SocketInstance = socketio('http://blablachat.me:8080?username=guest&v=0.2');
-//Vue.use(VueSocketio, SocketInstance);
+// export const SocketInstance = socketio('http://blablachat.me:8080?username=guest&v=0.2');
+// Vue.use(VueSocketio, SocketInstance);
+// Vue.use(VueSocketio, 'http://207.154.201.153:8080/?username=guest');
+let username = 22;
+let password = "9rFqkf2U";
+// Vue.use(VueSocketio, 'http://207.154.201.153:8080/?username='+username+'&password='+password);
 Vue.use(VueSocketio, 'http://localhost:3000');
 Vue.use(AccountKit);
 // Vue.use(axios);
@@ -41,6 +45,11 @@ new Vue({
       console.log(data);
       this.$store.dispatch('setLastMessageMainjs', data);
     },
+    setFirstMessageSocket: function (data) {
+      console.log('setFirstMessageSocket');
+      console.log(data);
+      this.$store.dispatch('setMessagesLoginSidebarvue', data);
+    },
     createNewRoomSocketEmit: function (data) {
       console.log('createNewRoomSocketEmit');
       console.log(data);
@@ -52,9 +61,11 @@ new Vue({
       console.log(data);
       this.$store.dispatch('setNewRoomBroadcastMainjs', data);
     },
-    register: function (data) {
-      console.log("register main");
-      console.log(data);
+    connect: function () {
+      console.log("socket connect");
+    },
+    chatevent: function () {
+      console.log("chatevent");
     }
   },
   template: '<App/>',

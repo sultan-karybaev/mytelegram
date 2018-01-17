@@ -70,18 +70,18 @@ export default new Vuex.Store({
       }
       Event.$emit("Store-to-Contact-pushMessage");
     },
-    //todo
     setLastMessage(state, room){
       for (let i = 0; i < state.roomProfiles.length; i++) {
         if (state.roomProfiles[i].roomID._id == room._id) {
           state.roomProfiles[i].roomID.lastMessageText = room.lastMessageText;
           state.roomProfiles[i].roomID.lastMessageTime = room.lastMessageTime;
-
           if (state.roomProfiles[i].chosen) {
-            for (let j = 0; j < state.roomProfiles.length; j++) {
-              state.roomProfiles[j].index++;
+            if (state.roomProfiles[i].index !== 1) {
+              for (let j = 0; j < state.roomProfiles.length; j++) {
+                state.roomProfiles[j].index++;
+              }
+              state.roomProfiles[i].index = 1;
             }
-            state.roomProfiles[i].index = 1;
           } else {
             state.roomProfiles[i].unreadMessageCount++;
           }

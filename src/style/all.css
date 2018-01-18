@@ -1,6 +1,7 @@
 @import "components/main.css";
 @import "components/modalContacts.css";
 @import "components/modalMessage.css";
+@import "components/modalGroup.css";
 @import "components/audioMessage.css";
 @import "components/writeblock.css";
 @import "components/sidebar.css";

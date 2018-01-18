@@ -53,7 +53,9 @@ new Vue({
     createNewRoomSocketEmit: function (data) {
       console.log('createNewRoomSocketEmit');
       console.log(data);
+      this.myself = this.$store.getters.getUser;
       this.$store.dispatch('setNewRoomEmitMainjs', data);
+      this.$socket.emit("enterRoom-ChatSidebar.vue-Server", data.roomID._id, this.myself._id);
       this.$router.push({ name: 'contact', params: { roomID: data.roomID._id }});
     },
     createNewRoomSocketBroadcast: function (data) {

@@ -61,8 +61,6 @@ export default {
   data () {
     return {
       rooms: [],
-      currentRoomID: "",
-      openedRooms: [],
     }
   },
   components: {
@@ -82,19 +80,11 @@ export default {
 
     for (let i = 0; i < this.rooms.length; i++) {
       if (this.rooms[i].chosen) {
-        document.getElementById("contactNameChat").innerHTML = this.rooms[i].name;
-        this.openedRooms.push(this.rooms[i].roomID._id);
+//        document.getElementById("contactNameChat").innerHTML = this.rooms[i].name;
         this.$socket.emit("enterRoom-ChatSidebar.vue-Server", this.rooms[i].roomID._id, this.myself._id);
         this.$router.push({ name: 'contact', params: { roomID: this.rooms[i].roomID._id }});
       }
     }
-
-
-    //Socket
-//    this.$options.sockets.newLastMessageChatSidebarSocket = (data) => {
-//      console.log("Titanic");
-//      this.setLastMessage(data);
-//    };
   },
   watch: {
     "$store.state.roomProfiles": function (newVal) {
@@ -104,13 +94,14 @@ export default {
   methods: {
     getChat(roomProfile, index) {
       const vm = this;
-      document.getElementById("contactNameChat").innerHTML = roomProfile.name;
+//      document.getElementById("contactNameChat").innerHTML = roomProfile.name;
       this.$store.dispatch('setRoomChosenChatSidebarvue', roomProfile._id);
       if(vm.$store.getters.getHasRoomBeenOpened(roomProfile.roomID._id)) {
         vm.$router.push({ name: 'contact', params: { roomID: roomProfile.roomID._id }});
       } else {
         axios.get("http://localhost:3000/get/messages/" + roomProfile.roomID._id)
           .then(function (res) {
+            console.log("GROUP", res.data);
             vm.$socket.emit("enterRoom-ChatSidebar.vue-Server", roomProfile.roomID._id, vm.myself._id);
             vm.$store.dispatch('setMessagesLoginSidebarvue', res.data);
             vm.$router.push({ name: 'contact', params: { roomID: roomProfile.roomID._id }});
@@ -120,24 +111,13 @@ export default {
     },
     computedTime(time) {
       let months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "Jule", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      console.log("date", new Date(time * 1000 / 1000).getDate());
       return  new Date(time * 1000 / 1000).getDate() + " " + months[new Date(time * 1000 / 1000).getMonth()];
-    },
-    setLastMessage(lastMessage) {
-      console.log("setLastMessage");
-      for (let i = 0; i < this.rooms.length; i++) {
-        if (this.rooms[i].roomID == lastMessage.roomID) {
-          console.log("message", lastMessage);
-          console.log("this.rooms[i].lastMessageText", this.rooms[i].lastMessageText);
-          this.rooms[i].lastMessageText = lastMessage.text;
-          this.rooms[i].lastMessageTime = lastMessage.time;
-          if (this.rooms[i].roomID !== this.currentRoomID) this.rooms[i].unreadMessageCount++;
-        }
-      }
     }
   }
 }
 </script>
+
+
 
 
 <style scoped>

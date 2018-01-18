@@ -6,7 +6,8 @@ let roomProfile = mongoose.Schema({
   index: Number,
   chosen: Boolean,
   name: String,
-  img: String
+  img: String,
+  admin: Boolean
 }, { versionKey: false });
 
 module.exports = mongoose.model("roomProfile", roomProfile);

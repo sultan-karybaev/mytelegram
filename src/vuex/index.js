@@ -75,16 +75,13 @@ export default new Vuex.Store({
         if (state.roomProfiles[i].roomID._id == room._id) {
           state.roomProfiles[i].roomID.lastMessageText = room.lastMessageText;
           state.roomProfiles[i].roomID.lastMessageTime = room.lastMessageTime;
-          if (state.roomProfiles[i].chosen) {
-            if (state.roomProfiles[i].index !== 1) {
-              for (let j = 0; j < state.roomProfiles.length; j++) {
-                state.roomProfiles[j].index++;
-              }
-              state.roomProfiles[i].index = 1;
+          if (state.roomProfiles[i].index !== 1) {
+            for (let j = 0; j < state.roomProfiles.length; j++) {
+              state.roomProfiles[j].index++;
             }
-          } else {
-            state.roomProfiles[i].unreadMessageCount++;
+            state.roomProfiles[i].index = 1;
           }
+          if (!state.roomProfiles[i].chosen) state.roomProfiles[i].unreadMessageCount++;
         }
       }
       Event.$emit("Store-to-Sidebar-lastMessage");
@@ -146,14 +143,24 @@ export default new Vuex.Store({
               src: messages[j].src,
               time: messages[j].time,
               type: messages[j].type,
+              secondPerson: messages[j].secondPerson
             };
 
             //console.log(senderID !== state.messages[i].senderID);
-            if (user._id !== messages[j].profileID._id) {
+            if (messages[j].type == "System") {
+              user = {_id: 0};
+              currentIndex++;
+              array.push({
+                profile: messages[j].profileID,
+                messageType: messages[j].type,
+                messageArray: [messageParams]
+              });
+            } else if (user._id !== messages[j].profileID._id) {
               user = messages[j].profileID;
               currentIndex++;
               array.push({
                 profile: messages[j].profileID,
+                messageType: messages[j].type,
                 messageArray: [messageParams]
               });
             } else {

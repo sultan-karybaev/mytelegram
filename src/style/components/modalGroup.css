@@ -1,0 +1,79 @@
+.modalGroup-center{
+  width: 300px;
+  height: 700px;
+  background-color: #f5ecff;
+  z-index: 3;
+  position: relative;
+}
+  .modalGroup-center-name{
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+    .modalGroup-center-name input{
+      width: 260px;
+      height: 30px;
+      outline: none;
+      background: rgba(0, 0, 0, 0);
+      border: none;
+      border-bottom: 3px solid #29434e;
+    }
+  .modalGroup-center-typeGroup{
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 0 20px;
+  }
+    .modalGroup-center-typeGroup-button{
+      width: 100px;
+      height: 30px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      border: 2px solid #29434e;
+      text-align: center;
+      line-height: 30px;
+      font-size: 14px;
+      letter-spacing: 2px;
+      cursor: pointer;
+    }
+    .typeGroupChosen{
+      background-color: #29434e;
+      color: white;
+    }
+    .typeGroupUnchosen{
+      background-color: white;
+      color: #29434e;
+    }
+  .modalGroup-center-contacts{
+    width: 100%;
+    height: 500px
+  }
+
+  .modalGroup-center-bottom{
+    width: 100%;
+    height: 60px;
+    border-top: 1px solid #b8b8b8;
+    box-sizing: border-box;
+    position: absolute;
+    bottom: 0;
+    opacity: 0;
+    display: none;
+  }
+    .modalGroup-center-bottom-button{
+      width: 200px;
+      height: 30px;
+      background-color: #29434e;
+      color: white;
+      font-weight: 700;
+      font-size: 12px;
+      border-radius: 3px;
+      line-height: 30px;
+      cursor: pointer;
+      text-align: center;
+      margin: 15px auto;
+    }

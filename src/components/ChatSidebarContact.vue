@@ -8,23 +8,66 @@
 
           <div id="mems2" style="height: calc(100% - 160px); overflow-y: scroll; position: relative; display: flex; align-items: flex-end">
             <div style="position: absolute; bottom: 0; width: 100%" ref="allMessages">
-                  <div class="downsection-maincontent-messageblock-message"    v-for="(message, messageIndex) in messages">
-                    <div class="downsection-maincontent-messageblock-message-check">
-                      <img src="../assets/tick.svg" style="width: 26px; height: 26px" class="downsection-maincontent-messageblock-message-check-icon">
-                    </div>
-                    <div class="downsection-maincontent-messageblock-message-text">
-                      <div class="downsection-maincontent-messageblock-message-text-contact">
-                        <div class="downsection-maincontent-messageblock-message-text-contact-icon">
-                          <div class="downsection-maincontent-messageblock-message-text-contact-icon-circle"
-                               :style="{ 'background-image': 'url(' + message.profile.avatar + ')' }"></div>
+                  <div   style="width: 100%"  v-for="(message, messageIndex) in messages">
+
+                    <!--todo style-->
+                    <template v-if="message.messageType == 'System'">
+                      <div style="width: 100%; text-align: center; font-size: 12px; margin: 10px 0;">
+                        <span style="cursor: pointer; color: rebeccapurple; font-weight: 700" @click="testFirst">
+                          {{message.profile.firstName}} {{message.profile.lastName}}
+                        </span>
+                        {{message.messageArray[0].text}}
+                        <template v-if="message.messageArray[0].secondPerson">
+                          <span style="cursor: pointer; color: brown; font-weight: 700" @click="testSecond">{{message.messageArray[0].secondPerson.firstName}} {{message.messageArray[0].secondPerson.lastName}}</span>
+                        </template>
+                      </div>
+                    </template>
+
+                    <template v-else>
+
+                      <div class="downsection-maincontent-messageblock-message" v-for="(text, textIndex) in message.messageArray"
+                           @click="accentMessage(messageIndex, textIndex)">
+
+                        <div class="downsection-maincontent-messageblock-message-check">
+                          <img src="../assets/tick.svg" style="width: 26px; height: 26px" class="downsection-maincontent-messageblock-message-check-icon">
                         </div>
-                        <div class="downsection-maincontent-messageblock-message-text-contact-info">
-                          <div class="downsection-maincontent-messageblock-message-text-contact-info-person" >{{message.profile.firstName}}</div>
-                            <div v-for="(text, textIndex) in message.messageArray" style="position: relative">
+
+                        <template v-if="textIndex == 0">
+                          <div class="downsection-maincontent-messageblock-message-text">
+                            <div class="downsection-maincontent-messageblock-message-text-contact">
+                              <div class="downsection-maincontent-messageblock-message-text-contact-icon">
+                                <div class="downsection-maincontent-messageblock-message-text-contact-icon-circle"
+                                     :style="{ 'background-image': 'url(' + message.profile.avatar + ')' }"></div>
+                              </div>
+                              <div class="downsection-maincontent-messageblock-message-text-contact-info">
+                                <div class="downsection-maincontent-messageblock-message-text-contact-info-person" >{{message.profile.firstName}}</div>
+                                  <!--<div v-for="(text, textIndex) in message.messageArray" style="position: relative">-->
+                                    <template v-if="text.type == 'Text'">
+                                      <div class="downsection-maincontent-messageblock-message-text-contact-info-message" v-html="text.text"></div>
+                                    </template>
+                                    <template v-if="text.type == 'Audio'">
+                                      <audio-file :audioWay=text.src />
+                                    </template>
+                                    <template v-if="text.type == 'Image'">
+                                      <img :src=text.src style="width: 300px"/>
+                                    </template>
+
+                                  <!--</div>-->
+                              </div>
+                              <div class="downsection-maincontent-messageblock-message-text-contact-time"
+                                   v-text="computedTime(text.time)">
+                              </div>
+                            </div>
+                          </div>
+                        </template>
+
+                        <template v-else>
+                          <div style="width: 80%; height: 100%; display: flex">
+                            <div style="width: 20%"></div>
+
+                            <div style="width: 80%; height: 100%; position: relative;">
                               <template v-if="text.type == 'Text'">
-                                <div class="downsection-maincontent-messageblock-message-text-contact-info-message"
-                                     v-html="text.text" @click="testMethod(messageIndex, textIndex)">
-                                </div>
+                                <div class="downsection-maincontent-messageblock-message-text-contact-info-message" v-html="text.text"></div>
                               </template>
                               <template v-if="text.type == 'Audio'">
                                 <audio-file :audioWay=text.src />
@@ -32,18 +75,20 @@
                               <template v-if="text.type == 'Image'">
                                 <img :src=text.src style="width: 300px"/>
                               </template>
-
                               <div class="downsection-maincontent-messageblock-message-text-contact-time"
-                                   v-text="computedTime(message.messageArray[0].time, textIndex)">
+                                   v-text="computedTime(text.time)">
                               </div>
-
                             </div>
-                        </div>
-                        <div class="downsection-maincontent-messageblock-message-text-contact-time"
-                             v-text="computedTime(message.messageArray[0].time)">
-                        </div>
+
+                          </div>
+                        </template>
+
+
                       </div>
-                    </div>
+                    </template>
+
+
+
                   </div>
             </div>
           </div>
@@ -123,7 +168,7 @@ export default {
     this.myself = this.$store.getters.getUser;
     this.messages = this.$store.getters.getMessages(this.$route.params.roomID);
     this.roomProfile = this.$store.getters.getRoomProfile(this.$route.params.roomID);
-    console.log("this.roomProfile", this.roomProfile);
+    console.log("this.messages", this.messages);
 
     const vm = this;
     Event.$on("Store-to-Contact-pushMessage", function () {
@@ -134,7 +179,7 @@ export default {
   mounted() {
     $("#textarea").emojioneArea();
     Recorder.setupDownload = (blob, filename) => {
-      let random = Math.floor(Math.random() * 1000000)
+      let random = Math.floor(Math.random() * 1000000);
       let audioData = {
         name: random
       };
@@ -212,21 +257,11 @@ export default {
         emoji[0].innerHTML = "";
       }
     },
-    testMethod(messageIndex, textIndex) {
-      let icon = this.$refs.allMessages.children[messageIndex].children[1].children[0].children[0];
-      let name = this.$refs.allMessages.children[messageIndex].children[1].children[0].children[1].children[0];
-      let message = this.$refs.allMessages.children[messageIndex].children[1].children[0].children[1].children[textIndex + 1];
-
+    accentMessage(messageIndex, textIndex) {
+      let message = this.$refs.allMessages.children[messageIndex].children[textIndex];
       let color = "#819ca9";
-      if (message.style.backgroundColor == "rgb(129, 156, 169)") color = "white";
-
-      if (textIndex > 0) {
-        message.style.backgroundColor = color;
-      } else {
-        icon.style.backgroundColor = color;
-        name.style.backgroundColor = color;
-        message.style.backgroundColor = color;
-      }
+      if (message.style.backgroundColor == "rgb(129, 156, 169)") color = "";
+      message.style.backgroundColor = color;
     },
     sendImage(event) {
       this.someData = event.target.files[0];
@@ -247,6 +282,12 @@ export default {
 
       console.log(imgData);
       this.$socket.emit("File-ChatSidebarContact.vue-Server", event.target.files[0], imgMessage, imgData);
+    },
+    testFirst() {
+      console.log('FIRST')
+    },
+    testSecond() {
+      console.log('SECOND')
     }
   },
 }

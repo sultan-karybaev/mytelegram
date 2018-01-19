@@ -40,14 +40,15 @@
             </div>
           </div>
 
-          <div class="header-name" >
+          <div class="header-name" @click="getRoomInfo">
             <div class="header-name-person" v-text="roomProfile.name"></div>
             <div class="header-name-index">last seen 20 minutes ago</div>
+            <!--last seen 20 minutes ago-->
           </div>
           <div class="header-search" @click="clickButton">
             <img src="../assets/search-white.svg" style="width: 20px; height: 20px">
           </div>
-          <div class="header-settings">
+          <div class="header-settings" @click="modalGroupInfoDisplay = 'display: flex'">
             <div class="header-settings-circles">
               <div class="header-settings-circle"></div>
               <div class="header-settings-circle"></div>
@@ -80,7 +81,7 @@
         <div class="modal-drop" @click="modalContactDisplay = 'display: none'"></div>
       </section>
 
-      <section class="modalWindow" :style=modalMessageDisplay>
+      <section class="modalWindow" :style=modalMessageDisplay style="z-index: 5">
         <div class="modalMessage-center">
           <div class="modal-header">Write a message</div>
           <div class="modalMessage-center-middle">
@@ -123,6 +124,110 @@
         <div class="modal-drop" @click="modalGroupDisplay = 'display: none'"></div>
       </section>
 
+      <section class="modalWindow" :style=modalPersonDisplay>
+        <div class="modalPerson-center">
+          <div class="modal-header">Contact info</div>
+          <div class="modalPerson-center-person">
+            <div class="modalPerson-center-person-left">
+              <div class="modalPerson-center-person-left-icon" :style="{ 'background-image': 'url(' + contactInfo.avatar + ')' }"></div>
+            </div>
+            <div class="modalPerson-center-person-right">
+              <div class="modalPerson-center-person-name">{{contactInfo.firstName}}</div>
+              <div class="modalPerson-center-person-name">{{contactInfo.lastName}}</div>
+            </div>
+          </div>
+          <div class="modalPerson-center-phone">
+            <div class="modalPerson-center-phone-left">
+              <img src="../assets/phone-receiver.svg"/>
+            </div>
+            <div class="modalPerson-center-phone-right">
+              {{contactInfo.phone}}
+            </div>
+          </div>
+        </div>
+        <div class="modal-drop" @click="closePersonModal"></div>
+      </section>
+
+      <section class="modalWindow" :style=modalGroupInfoDisplay>
+        <div class="modalGroupInfo-center">
+          <div class="modal-header">Group info</div>
+          <div class="modalGroupInfo-center-group">
+            <div class="modalGroupInfo-center-group-left">
+              <div class="modalGroupInfo-center-group-left-icon" :style="{ 'background-image': 'url(' + roomProfile.img + ')' }"></div>
+            </div>
+            <div class="modalGroupInfo-center-group-right">
+              <div class="modalGroupInfo-center-group-name">{{roomProfile.name}}</div>
+              <div class="modalGroupInfo-center-group-members">{{roomProfile.roomID.memberCount}} members</div>
+            </div>
+          </div>
+          <div class="modalGroupInfo-center-invite" v-if="roomProfile.admin">
+            <div class="modalGroupInfo-center-invite-left">
+              <img src="../assets/user.svg"/>
+            </div>
+            <div class="modalGroupInfo-center-invite-right">
+              <p @click="modalAddNewMemberDisplay = 'display: flex'">add new member</p>
+            </div>
+          </div>
+          <div class="modalGroupInfo-center-block">you</div>
+          <div class="modalGroupInfo-center-personBlock">
+            <div class="modalGroupInfo-center-personBlock-person">
+                <div class="modalGroupInfo-center-personBlock-person-icon">
+                  <div class="modalGroupInfo-center-personBlock-person-icon-circle" :style="{ 'background-image': 'url(' + myself.avatar + ')' }"></div>
+                </div>
+                <div class="modalGroupInfo-center-personBlock-person-username">
+                  {{myself.firstName}}  {{myself.lastName}}
+                </div>
+            </div>
+            <div class="modalGroupInfo-center-personBlock-buttons"></div>
+          </div>
+          <div class="modalGroupInfo-center-block">admins</div>
+          <div class="modalGroupInfo-center-personBlock" v-for="(admin, index) in admins" @click="adminClick(index)">
+            <div class="modalGroupInfo-center-personBlock-person">
+              <div class="modalGroupInfo-center-personBlock-person-icon">
+                <div class="modalGroupInfo-center-personBlock-person-icon-circle" :style="{ 'background-image': 'url(' + admin.profileID.avatar + ')' }"></div>
+              </div>
+              <div class="modalGroupInfo-center-personBlock-person-username">
+                {{admin.profileID.firstName}}  {{admin.profileID.lastName}}
+              </div>
+            </div>
+            <div class="modalGroupInfo-center-personBlock-buttons"></div>
+          </div>
+          <div class="modalGroupInfo-center-block">members</div>
+          <div class="modalGroupInfo-center-personBlock" v-for="(member, index) in members" @click="memberClick(index)">
+            <div class="modalGroupInfo-center-personBlock-person">
+              <div class="modalGroupInfo-center-personBlock-person-icon">
+                <div class="modalGroupInfo-center-personBlock-person-icon-circle" :style="{ 'background-image': 'url(' + member.profileID.avatar + ')' }"></div>
+              </div>
+              <div class="modalGroupInfo-center-personBlock-person-username">
+                {{member.profileID.firstName}}  {{member.profileID.lastName}}
+              </div>
+            </div>
+            <div class="modalGroupInfo-center-personBlock-buttons"></div>
+          </div>
+        </div>
+        <div class="modal-drop" @click="modalGroupInfoDisplay = 'display: none'"></div>
+      </section>
+
+      <section class="modalWindow" :style=modalAddNewMemberDisplay style="z-index: 5">
+        <div class="modalContacts-center">
+          <div class="modal-header">Add new member</div>
+          <div class="modalContacts-center-contacts" ref="modalMember">
+            <div class="modal-contact" v-for="(contact, index) in contacts" @click="addNewMember(index)">
+              <div class="modal-contact-icon">
+                <div class="modal-contact-icon-circle" :style="{ 'background-image': 'url(' + contact.avatar + ')' }"></div>
+              </div>
+              <div class="modal-contact-username">{{contact.firstName}}  {{contact.lastName}}</div>
+            </div>
+          </div>
+
+          <div class="modalGroup-center-bottom" ref="modalMemberBottom">
+            <div class="modalGroup-center-bottom-button" @click="addMembersToGroup">Add new members</div>
+          </div>
+
+        </div>
+        <div class="modal-drop" @click="modalAddNewMemberDisplay = 'display: none'"></div>
+      </section>
+
     </section>
 
       </div>
@@ -139,21 +244,54 @@
     data () {
       return {
         contacts: [],
+        admins: [],
+        members: [],
         modalContactDisplay: "display: none",
         modalMessageDisplay: "display: none",
         modalGroupDisplay: "display: none",
+        modalPersonDisplay: "display: none",
+        modalGroupInfoDisplay: "display: none",
+        modalAddNewMemberDisplay: "display: none",
         chatTextarea: "",
         menuDisplay: "none",
         groupIndexes: [],
+        memberIndexes: [],
         publicClass: "typeGroupChosen",
         privateClass: "typeGroupUnchosen",
         groupName: "",
-        roomProfile: {}
+        roomProfile: {roomID: {}},
+        contactInfo: {},
+        groupInfo: {},
+        myself: {},
+        groupBoolean: false
       }
+    },
+    created() {
+      const vm = this;
+      Event.$on("From-Contact-To-Chat", function (profileID) {
+        console.log("From-Contact-To-Chat");
+        console.log(profileID);
+        axios.get("http://localhost:3000/get/profile/" + profileID)
+          .then(function (res) {
+            console.log(res.data);
+            vm.contactInfo = res.data;
+            vm.modalPersonDisplay = 'display: flex';
+          })
+          .catch(err => console.log(err));
+      });
     },
     mounted() {
       this.myself = this.$store.getters.getUser;
       this.contacts = this.$store.getters.getContacts;
+//      this.rooms = this.$store.getters.getRooms;
+//
+//      for (let i = 0; i < this.rooms.length; i++) {
+//        if (this.rooms[i].chosen) {
+//          this.roomProfile = this.$store.getters.getRoomProfile(this.rooms[i].roomID._id);
+//          console.log("CHAT");
+//          console.log(this.roomProfile);
+//        }
+//      }
 
 //      if (!this.$store.getters.getExistingUserAccount) this.$router.push({ name: 'Login'});
     },
@@ -217,7 +355,6 @@
         }
       },
       addContact(index) {
-        console.log(index);
         if (this.$refs.modalGroup.children[index].style.backgroundColor == "rgb(41, 67, 78)") {
           this.$refs.modalGroup.children[index].style.backgroundColor = "";
           this.$refs.modalGroup.children[index].children[1].style.color = "";
@@ -238,6 +375,35 @@
           this.$refs.modalGroupBottom.style.display = "none";
           this.$refs.modalGroupBottom.style.opacity = 0;
         }
+      },
+      addNewMember(index) {
+        if (this.$refs.modalMember.children[index].style.backgroundColor == "rgb(41, 67, 78)") {
+          this.$refs.modalMember.children[index].style.backgroundColor = "";
+          this.$refs.modalMember.children[index].children[1].style.color = "";
+          for (let i = 0; i < this.memberIndexes.length; i++) {
+            if (this.memberIndexes[i] == index) this.memberIndexes.splice(i, 1);
+          }
+        } else {
+          this.$refs.modalMember.children[index].style.backgroundColor = "#29434e";
+          this.$refs.modalMember.children[index].children[1].style.color = "#f5ecff";
+          this.memberIndexes.push(index);
+        }
+
+        if (this.memberIndexes.length > 0) {
+          this.$refs.modalMemberBottom.style.display = "block";
+          this.$refs.modalMemberBottom.style.opacity = 1;
+        } else {
+          this.$refs.modalMemberBottom.style.display = "none";
+          this.$refs.modalMemberBottom.style.opacity = 0;
+        }
+      },
+      addMembersToGroup() {
+        let profileArray = [];
+        for (let i = 0; i < this.memberIndexes.length; i++) {
+          profileArray.push(this.contacts[this.memberIndexes[i]]);
+        }
+        this.$socket.emit("addMembersToGroup-Chat.vue-Server", this.roomProfile, profileArray);
+        this.modalAddNewMemberDisplay = 'display: none';
       },
       createNewGroup() {
         let roomType;
@@ -260,15 +426,62 @@
 
         let profileArray = [];
 
-        console.log("createNewGroup");
-        console.log(this.groupName);
         for (let i = 0; i < this.groupIndexes.length; i++) {
-          console.log(this.contacts[this.groupIndexes[i]].firstName + " " + this.contacts[this.groupIndexes[i]].lastName);
           profileArray.push(this.contacts[this.groupIndexes[i]]);
         }
 
         this.$socket.emit("createNewGroup-Chat.vue-Server", this.myself, room, message, this.groupName, profileArray);
+        this.modalGroupDisplay = 'display: none';
       },
+      getRoomInfo() {
+        const vm = this;
+        if (this.roomProfile.roomID.typeRoom == "Standart") {
+          let data = {
+            roomID: this.roomProfile.roomID._id,
+            profileID: this.myself._id
+          };
+          axios.post("http://localhost:3000/post/getContactViaRoom", data)
+            .then(function (res) {
+              console.log(res.data);
+              vm.contactInfo = res.data;
+              vm.modalPersonDisplay = 'display: flex';
+            })
+            .catch(err => console.log(err));
+        } else {
+          const vm = this;
+          axios.get("http://localhost:3000/get/admins/" + vm.roomProfile.roomID._id,)
+            .then(function (res) {
+              console.log("Admin");
+              console.log(res.data);
+              vm.admins = res.data;
+            })
+            .catch(err => console.log(err));
+          axios.get("http://localhost:3000/get/members/" + vm.roomProfile.roomID._id,)
+            .then(function (res) {
+              console.log("Member");
+              console.log(res.data);
+              vm.members = res.data;
+            })
+            .catch(err => console.log(err));
+          this.modalGroupInfoDisplay = 'display: flex';
+        }
+      },
+      adminClick(index) {
+        this.contactInfo = this.admins[index].profileID;
+        this.modalPersonDisplay = 'display: flex';
+        this.modalGroupInfoDisplay = 'display: none';
+        this.groupBoolean = true;
+      },
+      memberClick(index) {
+        this.contactInfo = this.members[index].profileID;
+        this.modalPersonDisplay = 'display: flex';
+        this.modalGroupInfoDisplay = 'display: none';
+        this.groupBoolean = true;
+      },
+      closePersonModal() {
+        this.modalPersonDisplay = 'display: none';
+        if (this.groupBoolean) this.modalGroupInfoDisplay = 'display: flex'; this.groupBoolean = false;
+      }
     },
   }
 </script>

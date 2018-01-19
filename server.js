@@ -83,11 +83,18 @@ app.post("/post/login", function (req, res) {
 });
 
 app.get("/get/contacts/:profileID", function (req, res) {
-  console.log(req.params.profileID);
   Profile.find({_id: { $ne: req.params.profileID}})
     .exec(function (err, profiles) {
       if (err) return console.log(err);
       res.send(profiles);
+    });
+});
+
+app.get("/get/profile/:profileID", function (req, res) {
+  Profile.findById(req.params.profileID)
+    .exec(function (err, profile) {
+      if (err) return res.sendStatus(400).end();
+      res.send(profile);
     });
 });
 
@@ -150,6 +157,38 @@ app.get("/get/roomExisting/:profileID/:contactID", function (req, res) {
         res.send(existing);
       });
     });
+});
+
+//chat.vue
+app.post("/post/getContactViaRoom", function (req, res) {
+  RoomProfile.findOne({roomID: req.body.roomID, profileID: { $ne: req.body.profileID}}).populate("profileID")
+    .exec(function (err, roomProfile) {
+      if (err) return res.sendStatus(400).end();
+      console.log(roomProfile);
+      res.send(roomProfile.profileID);
+    });
+});
+
+app.get("/get/admins/:roomID", function (req, res) {
+  RoomProfile.find({roomID: req.params.roomID, admin: true}).populate("profileID")
+    .exec(function (err, roomProfiles) {
+      if (err) return res.sendStatus(400).end();
+      console.log(roomProfiles);
+      res.send(roomProfiles);
+    });
+});
+
+app.get("/get/members/:roomID", function (req, res) {
+  RoomProfile.find({roomID: req.params.roomID, admin: false}).populate("profileID")
+    .exec(function (err, roomProfiles) {
+      if (err) return res.sendStatus(400).end();
+      console.log(roomProfiles);
+      res.send(roomProfiles);
+    });
+});
+
+app.post("/post/newMembers", function (req, res) {
+
 });
 
 app.post("/post/audio", upload.single("audiofile"), function (req, res, next) {
@@ -569,29 +608,17 @@ function socketEvents(io) {
         });
     });
 
-    // socket.on("image-ChatSidebarContact.vue-Server", function (data, img, message) {
-    //   console.log("image");
-    //   console.log(data);
-    //   console.log(img);
-    //   console.log(message);
-    //   let lastMessage = {
-    //     roomID: message.roomID,
-    //     text: "Image",
-    //     time: message.time,
-    //   };
-    //   message.text = "<img src=\"static/img/" + img.name + "\" style=\"width: 320px\"/>";
-    //   fs.writeFile(__dirname + "/static/img/" + img.name, data,  "binary", function(err) {
-    //     if(err) {
-    //       console.log(err);
-    //     } else {
-    //       console.log("The file was saved!");
-    //       socket.emit("setMessageSocket", message);
-    //       socket.broadcast.emit("setMessageSocket", message);
-    //       // socket.emit("newLastMessageChatSidebarSocket", lastMessage);
-    //       // socket.broadcast.emit("newLastMessageChatSidebarSocket", lastMessage);
-    //     }
-    //   });
-    // });
+
+    //todo
+    socket.on("addMembersToGroup-Chat.vue-Server", function (roomProfile, profileArray) {
+      console.log("addMembersToGroup-Chat.vue-Server");
+      console.log(roomProfile);
+      console.log(profileArray);
+
+
+    });
+
+
   });
 }
 

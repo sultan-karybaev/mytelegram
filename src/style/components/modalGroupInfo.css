@@ -1,0 +1,125 @@
+.modalGroupInfo-center{
+  width: 500px;
+  z-index: 3;
+  background-color: white;
+}
+  .modalGroupInfo-center-group{
+    width: 100%;
+    height: 160px;
+    box-sizing: border-box;
+    /*background-color: #6079bb;*/
+    display: flex;
+  }
+    .modalGroupInfo-center-group-left{
+      width: 50%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+      .modalGroupInfo-center-group-left-icon{
+        width: 140px;
+        height: 140px;
+        border-radius: 70px;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+      }
+    .modalGroupInfo-center-group-right{
+      width: 50%;
+      height: 100%;
+    }
+      .modalGroupInfo-center-group-name{
+        width: 100%;
+        height: 60px;
+        line-height: 60px;
+        color: #29434e;
+        font-weight: 700;
+        text-align: left;
+      }
+      .modalGroupInfo-center-group-members{
+        width: 100%;
+        height: 60px;
+        line-height: 60px;
+        color: #29434e;
+        text-align: left;
+      }
+  .modalGroupInfo-center-invite{
+    width: 100%;
+    height: 60px;
+    display: flex;
+  }
+    .modalGroupInfo-center-invite-left{
+      width: 50%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+      .modalGroupInfo-center-invite-left img{
+        width: 30px;
+      }
+    .modalGroupInfo-center-invite-right{
+      width: 50%;
+      height: 100%;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    .modalGroupInfo-center-invite-right p:hover{
+      color: #6079bb;
+    }
+  .modalGroupInfo-center-block{
+    width: 100%;
+    height: 20px;
+    text-transform: uppercase;
+    color: #b8b8b8;
+    font-weight: 700;
+    border-bottom: 1px solid #b8b8b8;
+    line-height: 20px;
+    padding: 0 55px;
+    box-sizing: border-box;
+  }
+  .modalGroupInfo-center-personBlock{
+    width: 100%;
+    height: 60px;
+    display: flex;
+  }
+    .modalGroupInfo-center-personBlock-person{
+      width: 70%;
+      height: 100%;
+      display: flex;
+      cursor: pointer;
+      box-sizing: border-box;
+      padding-left: 55px;
+    }
+        .modalGroupInfo-center-personBlock-person-icon{
+          width: 60px;
+          height: 100%;
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+        }
+        .modalGroupInfo-center-personBlock-person-icon-circle{
+          width: 40px;
+          height: 40px;
+          border-radius: 20px;
+          background-size: cover;
+          background-repeat: no-repeat;
+          background-position: center center;
+        }
+        .modalGroupInfo-center-personBlock-person-username{
+          width: calc(100% - 115px);
+          height: 60px;
+          line-height: 60px;
+          color: #29434e;
+          font-weight: 700;
+          text-align: left;
+          transition: 200ms;
+        }
+    .modalGroupInfo-center-personBlock-buttons{
+      width: 30%;
+      height: 100%;
+      background-color: #ff6ba6;
+    }

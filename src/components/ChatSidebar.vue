@@ -76,7 +76,6 @@ export default {
   mounted(){
     this.myself = this.$store.getters.getUser;
     this.rooms = this.$store.getters.getRooms;
-    this.messagesTest = this.$store.getters.getMessegesTest;
 
     for (let i = 0; i < this.rooms.length; i++) {
       if (this.rooms[i].chosen) {

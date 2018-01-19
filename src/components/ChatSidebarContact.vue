@@ -13,12 +13,14 @@
                     <!--todo style-->
                     <template v-if="message.messageType == 'System'">
                       <div style="width: 100%; text-align: center; font-size: 12px; margin: 10px 0;">
-                        <span style="cursor: pointer; color: rebeccapurple; font-weight: 700" @click="testFirst">
+                        <span style="cursor: pointer; color: rebeccapurple; font-weight: 700" @click="getContactInfo(message.profile._id)">
                           {{message.profile.firstName}} {{message.profile.lastName}}
                         </span>
                         {{message.messageArray[0].text}}
                         <template v-if="message.messageArray[0].secondPerson">
-                          <span style="cursor: pointer; color: brown; font-weight: 700" @click="testSecond">{{message.messageArray[0].secondPerson.firstName}} {{message.messageArray[0].secondPerson.lastName}}</span>
+                          <span style="cursor: pointer; color: brown; font-weight: 700" @click="getContactInfo(message.messageArray[0].secondPerson._id)">
+                            {{message.messageArray[0].secondPerson.firstName}} {{message.messageArray[0].secondPerson.lastName}}
+                          </span>
                         </template>
                       </div>
                     </template>
@@ -283,12 +285,9 @@ export default {
       console.log(imgData);
       this.$socket.emit("File-ChatSidebarContact.vue-Server", event.target.files[0], imgMessage, imgData);
     },
-    testFirst() {
-      console.log('FIRST')
+    getContactInfo(profileID) {
+      Event.$emit("From-Contact-To-Chat", profileID);
     },
-    testSecond() {
-      console.log('SECOND')
-    }
   },
 }
 </script>

@@ -1,0 +1,60 @@
+.modalPerson-center{
+  width: 500px;
+  z-index: 8;
+  background-color: white;
+}
+  .modalPerson-center-person{
+    width: 100%;
+    height: 160px;
+    box-sizing: border-box;
+    /*background-color: #6079bb;*/
+    display: flex;
+  }
+    .modalPerson-center-person-left{
+      width: 50%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+      .modalPerson-center-person-left-icon{
+        width: 140px;
+        height: 140px;
+        border-radius: 70px;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+      }
+    .modalPerson-center-person-right{
+      width: 50%;
+      height: 100%;
+    }
+      .modalPerson-center-person-name{
+        width: 100%;
+        height: 60px;
+        line-height: 60px;
+        color: #29434e;
+        font-weight: 700;
+        text-align: left;
+      }
+  .modalPerson-center-phone{
+    width: 100%;
+    height: 60px;
+    display: flex;
+  }
+    .modalPerson-center-phone-left{
+      width: 50%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+      .modalPerson-center-phone-left img{
+        width: 30px;
+      }
+    .modalPerson-center-phone-right{
+      width: 50%;
+      height: 100%;
+      line-height: 60px;
+      font-size: 16px;
+    }

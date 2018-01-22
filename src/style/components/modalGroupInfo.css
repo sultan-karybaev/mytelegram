@@ -87,7 +87,7 @@
     display: flex;
   }
     .modalGroupInfo-center-personBlock-person{
-      width: 70%;
+      width: 60%;
       height: 100%;
       display: flex;
       cursor: pointer;
@@ -119,7 +119,27 @@
           transition: 200ms;
         }
     .modalGroupInfo-center-personBlock-buttons{
-      width: 30%;
+      width: 40%;
       height: 100%;
-      background-color: #ff6ba6;
+      display: flex;
     }
+      .modalGroupInfo-center-personBlock-buttons-button{
+        height: 100%;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        opacity: 1;
+        transition: 300ms;
+      }
+        .modalGroupInfo-center-personBlock-buttons-button p {
+          cursor: pointer;
+          color: black;
+          transition: 200ms;
+        }
+      .modalGroupInfo-center-personBlock-buttons:hover .modalGroupInfo-center-personBlock-buttons-button{
+        display: flex;
+        opacity: 1;
+      }
+      .modalGroupInfo-center-personBlock-buttons-button p:hover {
+        color: #6079bb;
+      }

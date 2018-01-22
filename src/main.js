@@ -40,10 +40,10 @@ new Vue({
       console.log(data);
       this.$store.dispatch('setMessageMainjs', data);
     },
-    setLastMessageSocket: function (data) {
+    updateRoomProfileSocket: function (roomProfile) {
       console.log('setLastMessageSocket');
-      console.log(data);
-      this.$store.dispatch('setLastMessageMainjs', data);
+      console.log(roomProfile);
+      this.$store.dispatch('updateRoomProfileMainjs', roomProfile);
     },
     setFirstMessageSocket: function (data) {
       console.log('setFirstMessageSocket');

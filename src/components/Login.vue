@@ -84,7 +84,7 @@
                 .then(function (res) {
                   for (let i = 0; i < res.data.length; i++) {
                     if (res.data[i].chosen) {
-                      axios.get("http://localhost:3000/get/messages/" + res.data[i].roomID._id)
+                      axios.get("http://localhost:3000/get/messages/" + res.data[i]._id)
                         .then(res => vm.$store.dispatch('setMessagesLoginSidebarvue', res.data))
                         .catch(err => console.log(err));
                       break;

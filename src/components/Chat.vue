@@ -193,8 +193,8 @@
             <div class="modalGroupInfo-center-personBlock-buttons"></div>
           </div>
           <div class="modalGroupInfo-center-block">members</div>
-          <div class="modalGroupInfo-center-personBlock" v-for="(member, index) in members" @click="memberClick(index)">
-            <div class="modalGroupInfo-center-personBlock-person">
+          <div class="modalGroupInfo-center-personBlock" v-for="(member, index) in members">
+            <div class="modalGroupInfo-center-personBlock-person" @click="memberClick(index)">
               <div class="modalGroupInfo-center-personBlock-person-icon">
                 <div class="modalGroupInfo-center-personBlock-person-icon-circle" :style="{ 'background-image': 'url(' + member.profileID.avatar + ')' }"></div>
               </div>
@@ -202,7 +202,14 @@
                 {{member.profileID.firstName}}  {{member.profileID.lastName}}
               </div>
             </div>
-            <div class="modalGroupInfo-center-personBlock-buttons"></div>
+            <div class="modalGroupInfo-center-personBlock-buttons">
+              <div class="modalGroupInfo-center-personBlock-buttons-button" style="width: 60%">
+                <p>Assign admin</p>
+              </div>
+              <div class="modalGroupInfo-center-personBlock-buttons-button" style="width: 40%" @click="removeMemberFromGroup(index)">
+                <p>Remove</p>
+              </div>
+            </div>
           </div>
         </div>
         <div class="modal-drop" @click="modalGroupInfoDisplay = 'display: none'"></div>
@@ -402,8 +409,20 @@
         for (let i = 0; i < this.memberIndexes.length; i++) {
           profileArray.push(this.contacts[this.memberIndexes[i]]);
         }
-        this.$socket.emit("addMembersToGroup-Chat.vue-Server", this.roomProfile, profileArray);
+        for (let j = 0; j < this.members.length; j++) {
+          for (let k = 0; k < profileArray.length; k++) {
+           if (this.members[j].profileID._id == profileArray[k]._id) profileArray.splice(k, 1);
+          }
+        }
+        if (profileArray.length > 0) {
+          this.$socket.emit("addMembersToGroup-Chat.vue-Server", this.myself, this.roomProfile, profileArray);
+        }
         this.modalAddNewMemberDisplay = 'display: none';
+        this.modalGroupInfoDisplay = 'display: none';
+      },
+      removeMemberFromGroup(index) {
+        this.$socket.emit("removeMemberFromGroup-Chat.vue-Server", this.myself, this.roomProfile, this.members[index].profileID);
+        this.modalGroupInfoDisplay = 'display: none';
       },
       createNewGroup() {
         let roomType;
@@ -421,7 +440,7 @@
           typeRoom: roomType,
           lastMessageText: this.myself.firstName + " created the group " + this.groupName,
           lastMessageTime: new Date().getTime(),
-          memberCount: this.groupIndexes.length
+          memberCount: this.groupIndexes.length + 1
         };
 
         let profileArray = [];

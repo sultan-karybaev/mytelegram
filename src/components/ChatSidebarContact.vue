@@ -170,7 +170,9 @@ export default {
     this.myself = this.$store.getters.getUser;
     this.messages = this.$store.getters.getMessages(this.$route.params.roomID);
     this.roomProfile = this.$store.getters.getRoomProfile(this.$route.params.roomID);
+    this.test = this.$store.getters.getMessegesTest;
     console.log("this.messages", this.messages);
+    console.log("this.test", this.test);
 
     const vm = this;
     Event.$on("Store-to-Contact-pushMessage", function () {
@@ -187,16 +189,12 @@ export default {
       };
       let audioMessage = {
         type: "Audio",
+        text: "Audio File",
         roomID: this.$route.params.roomID,
         profileID: this.myself._id,
         time: new Date().getTime()
       };
       this.$socket.emit("File-ChatSidebarContact.vue-Server", blob, audioMessage, audioData);
-//        let data = new FormData();
-//        data.append("audiofile", blob);
-//        axios.post("http://localhost:3000/post/audio", data)
-//          .then(res => console.log(res))
-//          .catch(err => console.log(err));
     };
   },
   watch: {
@@ -253,9 +251,8 @@ export default {
           profileID: this.myself._id,
           time: new Date().getTime()
         };
-        this.$socket.emit('setMessage-ChatSidebarContact.vue-Server', message);
+        this.$socket.emit('setMessage-ChatSidebarContact.vue-Server', message,  this.roomProfile.roomID);
         console.log("this.roomProfile.index !== 1", this.roomProfile.index !== 1);
-        if (this.roomProfile.index !== 1) this.$socket.emit('indexRoom-ChatSidebarContact.vue-Server', this.myself._id, this.roomProfile.roomID._id);
         emoji[0].innerHTML = "";
       }
     },
@@ -278,12 +275,13 @@ export default {
       let imgMessage = {
         type: "Image",
         roomID: this.$route.params.roomID,
+        text: "Image",
         profileID: this.myself._id,
         time: new Date().getTime()
       };
 
       console.log(imgData);
-      this.$socket.emit("File-ChatSidebarContact.vue-Server", event.target.files[0], imgMessage, imgData);
+      this.$socket.emit("File-ChatSidebarContact.vue-Server", event.target.files[0], imgMessage, imgData, this.roomProfile.roomID);
     },
     getContactInfo(profileID) {
       Event.$emit("From-Contact-To-Chat", profileID);
@@ -314,36 +312,5 @@ li {
 a {
   color: #42b983;
 }
-
-/*#textarea{*/
-  /*border: none;*/
-  /*box-shadow: none;*/
-/*}*/
-
-/*.emojionearea{*/
-  /*border: none;*/
-  /*background: rgba(0, 0, 0, 0);*/
-  /*outline: none;*/
-  /*box-shadow: none;*/
-/*}*/
-
-
-/*.emojionearea .emojionearea-editor{*/
-  /*width: 100%;*/
-  /*min-height: 70px;*/
-  /*max-height: none;*/
-  /*!*border: 1px solid black;*!*/
-  /*border-radius: 0;*/
-  /*outline: none;*/
-  /*border: none;*/
-  /*box-shadow: none;*/
-  /*background: rgba(0, 0, 0, 0);*/
-/*}*/
-
-  /*.emojioneemoji{*/
-    /*width: 16px;*/
-    /*height: 16px;*/
-    /*vertical-align: middle;*/
-  /*}*/
 
 </style>

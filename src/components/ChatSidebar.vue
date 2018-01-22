@@ -80,7 +80,7 @@ export default {
     for (let i = 0; i < this.rooms.length; i++) {
       if (this.rooms[i].chosen) {
 //        document.getElementById("contactNameChat").innerHTML = this.rooms[i].name;
-        this.$socket.emit("enterRoom-ChatSidebar.vue-Server", this.rooms[i].roomID._id, this.myself._id);
+        if (this.rooms[i].member) this.$socket.emit("enterRoom-ChatSidebar.vue-Server", this.rooms[i].roomID._id, this.myself._id);
         this.$router.push({ name: 'contact', params: { roomID: this.rooms[i].roomID._id }});
       }
     }
@@ -93,15 +93,14 @@ export default {
   methods: {
     getChat(roomProfile, index) {
       const vm = this;
-//      document.getElementById("contactNameChat").innerHTML = roomProfile.name;
       this.$store.dispatch('setRoomChosenChatSidebarvue', roomProfile._id);
       if(vm.$store.getters.getHasRoomBeenOpened(roomProfile.roomID._id)) {
         vm.$router.push({ name: 'contact', params: { roomID: roomProfile.roomID._id }});
       } else {
-        axios.get("http://localhost:3000/get/messages/" + roomProfile.roomID._id)
+        axios.get("http://localhost:3000/get/messages/" + roomProfile._id)
           .then(function (res) {
             console.log("GROUP", res.data);
-            vm.$socket.emit("enterRoom-ChatSidebar.vue-Server", roomProfile.roomID._id, vm.myself._id);
+            if (roomProfile.member) vm.$socket.emit("enterRoom-ChatSidebar.vue-Server", roomProfile.roomID._id, vm.myself._id);
             vm.$store.dispatch('setMessagesLoginSidebarvue', res.data);
             vm.$router.push({ name: 'contact', params: { roomID: roomProfile.roomID._id }});
           })

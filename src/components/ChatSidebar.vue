@@ -72,6 +72,10 @@ export default {
       vm.rooms = vm.$store.getters.getRooms;
       console.log("vm.rooms", vm.rooms);
     });
+    Event.$on("Store-to-Sidebar-enterRoom", function (roomID) {
+      console.log("Store-to-Sidebar-enterRoom");
+      vm.$socket.emit("enterRoom-ChatSidebar.vue-Server", roomID);
+    });
   },
   mounted(){
     this.myself = this.$store.getters.getUser;
@@ -79,7 +83,6 @@ export default {
 
     for (let i = 0; i < this.rooms.length; i++) {
       if (this.rooms[i].chosen) {
-//        document.getElementById("contactNameChat").innerHTML = this.rooms[i].name;
         if (this.rooms[i].member) this.$socket.emit("enterRoom-ChatSidebar.vue-Server", this.rooms[i].roomID._id, this.myself._id);
         this.$router.push({ name: 'contact', params: { roomID: this.rooms[i].roomID._id }});
       }
@@ -87,6 +90,7 @@ export default {
   },
   watch: {
     "$store.state.roomProfiles": function (newVal) {
+      console.log("$store.state.roomProfiles");
       this.rooms = this.$store.getters.getRooms;
     },
   },
@@ -94,13 +98,14 @@ export default {
     getChat(roomProfile, index) {
       const vm = this;
       this.$store.dispatch('setRoomChosenChatSidebarvue', roomProfile._id);
+      vm.$socket.emit("chooseRoom-ChatSidebar.vue-Server", roomProfile.roomID._id, vm.myself._id);
       if(vm.$store.getters.getHasRoomBeenOpened(roomProfile.roomID._id)) {
         vm.$router.push({ name: 'contact', params: { roomID: roomProfile.roomID._id }});
       } else {
         axios.get("http://localhost:3000/get/messages/" + roomProfile._id)
           .then(function (res) {
             console.log("GROUP", res.data);
-            if (roomProfile.member) vm.$socket.emit("enterRoom-ChatSidebar.vue-Server", roomProfile.roomID._id, vm.myself._id);
+            if (roomProfile.member) vm.$socket.emit("enterRoom-ChatSidebar.vue-Server", roomProfile.roomID._id);
             vm.$store.dispatch('setMessagesLoginSidebarvue', res.data);
             vm.$router.push({ name: 'contact', params: { roomID: roomProfile.roomID._id }});
           })

@@ -125,10 +125,10 @@
     }
       .modalGroupInfo-center-personBlock-buttons-button{
         height: 100%;
-        display: none;
+        display: flex;
         justify-content: center;
         align-items: center;
-        opacity: 1;
+        opacity: 0;
         transition: 300ms;
       }
         .modalGroupInfo-center-personBlock-buttons-button p {
@@ -137,7 +137,6 @@
           transition: 200ms;
         }
       .modalGroupInfo-center-personBlock-buttons:hover .modalGroupInfo-center-personBlock-buttons-button{
-        display: flex;
         opacity: 1;
       }
       .modalGroupInfo-center-personBlock-buttons-button p:hover {

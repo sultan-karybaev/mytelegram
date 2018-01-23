@@ -6,6 +6,8 @@
       <label tabindex="0" for="imageMessage" >Select images</label>
     </div>
 
+
+
   </div>
 </template>
 
@@ -40,7 +42,16 @@
       }
     },
     mounted() {
-
+      Notification.requestPermission(function(permission){
+        console.log('Результат запроса прав:', permission);
+        if (permission = "granted") {
+          new Notification("Sultan Karybaev", {
+            tag : "ache-mail",
+            body : "Привет, высылаю материалы по проекту...",
+            icon : "http://habrastorage.org/storage2/cf9/50b/e87/cf950be87f8c34e63c07217a009f1d17.jpg"
+          });
+        }
+      });
     }
   }
 </script>

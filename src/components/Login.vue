@@ -73,6 +73,7 @@
           };
           axios.post("http://localhost:3000/post/login", data)
             .then(function (res) {
+              console.log(res);
               vm.$socket.emit("login-Login.vue-Server", res.data);
               vm.$store.dispatch('setUserAccountLoginvue', res.data);
 

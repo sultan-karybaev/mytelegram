@@ -141,6 +141,8 @@ textarea{
         justify-content: center;
         background-color: #546e7a;
         transition: 200ms;
+        position: relative;
+        cursor: pointer;
       }
         .header-settings-circles{
 
@@ -152,6 +154,28 @@ textarea{
             background-color: white;
             margin: 3px 0;
           }
+        .header-settings-down{
+          position: absolute;
+          right: 0;
+          top: 60px;
+          width: 200px;
+          background-color: white;
+          z-index: 2;
+          box-shadow: 3px 3px 10px 2px rgba(0,0,0,.5);
+          padding-top: 10px;
+        }
+          .header-settings-down-block{
+            width: 100%;
+            height: 50px;
+            line-height: 50px;
+            padding-left: 10%;
+            color: #546e7a;
+            font-size: 14px;
+            box-sizing: border-box;
+          }
+          .header-settings-down-block:hover{
+            background: rgba(129, 156, 169, .5);
+          }
 
       .header-settings:hover{
         background-color: #29434e;
@@ -159,9 +183,6 @@ textarea{
       .header-search:hover{
         background-color: #29434e;
       }
-      /*.header-sidebar:hover{*/
-        /*background-color: #29434e;*/
-      /*}*/
       .header-name:hover{
         background-color: #29434e;
       }
@@ -173,122 +194,31 @@ textarea{
 }
   .downsection-maincontent-messageblock{
     width: 100%;
-    /*height: calc(100% - 140px);*/
-    height: 100%;
-    /*display: flex;*/
-    /*align-items: flex-end;*/
-    /*overflow-y: scroll;*/
-    overflow-x: hidden;
-    /*border: 1px solid black;*/
-    /*position: relative;*/
-  }
-/*.downsection-maincontent-messageblock::-webkit-scrollbar-track*/
-/*{*/
-  /*/*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);*/
-  /*border-radius: 10px;*/
-  /*/*background-color: #F5F5F5;*/
-  /*background: rgba(0, 0, 0, 0);*/
-/*}*/
-
-/*.downsection-maincontent-messageblock::-webkit-scrollbar*/
-/*{*/
-  /*width: 2px;*/
-  /*/*background-color: #F5F5F5;*/
-  /*background: rgba(0, 0, 0, 0);*/
-/*}*/
-
-/*.downsection-maincontent-messageblock::-webkit-scrollbar-thumb*/
-/*{*/ /*/*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);*/
-  /*background-color: #6079bb;*/
-/*}*/
-
-  .downsection-maincontent-messageblock-bottom{
-    width: 100%;
     height: 100%;
   }
+    .messageblock{
+      height: calc(100% - 160px);
+      overflow-y: scroll;
+    }
+      .messageblock > div {
+        width: 100%;
+        margin-top: 20px;
+      }
+.messageblock::-webkit-scrollbar-track
+{
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0);
+}
 
-    .downsection-maincontent-messageblock-message{
-      width: 100%;
-      display: flex;
-      transition: 500ms;
-    }
-    .downsection-maincontent-messageblock-message:hover{
-      background: rgba(129, 156, 169, .4);
-    }
-    .downsection-maincontent-messageblock-message:hover .downsection-maincontent-messageblock-message-check-icon{
-      opacity: 1;
-    }
-      .downsection-maincontent-messageblock-message-check{
-        width: 10%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-        .downsection-maincontent-messageblock-message-check-icon{
-          opacity: 0;
-          transition: 500ms;
-        }
-      .downsection-maincontent-messageblock-message-text{
-        width: 80%;
-      }
-        .downsection-maincontent-messageblock-message-text-contact{
-            width: 100%;
-            /*height: 60px;*/
-            cursor: pointer;
-            display: flex;
-            position: relative;
-            transition: 200ms;
-        }
-          .downsection-maincontent-messageblock-message-text-contact-icon{
-            width: 20%;
-            height: 100%;
-            padding-top: 7px;
-            padding-bottom: 7px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          }
-            .downsection-maincontent-messageblock-message-text-contact-icon-circle{
-              width: 46px;
-              height: 46px;
-              /*margin-top: 12px;*/
-              border-radius: 23px;
-              background-size: cover;
-              background-repeat: no-repeat;
-              background-position: center center;
-            }
-          .downsection-maincontent-messageblock-message-text-contact-info{
-            width: 80%;
-            height: 100%;
-          }
-            .downsection-maincontent-messageblock-message-text-contact-info-person{
-              width: 100%;
-              height: 30px;
-              line-height: 40px;
-              color: black;
-              font-size: 12px;
-              font-weight: 700;
-              text-align: left;
-            }
-            .downsection-maincontent-messageblock-message-text-contact-info-message{
-              width: 100%;
-              min-height: 30px;
-              line-height: 30px;
-              color: black;
-              font-size: 12px;
-              text-align: left;
-              overflow-x: hidden;
-              overflow-y: hidden;
-              transition: 400ms;
-            }
-            /*.downsection-maincontent-messageblock-message-text-contact-info-message:hover {*/
-              /*background: rgba(129, 156, 169, .4);*/
-            /*}*/
-          .downsection-maincontent-messageblock-message-text-contact-time{
-            position: absolute;
-            top: 5px;
-            right: 10px;
-            font-size: 10px;
-            color: #6c6c6c;
-          }
+.messageblock::-webkit-scrollbar
+{
+  width: 2px;
+  background: rgba(0, 0, 0, 0);
+}
+
+.messageblock::-webkit-scrollbar-thumb
+{
+  background-color: #6079bb;
+}
+
 

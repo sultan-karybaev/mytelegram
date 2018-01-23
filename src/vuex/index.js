@@ -39,10 +39,19 @@ export default new Vuex.Store({
 
           state.roomProfiles[i].unreadMessageCount = roomProfile.unreadMessageCount;
           state.roomProfiles[i].index = roomProfile.index;
-          state.roomProfiles[i].chosen = roomProfile.chosen;
           state.roomProfiles[i].name = roomProfile.name;
           state.roomProfiles[i].img = roomProfile.img;
           state.roomProfiles[i].admin = roomProfile.admin;
+          if (roomProfile.member && !state.roomProfiles[i].member) {
+            if (state.roomProfiles[i].chosen) {
+              Event.$emit("Store-to-Sidebar-enterRoom", roomProfile.roomID._id);
+            } else {
+              for (let i = 0; i < state.allMessageArray.length; i++) {
+                if (state.allMessageArray[i].roomID == roomProfile.roomID._id) state.allMessageArray.splice(i, 1);
+              }
+            }
+          }
+          state.roomProfiles[i].chosen = roomProfile.chosen;
           state.roomProfiles[i].member = roomProfile.member;
         }
       }
@@ -89,14 +98,14 @@ export default new Vuex.Store({
       return state.users;
     },
     getMessages: (state) => (id) => {
-      console.log("getMessages");
       let array = [];
       let user = {
         _id: 0
       };
       let messageParams;
       let currentIndex = -1;
-      let day;
+      let date = -1;
+      let months = ["January", "February", "Mart", "April", "May", "June", "Jule", "August", "September", "October", "November", "December"];
 
       for (let i = 0; i < state.allMessageArray.length; i++) {
         if (state.allMessageArray[i].roomID == id) {
@@ -111,10 +120,15 @@ export default new Vuex.Store({
               secondPerson: messages[j].secondPerson
             };
 
-            day = new Date(messages[j].time * 2 / 2).getDay();
-            console.log("day", day);
-            console.log(new Date(messages[j].time * 2 / 2).getDate());
+            if (date != new Date(messages[j].time * 2 / 2).getDate()) {
+              currentIndex++;
+              date = new Date(messages[j].time * 2 / 2).getDate();
 
+              array.push({
+                messageType: "Time",
+                messageTime: date + " " + months[new Date(messages[j].time * 2 / 2).getMonth()] + " " + new Date(messages[j].time * 2 / 2).getFullYear()
+              });
+            }
             if (messages[j].type == "System") {
               user = {_id: 0};
               currentIndex++;

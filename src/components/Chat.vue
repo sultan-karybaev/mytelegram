@@ -48,11 +48,17 @@
           <div class="header-search" @click="clickButton">
             <img src="../assets/search-white.svg" style="width: 20px; height: 20px">
           </div>
-          <div class="header-settings" @click="modalGroupInfoDisplay = 'display: flex'">
+          <div class="header-settings" @click="openFilter">
             <div class="header-settings-circles">
               <div class="header-settings-circle"></div>
               <div class="header-settings-circle"></div>
               <div class="header-settings-circle"></div>
+            </div>
+
+            <div class="header-settings-down" :style="{display: filterDisplay}">
+              <div class="header-settings-down-block">Text</div>
+              <div class="header-settings-down-block">Images</div>
+              <div class="header-settings-down-block">Audio</div>
             </div>
           </div>
         </div>
@@ -178,11 +184,15 @@
                   {{myself.firstName}}  {{myself.lastName}}
                 </div>
             </div>
-            <div class="modalGroupInfo-center-personBlock-buttons"></div>
+            <div class="modalGroupInfo-center-personBlock-buttons">
+              <div class="modalGroupInfo-center-personBlock-buttons-button" style="width: 100%" @click="leaveGroup">
+                <p>Leave this group</p>
+              </div>
+            </div>
           </div>
           <div class="modalGroupInfo-center-block">admins</div>
-          <div class="modalGroupInfo-center-personBlock" v-for="(admin, index) in admins" @click="adminClick(index)">
-            <div class="modalGroupInfo-center-personBlock-person">
+          <div class="modalGroupInfo-center-personBlock" v-for="(admin, index) in admins">
+            <div class="modalGroupInfo-center-personBlock-person" @click="adminClick(index)">
               <div class="modalGroupInfo-center-personBlock-person-icon">
                 <div class="modalGroupInfo-center-personBlock-person-icon-circle" :style="{ 'background-image': 'url(' + admin.profileID.avatar + ')' }"></div>
               </div>
@@ -190,7 +200,14 @@
                 {{admin.profileID.firstName}}  {{admin.profileID.lastName}}
               </div>
             </div>
-            <div class="modalGroupInfo-center-personBlock-buttons"></div>
+            <div class="modalGroupInfo-center-personBlock-buttons" v-if="roomProfile.admin && admin.profileID._id != myself._id">
+              <div class="modalGroupInfo-center-personBlock-buttons-button" style="width: 60%" @click="removeAdmin(index)">
+                <p>Remove admin</p>
+              </div>
+              <div class="modalGroupInfo-center-personBlock-buttons-button" style="width: 40%" @click="removeAdminFromGroup(index)">
+                <p>Remove</p>
+              </div>
+            </div>
           </div>
           <div class="modalGroupInfo-center-block">members</div>
           <div class="modalGroupInfo-center-personBlock" v-for="(member, index) in members">
@@ -202,8 +219,8 @@
                 {{member.profileID.firstName}}  {{member.profileID.lastName}}
               </div>
             </div>
-            <div class="modalGroupInfo-center-personBlock-buttons">
-              <div class="modalGroupInfo-center-personBlock-buttons-button" style="width: 60%">
+            <div class="modalGroupInfo-center-personBlock-buttons" v-if="roomProfile.admin">
+              <div class="modalGroupInfo-center-personBlock-buttons-button" style="width: 60%" @click="assignAdmin(index)">
                 <p>Assign admin</p>
               </div>
               <div class="modalGroupInfo-center-personBlock-buttons-button" style="width: 40%" @click="removeMemberFromGroup(index)">
@@ -261,6 +278,7 @@
         modalAddNewMemberDisplay: "display: none",
         chatTextarea: "",
         menuDisplay: "none",
+        filterDisplay: "none",
         groupIndexes: [],
         memberIndexes: [],
         publicClass: "typeGroupChosen",
@@ -290,15 +308,6 @@
     mounted() {
       this.myself = this.$store.getters.getUser;
       this.contacts = this.$store.getters.getContacts;
-//      this.rooms = this.$store.getters.getRooms;
-//
-//      for (let i = 0; i < this.rooms.length; i++) {
-//        if (this.rooms[i].chosen) {
-//          this.roomProfile = this.$store.getters.getRoomProfile(this.rooms[i].roomID._id);
-//          console.log("CHAT");
-//          console.log(this.roomProfile);
-//        }
-//      }
 
 //      if (!this.$store.getters.getExistingUserAccount) this.$router.push({ name: 'Login'});
     },
@@ -308,14 +317,29 @@
     watch: {
       '$route.params.roomID': function (newVal) {
         this.roomProfile = this.$store.getters.getRoomProfile(this.$route.params.roomID);
-        console.log("HEADER");
-        console.log(this.roomProfile);
       },
     },
     methods: {
       openMenu() {
-        if (this.menuDisplay == "none") this.menuDisplay = "block";
-        else this.menuDisplay = "none";
+        const vm = this;
+        if (this.menuDisplay == "none") {
+          this.menuDisplay = "block";
+          window.addEventListener("mouseup", vm.openMenu);
+        } else {
+          this.menuDisplay = "none";
+          window.removeEventListener("mouseup", vm.openMenu);
+        }
+      },
+      openFilter() {
+        const vm = this;
+        console.log("openFilter");
+        if (this.filterDisplay == "none") {
+          this.filterDisplay = "block";
+          window.addEventListener("mouseup", vm.openFilter);
+        } else {
+          this.filterDisplay = "none";
+          window.removeEventListener("mouseup", vm.openFilter);
+        }
       },
       createRoom(contact) {
         const vm = this;
@@ -422,6 +446,22 @@
       },
       removeMemberFromGroup(index) {
         this.$socket.emit("removeMemberFromGroup-Chat.vue-Server", this.myself, this.roomProfile, this.members[index].profileID);
+        this.modalGroupInfoDisplay = 'display: none';
+      },
+      removeAdminFromGroup(index) {
+        this.$socket.emit("removeMemberFromGroup-Chat.vue-Server", this.myself, this.roomProfile, this.admins[index].profileID);
+        this.modalGroupInfoDisplay = 'display: none';
+      },
+      assignAdmin(index) {
+        this.$socket.emit("assignAdmin-Chat.vue-Server", this.myself, this.roomProfile, this.members[index].profileID);
+        this.modalGroupInfoDisplay = 'display: none';
+      },
+      removeAdmin(index) {
+        this.$socket.emit("removeAdmin-Chat.vue-Server", this.myself, this.roomProfile, this.admins[index].profileID);
+        this.modalGroupInfoDisplay = 'display: none';
+      },
+      leaveGroup() {
+        this.$socket.emit("leaveGroup-Chat.vue-Server", this.myself, this.roomProfile);
         this.modalGroupInfoDisplay = 'display: none';
       },
       createNewGroup() {

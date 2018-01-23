@@ -41,8 +41,11 @@ new Vue({
       this.$store.dispatch('setMessageMainjs', data);
     },
     updateRoomProfileSocket: function (roomProfile) {
-      console.log('setLastMessageSocket');
+      console.log('updateRoomProfileMainjs');
       console.log(roomProfile);
+      if (!roomProfile.member) {
+        this.$socket.emit("leaveRoom-ChatSidebar.vue-Server", roomProfile.roomID._id);
+      }
       this.$store.dispatch('updateRoomProfileMainjs', roomProfile);
     },
     setFirstMessageSocket: function (data) {

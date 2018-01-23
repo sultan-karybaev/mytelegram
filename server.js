@@ -400,16 +400,6 @@ function socketEvents(io) {
             foundRoom.save(function (err, savedRoom) {
               if (err) return console.log(err);
 
-              //socket.emit("setLastMessageSocket", savedRoom);
-              // RoomProfile.find({roomID: message.roomID})
-              //   .exec(function (err, roomProfiles) {
-              //     if (err) return console.log(err);
-              //     for (let i = 0; i < roomProfiles.length; i++) {
-              //       socket.to(roomProfiles[i].profileID).emit("setLastMessageSocket", savedRoom);
-              //     }
-              //   });
-
-
               //roomProfilы отправителя письма
               RoomProfile.findOne({profileID: message.profileID, roomID: message.roomID}).populate("roomID")
                 .exec(function (err, myRoomProfile) {
@@ -435,6 +425,17 @@ function socketEvents(io) {
                   if (myRP) {
                     myRoomProfile.admin = myRP.admin;
                     myRoomProfile.member = myRP.member;
+                    //Уход пользоваеля
+                    if (!myRP.member) {
+                      TimePermission.findOne({roomProfile: myRoomProfile._id}).sort({startTime: -1}).limit(1)
+                        .exec(function (err, timepermission) {
+                          if (err) return console.log(err);
+                          console.log("timepermission", timepermission);
+                          timepermission.endTime = message.time;
+                          timepermission.theLastText = room.lastMessageText;
+                          timepermission.save();
+                        });
+                    }
                   }
                   myRoomProfile.save(function (err, savedMyRoomProfile) {
                     if (err) return console.log(err);
@@ -462,19 +463,34 @@ function socketEvents(io) {
                           })
                         });
                     }
+                    if (!roomProfile.chosen && roomProfile.member) roomProfile.unreadMessageCount++;
+                    roomProfile.index = 1;
+                    if (commonRP) {
+                      roomProfile.name = commonRP.name;
+                      roomProfile.img = commonRP.img;
+                    }
                     //раздел для системных сообщений
-                    if (message.secondPerson) {
+                    if (message.secondPerson  || secondPR) {
                       if (message.secondPerson._id == roomProfile.profileID) {
                         console.log("SECOND PERSON");
                         roomProfile.admin = secondPR.admin;
-                        roomProfile.member = secondPR.member;
-                        if (secondPR.member) {
+                        console.log(secondPR.member && !roomProfile.member);
+                        console.log(!secondPR.member);
+                        //Восстановление члена
+                        if (secondPR.member && !roomProfile.member) {
                           let timepermission = new TimePermission({
                             roomProfile: roomProfile._id,
                             startTime: message.time
                           });
                           timepermission.save();
-                        } else {
+                          Message.findById(savedMessage._id).populate("profileID").populate("secondPerson")
+                            .exec(function (err, foundMessage) {
+                              if (err) return console.log(err);
+                              socket.to(roomProfile.profileID).emit("setMessageSocket", foundMessage);
+                            });
+                        }
+                        //Удаление члена
+                        else if (!secondPR.member) {
                           TimePermission.findOne({roomProfile: roomProfile._id}).sort({startTime: -1}).limit(1)
                             .exec(function (err, timepermission) {
                               if (err) return console.log(err);
@@ -482,17 +498,23 @@ function socketEvents(io) {
                               timepermission.endTime = message.time;
                               timepermission.theLastText = room.lastMessageText;
                               timepermission.save();
+                              socket.to(roomProfile.profileID).emit("updateRoomProfileSocket", {
+                                roomID: savedRoom,
+                                unreadMessageCount: 0,
+                                index: 1,
+                                chosen: roomProfile.chosen,
+                                name: roomProfile.name,
+                                img: roomProfile.img,
+                                admin: false,
+                                member: false,
+                                _id: roomProfile._id
+                              });
                             });
                         }
+                        roomProfile.member = secondPR.member;
                       }
                     }
 
-                    if (!roomProfile.chosen) roomProfile.unreadMessageCount++;
-                    roomProfile.index = 1;
-                    if (commonRP) {
-                      roomProfile.name = commonRP.name;
-                      roomProfile.img = commonRP.img;
-                    }
                     roomProfile.save(function (err, savedRoomProfile) {
                       if (err) return console.log(err);
                       RoomProfile.findById(savedRoomProfile._id).populate("roomID")
@@ -925,11 +947,120 @@ function socketEvents(io) {
 
     });
 
-    socket.on("enterRoom-ChatSidebar.vue-Server", function (roomID, profileID) {
+    socket.on("assignAdmin-Chat.vue-Server", function (myself, roomProfile, profileMember) {
+      console.log("assignAdmin-Chat.vue-Server");
+      console.log(myself);
+      console.log(roomProfile);
+      console.log(profileMember);
+      let globalTime = new Date().getTime();
+
+      let myRP = {
+        admin: true,
+        member: true
+      };
+
+      let secondRP = {
+        admin: true,
+        member: true
+      };
+
+      let room = {
+        lastMessageText: myself.firstName + " assign new group admin " + profileMember.firstName,
+        lastMessageTime: globalTime,
+        memberCount: roomProfile.roomID.memberCount
+      };
+
+      let message = {
+        type: "System",
+        text: " assign new group admin ",
+        secondPerson: profileMember,
+        roomID: roomProfile.roomID._id,
+        profileID: myself._id,
+        time: globalTime
+      };
+
+      createMessage(message, room, myRP, secondRP);
+    });
+
+    socket.on("removeAdmin-Chat.vue-Server", function (myself, roomProfile, profileMember) {
+      console.log("assignAdmin-Chat.vue-Server");
+      console.log(myself);
+      console.log(roomProfile);
+      console.log(profileMember);
+      let globalTime = new Date().getTime();
+
+      let myRP = {
+        admin: true,
+        member: true
+      };
+
+      let secondRP = {
+        admin: false,
+        member: true
+      };
+
+      let room = {
+        lastMessageText: myself.firstName + " remove from group admins " + profileMember.firstName,
+        lastMessageTime: globalTime,
+        memberCount: roomProfile.roomID.memberCount
+      };
+
+      let message = {
+        type: "System",
+        text: " remove from group admins ",
+        secondPerson: profileMember,
+        roomID: roomProfile.roomID._id,
+        profileID: myself._id,
+        time: globalTime
+      };
+
+      createMessage(message, room, myRP, secondRP);
+    });
+
+    socket.on("leaveGroup-Chat.vue-Server", function (myself, roomProfile) {
+      console.log("leaveGroup-Chat.vue-Server");
+      console.log(myself);
+      console.log(roomProfile);
+      let globalTime = new Date().getTime();
+
+      let myRP = {
+        admin: false,
+        member: false
+      };
+
+      let room = {
+        lastMessageText: myself.firstName + " left this group",
+        lastMessageTime: globalTime,
+        memberCount: roomProfile.roomID.memberCount - 1
+      };
+
+      let message = {
+        type: "System",
+        text: " left this group",
+        roomID: roomProfile.roomID._id,
+        profileID: myself._id,
+        time: globalTime
+      };
+
+      createMessage(message, room, myRP);
+    });
+
+    socket.on("enterRoom-ChatSidebar.vue-Server", function (roomID) {
       console.log("enterRoom-ChatSidebar.vue-Server");
       console.log(roomID);
-      console.log(profileID);
       socket.join(roomID);
+    });
+
+    socket.on("leaveRoom-ChatSidebar.vue-Server", function (roomID) {
+      console.log("leaveRoom-ChatSidebar.vue-Server");
+      console.log(roomID);
+      socket.leave(roomID);
+    });
+
+    socket.on("chooseRoom-ChatSidebar.vue-Server", function (roomID, profileID) {
+      console.log("chooseRoom-ChatSidebar.vue-Server");
+      console.log(roomID);
+      console.log(profileID);
 
       RoomProfile.findOne({profileID: profileID, roomID: roomID})
         .exec(function (err, roomProfile) {

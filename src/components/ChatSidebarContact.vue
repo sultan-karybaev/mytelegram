@@ -4,14 +4,18 @@
 
     <div class="downsection-maincontent-messageblock">
 
-      <div class="downsection-maincontent-messageblock-bottom">
-
-          <div id="mems2" style="height: calc(100% - 160px); overflow-y: scroll; position: relative; display: flex; align-items: flex-end">
-            <div style="position: absolute; bottom: 0; width: 100%" ref="allMessages">
+          <div class="messageblock" ref="scrollTest1">
+            <div ref="allMessages">
                   <div   style="width: 100%"  v-for="(message, messageIndex) in messages">
 
                     <!--todo style-->
-                    <template v-if="message.messageType == 'System'">
+                    <template v-if="message.messageType == 'Time'">
+                      <div style="width: 100%; display: flex; justify-content: center">
+                        <div style="background-color: #3631b9; padding: 5px; border-radius: 5px; color: white">{{message.messageTime}}</div>
+                      </div>
+                    </template>
+
+                    <template v-else v-if="message.messageType == 'System'">
                       <div style="width: 100%; text-align: center; font-size: 12px; margin: 10px 0;">
                         <span style="cursor: pointer; color: rebeccapurple; font-weight: 700" @click="getContactInfo(message.profile._id)">
                           {{message.profile.firstName}} {{message.profile.lastName}}
@@ -27,36 +31,38 @@
 
                     <template v-else>
 
-                      <div class="downsection-maincontent-messageblock-message" v-for="(text, textIndex) in message.messageArray"
-                           @click="accentMessage(messageIndex, textIndex)">
-
-                        <div class="downsection-maincontent-messageblock-message-check">
-                          <img src="../assets/tick.svg" style="width: 26px; height: 26px" class="downsection-maincontent-messageblock-message-check-icon">
+                      <div class="message" v-for="(text, textIndex) in message.messageArray"  @click="accentMessage(messageIndex, textIndex)">
+                        <div class="message-check">
+                          <img src="../assets/tick.svg" class="message-check-icon">
                         </div>
 
                         <template v-if="textIndex == 0">
-                          <div class="downsection-maincontent-messageblock-message-text">
-                            <div class="downsection-maincontent-messageblock-message-text-contact">
-                              <div class="downsection-maincontent-messageblock-message-text-contact-icon">
-                                <div class="downsection-maincontent-messageblock-message-text-contact-icon-circle"
-                                     :style="{ 'background-image': 'url(' + message.profile.avatar + ')' }"></div>
+                          <div class="message-text">
+                            <div class="message-text-contact">
+                              <div class="message-text-contact-icon">
+                                <div class="message-text-contact-icon-circle" :style="{ 'background-image': 'url(' + message.profile.avatar + ')' }"></div>
                               </div>
-                              <div class="downsection-maincontent-messageblock-message-text-contact-info">
-                                <div class="downsection-maincontent-messageblock-message-text-contact-info-person" >{{message.profile.firstName}}</div>
+                              <div class="message-text-contact-info">
+                                <div class="message-text-contact-info-person" >{{message.profile.firstName}}</div>
                                   <!--<div v-for="(text, textIndex) in message.messageArray" style="position: relative">-->
                                     <template v-if="text.type == 'Text'">
-                                      <div class="downsection-maincontent-messageblock-message-text-contact-info-message" v-html="text.text"></div>
+                                      <div class="message-text-contact-info-message">
+                                        <div v-html="text.text" style="display: inline; padding: 3px; background-color: #3631b9; border-radius: 3px; color: white">
+                                        </div>
+                                      </div>
                                     </template>
                                     <template v-if="text.type == 'Audio'">
-                                      <audio-file :audioWay=text.src />
+                                      <div @click="accentMessageBoolean = false">
+                                        <audio-file :audioWay=text.src />
+                                      </div>
                                     </template>
                                     <template v-if="text.type == 'Image'">
-                                      <img :src=text.src style="width: 300px"/>
+                                      <img :src=text.src style="width: 300px" @click="accentMessageBoolean = false"/>
                                     </template>
 
                                   <!--</div>-->
                               </div>
-                              <div class="downsection-maincontent-messageblock-message-text-contact-time"
+                              <div class="message-text-contact-time"
                                    v-text="computedTime(text.time)">
                               </div>
                             </div>
@@ -69,17 +75,20 @@
 
                             <div style="width: 80%; height: 100%; position: relative;">
                               <template v-if="text.type == 'Text'">
-                                <div class="downsection-maincontent-messageblock-message-text-contact-info-message" v-html="text.text"></div>
+                                <div class="message-text-contact-info-message" >
+                                  <div v-html="text.text" style="display: inline; padding: 3px; background-color: #3631b9; border-radius: 3px; color: white">
+                                  </div>
+                                </div>
                               </template>
                               <template v-if="text.type == 'Audio'">
-                                <audio-file :audioWay=text.src />
+                                <div @click="accentMessageBoolean = false">
+                                  <audio-file :audioWay=text.src />
+                                </div>
                               </template>
                               <template v-if="text.type == 'Image'">
-                                <img :src=text.src style="width: 300px"/>
+                                <img :src=text.src style="width: 300px" @click="accentMessageBoolean = false"/>
                               </template>
-                              <div class="downsection-maincontent-messageblock-message-text-contact-time"
-                                   v-text="computedTime(text.time)">
-                              </div>
+                              <div class="message-text-contact-time"  v-text="computedTime(text.time)"></div>
                             </div>
 
                           </div>
@@ -139,7 +148,7 @@
             </div>
           </div>
 
-      </div>
+
 
     </div>
 
@@ -161,6 +170,7 @@ export default {
       messageText: "",
       date: "",
       textWriting: true,
+      accentMessageBoolean: true,
     }
   },
   components: {
@@ -181,30 +191,49 @@ export default {
     });
   },
   mounted() {
+    this.$refs.scrollTest1.scrollTop = this.$refs.allMessages.offsetHeight;
+    const vm = this;
     $("#textarea").emojioneArea();
+    setTimeout(function () {
+      $(".emojionearea-editor").keypress(function (e) {
+        if (e.charCode == 13) {
+          vm.addMessage();
+          e.preventDefault();
+          setTimeout(function () {
+            vm.$refs.scrollTest1.scrollTop = vm.$refs.allMessages.scrollHeight;
+          }, 300);
+        }
+      });
+    }, 500);
     Recorder.setupDownload = (blob, filename) => {
-      let random = Math.floor(Math.random() * 1000000);
-      let audioData = {
-        name: random
-      };
-      let audioMessage = {
-        type: "Audio",
-        text: "Audio File",
-        roomID: this.$route.params.roomID,
-        profileID: this.myself._id,
-        time: new Date().getTime()
-      };
-      this.$socket.emit("File-ChatSidebarContact.vue-Server", blob, audioMessage, audioData);
+      if (this.roomProfile.member) {
+        let random = Math.floor(Math.random() * 1000000);
+        let audioData = {
+          name: random
+        };
+        let audioMessage = {
+          type: "Audio",
+          text: "Audio File",
+          roomID: this.$route.params.roomID,
+          profileID: this.myself._id,
+          time: new Date().getTime()
+        };
+        this.$socket.emit("File-ChatSidebarContact.vue-Server", blob, audioMessage, audioData, this.roomProfile.roomID);
+      }
     };
   },
   watch: {
     '$route.params.roomID': function (newVal) {
       this.messages = [];
       setTimeout(() => this.messages = this.$store.getters.getMessages(newVal), 0);
+      setTimeout(() => this.$refs.scrollTest1.scrollTop = this.$refs.allMessages.offsetHeight, 0);
       this.roomProfile = this.$store.getters.getRoomProfile(this.$route.params.roomID);
-      console.log("this.roomProfile", this.roomProfile);
+    },
+    "$store.state.roomProfiles": function (newVal) {
+      this.roomProfile = this.$store.getters.getRoomProfile(this.$route.params.roomID);
     },
     "$store.state.allMessageArray": function (newVal) {
+      console.log("$store.state.allMessageArray");
       this.messages = this.$store.getters.getMessages(this.$route.params.roomID);
     },
   },
@@ -227,12 +256,14 @@ export default {
       document.getElementById("timer").innerHTML = "";
       clearInterval(this.interval);
     },
-    computedTime(time, index) {
-      if (!index && index == 0) {
-        return null;
-      }
-      let months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "Jule", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      return  new Date(time * 1000 / 1000).getDate() + " " + months[new Date(time * 1000 / 1000).getMonth()];
+    computedTime(time) {
+      let hours = new Date(time * 2 / 2).getHours();
+      let minutes = new Date(time * 2 / 2).getMinutes();
+      let seconds = new Date(time * 2 / 2).getSeconds();
+      if (hours < 10) hours = "0" + hours;
+      if (minutes < 10) minutes = "0" + minutes;
+      if (seconds < 10) seconds = "0" + seconds;
+      return  hours + ":" + minutes + ":" + seconds;
     },
     addMessageEnter(event) {
       console.log("ENTER");
@@ -242,46 +273,65 @@ export default {
       }
     },
     addMessage() {
-      const emoji = document.getElementsByClassName("emojionearea-editor");
-      if (emoji[0].innerHTML) {
-        let message = {
-          type: "Text",
-          text: emoji[0].innerHTML,
-          roomID: this.$route.params.roomID,
-          profileID: this.myself._id,
-          time: new Date().getTime()
-        };
-        this.$socket.emit('setMessage-ChatSidebarContact.vue-Server', message,  this.roomProfile.roomID);
-        console.log("this.roomProfile.index !== 1", this.roomProfile.index !== 1);
-        emoji[0].innerHTML = "";
+      const vm = this;
+      if (this.roomProfile.member) {
+        const emoji = document.getElementsByClassName("emojionearea-editor");
+        if (emoji[0].innerHTML) {
+          let d = emoji[0].innerHTML;
+          Notification.requestPermission(function(permission){
+            if (permission = "granted") {
+              new Notification(vm.myself.firstName + " " + vm.myself.lastName, {
+                tag : "ache-mail",
+                body : d,
+                icon : vm.myself.avatar
+              });
+            }
+          });
+
+          let message = {
+            type: "Text",
+            text: emoji[0].innerHTML,
+            roomID: this.$route.params.roomID,
+            profileID: this.myself._id,
+            time: new Date().getTime()
+          };
+          this.$socket.emit('setMessage-ChatSidebarContact.vue-Server', message,  this.roomProfile.roomID);
+          emoji[0].innerHTML = "";
+        }
       }
     },
     accentMessage(messageIndex, textIndex) {
-      let message = this.$refs.allMessages.children[messageIndex].children[textIndex];
-      let color = "#819ca9";
-      if (message.style.backgroundColor == "rgb(129, 156, 169)") color = "";
-      message.style.backgroundColor = color;
+      console.log(this.accentMessageBoolean);
+      if (this.accentMessageBoolean) {
+        let message = this.$refs.allMessages.children[messageIndex].children[textIndex];
+        let color = "rgba(129, 156, 169, .5)";
+        if (message.style.background == "rgba(129, 156, 169, 0.5)") color = "";
+        message.style.background = color;
+      }
+      this.accentMessageBoolean = true;
     },
     sendImage(event) {
-      this.someData = event.target.files[0];
-      console.log(this.someData);
+      if (this.roomProfile.member) {
+        this.someData = event.target.files[0];
+        console.log(this.someData);
 
-      let imgData = {
-        name: this.someData.name,
-        size: this.someData.size,
-        type: this.someData.type
-      };
+        let imgData = {
+          name: this.someData.name,
+          size: this.someData.size,
+          type: this.someData.type
+        };
 
-      let imgMessage = {
-        type: "Image",
-        roomID: this.$route.params.roomID,
-        text: "Image",
-        profileID: this.myself._id,
-        time: new Date().getTime()
-      };
+        let imgMessage = {
+          type: "Image",
+          roomID: this.$route.params.roomID,
+          text: "Image",
+          profileID: this.myself._id,
+          time: new Date().getTime()
+        };
 
-      console.log(imgData);
-      this.$socket.emit("File-ChatSidebarContact.vue-Server", event.target.files[0], imgMessage, imgData, this.roomProfile.roomID);
+        console.log(imgData);
+        this.$socket.emit("File-ChatSidebarContact.vue-Server", event.target.files[0], imgMessage, imgData, this.roomProfile.roomID);
+      }
     },
     getContactInfo(profileID) {
       Event.$emit("From-Contact-To-Chat", profileID);

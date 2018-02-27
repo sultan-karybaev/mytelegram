@@ -99,55 +99,59 @@ export default new Vuex.Store({
     },
     getMessages: (state) => (id) => {
       let array = [];
-      let user = {
-        _id: 0
-      };
+      let user = {_id: -1};
       let messageParams;
       let currentIndex = -1;
       let date = -1;
       let months = ["January", "February", "Mart", "April", "May", "June", "Jule", "August", "September", "October", "November", "December"];
 
+      console.log("3333", state.allMessageArray)
+
       for (let i = 0; i < state.allMessageArray.length; i++) {
         if (state.allMessageArray[i].roomID == id) {
           let messages = state.allMessageArray[i].messages;
           for (let j = 0; j < messages.length; j++) {
-            messageParams = {
-              messageID: messages[j]._id,
-              text: messages[j].text,
-              src: messages[j].src,
-              time: messages[j].time,
-              type: messages[j].type,
-              secondPerson: messages[j].secondPerson
-            };
-
-            if (date != new Date(messages[j].time * 2 / 2).getDate()) {
+            if (date !== new Date(messages[j].time * 2 / 2).getDate()) {
               currentIndex++;
               date = new Date(messages[j].time * 2 / 2).getDate();
-
               array.push({
                 messageType: "Time",
                 messageTime: date + " " + months[new Date(messages[j].time * 2 / 2).getMonth()] + " " + new Date(messages[j].time * 2 / 2).getFullYear()
               });
-            }
-            if (messages[j].type == "System") {
-              user = {_id: 0};
-              currentIndex++;
-              array.push({
-                profile: messages[j].profileID,
-                messageType: messages[j].type,
-                messageArray: [messageParams]
-              });
-            } else if (user._id !== messages[j].profileID._id) {
-              user = messages[j].profileID;
-              currentIndex++;
-              array.push({
-                profile: messages[j].profileID,
-                messageType: messages[j].type,
-                messageArray: [messageParams]
-              });
+              j--;
+              user = {_id: -1};
             } else {
-              array[currentIndex].messageArray.push(messageParams);
+              messageParams = {
+                messageID: messages[j]._id,
+                text: messages[j].text,
+                src: messages[j].src,
+                time: messages[j].time,
+                type: messages[j].type,
+                secondPerson: messages[j].secondPerson
+              };
+
+              if (messages[j].type == "System") {
+                user = {_id: 0};
+                currentIndex++;
+                array.push({
+                  profile: messages[j].profileID,
+                  messageType: messages[j].type,
+                  messageArray: [messageParams]
+                });
+              } else if (user._id !== messages[j].profileID._id) {
+                user = messages[j].profileID;
+                currentIndex++;
+                array.push({
+                  profile: messages[j].profileID,
+                  messageType: messages[j].type,
+                  messageArray: [messageParams]
+                });
+              } else {
+                array[currentIndex].messageArray.push(messageParams);
+              }
             }
+
+
           }
         }
       }

@@ -66,11 +66,16 @@ new Vue({
       console.log(data);
       this.$store.dispatch('setNewRoomBroadcastMainjs', data);
     },
-    connect: function () {
-      console.log("socket connect");
+    connect: function (data) {
+      console.log("socket connect1");
+      this.$socket.emit("presence", {username : 22, lastActivity: 1})
     },
     chatevent: function () {
       console.log("chatevent");
+    },
+    register: function (data) {
+      console.log("register");
+      console.log(data);
     }
   },
   template: '<App/>',

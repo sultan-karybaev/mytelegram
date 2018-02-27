@@ -6,7 +6,7 @@
       <label tabindex="0" for="imageMessage" >Select images</label>
     </div>
 
-
+    <button @click="test">Button</button>
 
   </div>
 </template>
@@ -39,18 +39,24 @@
 
         console.log(imgData);
         //this.$socket.emit("test", event.target.files[0]);
-      }
+      },
+      test() {
+        console.log("register socket");
+        let jsonObject = {phone:7077777777};
+        //socket.emit("register", jsonObject);
+        this.$socket.emit("register", jsonObject);
+      },
     },
     mounted() {
       Notification.requestPermission(function(permission){
         console.log('Результат запроса прав:', permission);
-        if (permission = "granted") {
-          new Notification("Sultan Karybaev", {
-            tag : "ache-mail",
-            body : "Привет, высылаю материалы по проекту...",
-            icon : "http://habrastorage.org/storage2/cf9/50b/e87/cf950be87f8c34e63c07217a009f1d17.jpg"
-          });
-        }
+//        if (permission = "granted") {
+//          new Notification("Sultan Karybaev", {
+//            tag : "ache-mail",
+//            body : "Привет, высылаю материалы по проекту...",
+//            icon : "http://habrastorage.org/storage2/cf9/50b/e87/cf950be87f8c34e63c07217a009f1d17.jpg"
+//          });
+//        }
       });
     }
   }

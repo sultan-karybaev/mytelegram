@@ -4,14 +4,18 @@
 
     <div class="downsection-maincontent-messageblock">
 
-          <div class="messageblock" ref="scrollTest1">
-            <div ref="allMessages">
+          <div class="messageblock" ref="scrollTest1" style="position: relative;
+    display: flex;
+    overflow-y: auto;
+    flex-direction: column-reverse;">
+            <div ref="allMessages" style="    flex: 0 0 auto
+">
                   <div   style="width: 100%"  v-for="(message, messageIndex) in messages">
 
                     <!--todo style-->
                     <template v-if="message.messageType == 'Time'">
-                      <div style="width: 100%; display: flex; justify-content: center">
-                        <div style="background-color: #3631b9; padding: 5px; border-radius: 5px; color: white">{{message.messageTime}}</div>
+                      <div style="width: 100%; display: flex; justify-content: center; margin: 5px 0;">
+                        <div style="background-color: #7594e3; padding: 5px; border-radius: 5px; color: white">{{message.messageTime}}</div>
                       </div>
                     </template>
 
@@ -47,7 +51,8 @@
                                   <!--<div v-for="(text, textIndex) in message.messageArray" style="position: relative">-->
                                     <template v-if="text.type == 'Text'">
                                       <div class="message-text-contact-info-message">
-                                        <div v-html="text.text" style="display: inline; padding: 3px; background-color: #3631b9; border-radius: 3px; color: white">
+                                        <div v-html="text.text" >
+                                          <!--style="display: inline; padding: 3px; background-color: #3631b9; border-radius: 3px; color: white"-->
                                         </div>
                                       </div>
                                     </template>
@@ -76,7 +81,8 @@
                             <div style="width: 80%; height: 100%; position: relative;">
                               <template v-if="text.type == 'Text'">
                                 <div class="message-text-contact-info-message" >
-                                  <div v-html="text.text" style="display: inline; padding: 3px; background-color: #3631b9; border-radius: 3px; color: white">
+                                  <div v-html="text.text">
+                                    <!--style="display: inline; padding: 3px; background-color: #3631b9; border-radius: 3px; color: white"-->
                                   </div>
                                 </div>
                               </template>
@@ -171,6 +177,7 @@ export default {
       date: "",
       textWriting: true,
       accentMessageBoolean: true,
+      roomProfile: {},
     }
   },
   components: {
@@ -180,9 +187,10 @@ export default {
     this.myself = this.$store.getters.getUser;
     this.messages = this.$store.getters.getMessages(this.$route.params.roomID);
     this.roomProfile = this.$store.getters.getRoomProfile(this.$route.params.roomID);
-    this.test = this.$store.getters.getMessegesTest;
-    console.log("this.messages", this.messages);
-    console.log("this.test", this.test);
+//    this.test = this.$store.getters.getMessegesTest;
+//    console.log("this.$route.params.roomID", this.$route.params.roomID)
+//    console.log("this.messages", this.messages);
+//    console.log("this.test", this.test);
 
     const vm = this;
     Event.$on("Store-to-Contact-pushMessage", function () {
@@ -191,7 +199,9 @@ export default {
     });
   },
   mounted() {
-    this.$refs.scrollTest1.scrollTop = this.$refs.allMessages.offsetHeight;
+//    console.log("this.$refs.allMessages.scrollHeight", this.$refs.allMessages.scrollHeight)
+//    setTimeout(() => this.$refs.scrollTest1.scrollTop = this.$refs.allMessages.scrollHeight, 200);
+
     const vm = this;
     $("#textarea").emojioneArea();
     setTimeout(function () {
@@ -199,9 +209,9 @@ export default {
         if (e.charCode == 13) {
           vm.addMessage();
           e.preventDefault();
-          setTimeout(function () {
-            vm.$refs.scrollTest1.scrollTop = vm.$refs.allMessages.scrollHeight;
-          }, 300);
+//          setTimeout(function () {
+//            vm.$refs.scrollTest1.scrollTop = vm.$refs.allMessages.scrollHeight;
+//          }, 300);
         }
       });
     }, 500);
@@ -276,21 +286,23 @@ export default {
       const vm = this;
       if (this.roomProfile.member) {
         const emoji = document.getElementsByClassName("emojionearea-editor");
-        if (emoji[0].innerHTML) {
-          let d = emoji[0].innerHTML;
-          Notification.requestPermission(function(permission){
-            if (permission = "granted") {
-              new Notification(vm.myself.firstName + " " + vm.myself.lastName, {
-                tag : "ache-mail",
-                body : d,
-                icon : vm.myself.avatar
-              });
-            }
-          });
+        let s = emoji[0].innerHTML
+        //emoji[0].innerHTML
+        if (s) {
+//          let d = emoji[0].innerHTML;
+//          Notification.requestPermission(function(permission){
+//            if (permission = "granted") {
+//              new Notification(vm.myself.firstName + " " + vm.myself.lastName, {
+//                tag : "ache-mail",
+//                body : d,
+//                icon : vm.myself.avatar
+//              });
+//            }
+//          });
 
           let message = {
             type: "Text",
-            text: emoji[0].innerHTML,
+            text: s,
             roomID: this.$route.params.roomID,
             profileID: this.myself._id,
             time: new Date().getTime()
@@ -336,6 +348,11 @@ export default {
     getContactInfo(profileID) {
       Event.$emit("From-Contact-To-Chat", profileID);
     },
+
+    scr() {
+      //console.log(this.$refs.scrollTest1.scrollTop)
+//      this.$refs.scrollTest1.scrollTop
+    }
   },
 }
 </script>

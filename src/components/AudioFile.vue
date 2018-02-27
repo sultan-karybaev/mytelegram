@@ -34,12 +34,12 @@
       }
     },
     mounted() {
-      console.log("audio", this.$refs.sound);
+//      console.log("audio", this.$refs.sound);
       const vm = this;
       this.Audio = new AudioObject2();
 
       function AudioObject2() {
-        console.log("AudioObject2");
+//        console.log("AudioObject2");
         this.audio = vm.$refs.sound;
         this.duration = 0;
         this.playbutton = vm.$refs.playbutton;

@@ -198,7 +198,7 @@ textarea{
   }
     .messageblock{
       height: calc(100% - 160px);
-      overflow-y: scroll;
+      /*overflow-y: scroll;*/
     }
       .messageblock > div {
         width: 100%;

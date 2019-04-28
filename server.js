@@ -34,15 +34,15 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
-let profile = new Profile({
-  firstName: "Pavel",
-  lastName: "Durov",
-  avatar: "static/img/avatars/76938b57dbc37b.png",
-  phone: 87778888888,
-  password: "pavel"
-});
-
-profile.save();
+// let profile = new Profile({
+//   firstName: "Pavel",
+//   lastName: "Durov",
+//   avatar: "static/img/avatars/76938b57dbc37b.png",
+//   phone: 87778888888,
+//   password: "pavel"
+// });
+//
+// profile.save();
 
 app.post("/post/profile", function (req, res) {
   let profile = new Profile({
